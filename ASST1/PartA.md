@@ -31,11 +31,10 @@ $$
 $$
 \begin{align}
 \vec{N}(t)&=\frac{\frac{d\vec{T}}{dt}}{||\frac{d\vec{T}}{dt}||}\\
-\vec{N}(t) &= \frac{\langle -\sin (t) , -10\sin(2t) \rangle}{||\frac{d\vec{T}}{dt}||}
+\vec{N}(t) &= \frac{\langle -\sin (t) , -10\sin(2t) \rangle}{||\frac{d\vec{T}}{dt}||}\\
+&=\frac{\langle-\sin(t),-10\sin(2t)\rangle}{\sqrt{\sin^2(t)+100\sin^2(2t)}}
 \end{align}
 $$
-
-**TODO fix this**
 
 ### 1.4 Symmetry
 
@@ -89,52 +88,51 @@ Therefore the area under the bowtie is $15$.
 
 #### 2.a Translation and Translation
 
-The general form of a translation in homogenous form is
-$$
-T =
-\begin{bmatrix}
-1 & 0 & t_x \\
-0 & 1 & t_y \\
-0 & 0 & 1
-\end{bmatrix}
-$$
-Two sequential translations
+Two sequential $N\times N$ translations have the form
 $$
 T_1 =
 \begin{bmatrix}
-1 & 0 & t_{x1} \\
-0 & 1 & t_{y1} \\
-0 & 0 & 1
+1 & 0 & ... & t_{x1} \\
+0 & 1 & ... & t_{y1} \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & ... & 1
 \end{bmatrix}\\
+
 T_2 =
 \begin{bmatrix}
-1 & 0 & t_{x2} \\
-0 & 1 & t_{y2} \\
-0 & 0 & 1
+1 & 0 & ... & t_{x2} \\
+0 & 1 & ... & t_{y2} \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & ... & 1
 \end{bmatrix}\\
+
 T_1T_2=
 \begin{bmatrix}
-1 & 0 & t_{x1} \\
-0 & 1 & t_{y1} \\
-0 & 0 & 1
+1 & 0 & ... & t_{x1} \\
+0 & 1 & ... & t_{y1} \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & ... & 1
 \end{bmatrix}
 \begin{bmatrix}
-1 & 0 & t_{x2} \\
-0 & 1 & t_{y2} \\
-0 & 0 & 1
+1 & 0 & ... & t_{x2} \\
+0 & 1 & ... & t_{y2} \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & ... & 1
 \end{bmatrix}
+
 =
 \begin{bmatrix}
-1 & 0 & t_{x1}+t_{x2} \\
-0 & 1 & t_{y1}+t_{y2} \\
-0 & 0 & 1
+1 & 0 & \dots & t_{x1} + t_{x2} \\
+0 & 1 & \dots & t_{y1} + t_{y2} \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \dots & 1
 \end{bmatrix}
 $$
-By inspection, changin the order of $T1$ and $T2$ does not affect the resulting transformation matrix, therefore **translation and translation is commutative**.
+By inspection, the summation in the rightmost column does not change value based on the order of $t_{i1}$ and $t_{i2}$. Changing the order of $T1$ and $T2$ does not affect the resulting transformation matrix, therefore **translation and translation is commutative**.
 
 #### 2.b Translation and Rotation
 
-The general form of a rotation in homogenous form is
+Assume that translations and rotations are commutative. The form of an $\mathbb R^2$ rotation in homogenous form is
 $$
 T=
 \begin{bmatrix}
@@ -143,7 +141,7 @@ T=
 0 & 0 & 1
 \end{bmatrix}
 $$
-It follows that a rotation followed by a translation has the form
+It follows that a translation followed by a rotation has the form
 $$
 T_1=
 \begin{bmatrix}
@@ -163,7 +161,7 @@ T_1=
 0 & 0 & 1
 \end{bmatrix}
 $$
-Conversely, a translation followed by a rotation has the form
+Conversely, a rotation followed by a rotation has the form
 $$
 T_2=
 \begin{bmatrix}
@@ -183,11 +181,98 @@ T_2=
 0 & 0 & 1
 \end{bmatrix}
 $$
-$T_1 \neq T_2$, therefore **translation and rotation are not commutative**.
+$T_1 \neq T_2$  which is a contradiction, therefore **translation and rotation are not commutative**.
 
 ### 2.c Scaling and Rotation, with different fixed points
 
-**TODO**
+A matrix composed of rotation followed by scaling with two different fixed points has the form:
+$$
+\begin{align}
+&=\Bigg(
+\begin {bmatrix}
+1 & 0 & t_{x1}\\
+0 & 1 & t_{y1}\\
+0 & 0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+S_x & 0 & 0 \\
+0 & S_y & 0\\
+0 & 0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+1 & 0 & -t_{x1} \\
+0 & 1 & -t_{y1}\\
+0 & 0 & 1
+\end{bmatrix}
+\Bigg)
+\Bigg(
+\begin {bmatrix}
+1 & 0 & t_{x2}\\
+0 & 1 & t_{y2}\\
+0 & 0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+\cos\theta & -\sin\theta  & 0\\
+\sin\theta & \cos\theta & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+1 & 0 & -t_{x2} \\
+0 & 1 & -t_{y2}\\
+0 & 0 & 1
+\end{bmatrix}
+\Bigg)
+\\
+&=\Bigg(
+\begin{bmatrix}
+S_x & 0 & t_{x1}(1-S_x)\\
+0 & S_y & t_{y1}(1-S_y)\\
+0 & 0 & 1
+\end{bmatrix}
+\Bigg)
+\Bigg(
+\begin{bmatrix}
+\cos\theta & -\sin\theta & t_{y2}\sin\theta+t_{x2}(1-\cos\theta)\\
+\sin\theta & \cos\theta & -t_{x2}\sin\theta+t_{y2}(1-\cos\theta)\\
+0 & 0 & 1
+\end{bmatrix}
+\Bigg)
+\\
+&=
+\begin{bmatrix}
+S_x\cos\theta & -S_x\sin\theta & S_x(t_{y2}\sin\theta+t_{x2}(1-\cos\theta)) + t_{x1}(1-S_x)\\
+S_y\sin\theta & S_y\cos\theta & S_y(-t_{x2}\sin\theta+t_{y2}(1-\cos\theta))+t_{y1}(1-S_y)\\
+0 & 0 & 1
+\end{bmatrix}
+\end{align}
+$$
+Conversely, a matrix composed of a scaling followed by a rotation with two different fixed points has the form:
+$$
+\begin{align}
+&=
+\Bigg(
+\begin{bmatrix}
+\cos\theta & -\sin\theta & t_{y2}\sin\theta+t_{x2}(1-\cos\theta)\\
+\sin\theta & \cos\theta & -t_{x2}\sin\theta+t_{y2}(1-\cos\theta)\\
+0 & 0 & 1
+\end{bmatrix}
+\Bigg)
+\Bigg(
+\begin{bmatrix}
+S_x & 0 & t_{x1}(1-S_x)\\
+0 & S_y & t_{y1}(1-S_y)\\
+0 & 0 & 1
+\end{bmatrix}
+\Bigg)
+\\
+&=
+\begin{bmatrix}
+S_x\cos\theta & -S_y\sin\theta & t_{x1}\cos\theta (1-S_x)-t_{y1}\sin\theta(1-S_y) + t_{y2}\sin\theta+t_{x2}(1-\cos\theta)\\
+S_x\sin\theta & S_y\cos\theta & t_{x1}\sin\theta(1-S_x)
+\end{bmatrix}
+\end{align}
+$$
+
 
 ### 2.d Scaling and Scaling, with the same fixed point.
 
