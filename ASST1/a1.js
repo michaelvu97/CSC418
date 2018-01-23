@@ -278,69 +278,168 @@ function drawPenguin(ctx)
     rotationAboutPoint(head_angle, head_joint_offset),
     translateByOffset(head_offset)
   );
+
+  head_T = composeTransforms(
+      head_T,
+      torso_T
+  );
  
   // Transform and draw the head in a hierarchical fashion
   // That is, if the body moves, then the head will move with it.
   head_poly = transformPolygon(head_poly, head_T);
-  head_poly = transformPolygon(head_poly, torso_T);
   drawPolygon(ctx, head_poly);
 
 
   // Now draw the head joint
   head_joint = transformPoint(head_joint_offset, head_T);
-  head_joint = transformPoint(head_joint, torso_T);
   drawCircle(ctx, head_joint[0], head_joint[1], head_joint_r);
+
+  /////////////////////////////////////////////////////////////////////////////
 
   // EYE
   var eye_offset = [-30, -20];
-  var eye_T = translateByOffset(eye_offset);
+  var eye_T = composeTransforms(
+      translateByOffset(eye_offset),
+      head_T
+  );
   eye = transformPoint(eye, eye_T);
-  eye = transformPoint(eye, head_T);
-  eye = transformPoint(eye, torso_T);
   drawCircle(ctx, eye[0], eye[1], eye_r);
 
   // IRIS
   // This has the same transformation as the eye
   drawCircle(ctx, eye[0], eye[1], iris_r);
 
+  /////////////////////////////////////////////////////////////////////////////
+
   // UPPER BEAK
   var beak_offset = [-90, 0];
-  var beak_T = translateByOffset(beak_offset);
+  var beak_T = composeTransforms(
+      translateByOffset(beak_offset),
+      head_T
+  );
 
   upper_beak_poly = transformPolygon(upper_beak_poly, beak_T);
-  upper_beak_poly = transformPolygon(upper_beak_poly, head_T);
-  upper_beak_poly = transformPolygon(upper_beak_poly, torso_T);
   drawPolygon(ctx, upper_beak_poly);
 
 
   // LOWER BEAK
   var lower_beak_offset = [0, 30 + mouth_gap]; 
-  var lower_beak_T = translateByOffset(lower_beak_offset);
+  var lower_beak_T = composeTransforms(
+      translateByOffset(lower_beak_offset),
+      beak_T
+  );
 
-  lower_beak_poly = transformPolygon(lower_beak_poly, composeTransforms(beak_T, lower_beak_T));
-  lower_beak_poly = transformPolygon(lower_beak_poly, head_T);
-  lower_beak_poly = transformPolygon(lower_beak_poly, torso_T);
+  lower_beak_poly = transformPolygon(lower_beak_poly, lower_beak_T);
   drawPolygon(ctx, lower_beak_poly);
-  
-  // ARM JOINT
-  var arm_joint_offset = [20,-70];
-  arm_joint_T = translateByOffset(arm_joint_offset);
-  arm_joint = transformPoint(arm_joint, arm_joint_T);
-  arm_joint = transformPoint(arm_joint, torso_T);
-  drawCircle(ctx, arm_joint[0], arm_joint[1], arm_joint_r);
+
+  /////////////////////////////////////////////////////////////////////////////
 
   // ARM
-  var arm_offset = [0, 50]; // Offset from joint
-  var neg_arm_offset = [0, -50];
-  arm_poly = transformPolygon(arm_poly, rotationAboutPoint(arm_angle, neg_arm_offset));
-  var arm_T = translateByOffset(arm_offset);
+  var arm_offset = [30, -10];
+  var arm_joint_offset = [0, -50];
+
+  var arm_T = composeTransforms(
+      rotationAboutPoint(arm_angle, arm_joint_offset),
+      translateByOffset(arm_offset)
+  );
+
+  arm_T = composeTransforms(arm_T, torso_T);
 
   arm_poly = transformPolygon(arm_poly, arm_T);
-  arm_poly = transformPolygon(arm_poly, arm_joint_T)
-  arm_poly = transformPolygon(arm_poly, torso_T);
-
   drawPolygon(ctx, arm_poly);
+
+  // ARM JOINT
+  arm_joint = transformPoint(arm_joint_offset, arm_T);
+  drawCircle(ctx, arm_joint[0], arm_joint[1], arm_joint_r);
   
+  /////////////////////////////////////////////////////////////////////////////
+
+  // LEG 0
+  var leg0_poly = leg_poly.slice(); // Clone the leg poly
+
+  var leg0_offset = [70, 190];
+  var leg0_joint_offset = [0,-40];
+
+  var leg0_T = composeTransforms(
+      rotationAboutPoint(hip_angles[0], leg0_joint_offset),
+      translateByOffset(leg0_offset)
+  );
+  leg0_T = composeTransforms(leg0_T, torso_T);
+
+  leg0_poly = transformPolygon(leg0_poly, leg0_T);
+  drawPolygon(ctx, leg0_poly);
+
+  // HIP 0
+  hip_joints[0] = transformPoint(leg0_joint_offset, leg0_T);
+  drawCircle(ctx, hip_joints[0][0], hip_joints[0][1], hip_joint_r);
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  // LEG 1
+  var leg1_poly = leg_poly.slice(); // Clone the leg poly
+
+  var leg1_offset = [-70, 190];
+  var leg1_joint_offset = [0,-40];
+
+  var leg1_T = composeTransforms(
+      rotationAboutPoint(hip_angles[1], leg1_joint_offset),
+      translateByOffset(leg1_offset)
+  );
+  leg1_T = composeTransforms(leg1_T, torso_T);
+
+  leg1_poly = transformPolygon(leg1_poly, leg1_T);
+  drawPolygon(ctx, leg1_poly);
+
+  // HIP 1
+  hip_joints[1] = transformPoint(leg1_joint_offset, leg1_T);
+  drawCircle(ctx, hip_joints[1][0], hip_joints[1][1], hip_joint_r);
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  // FOOT 0
+
+  var foot0_poly = foot_poly.slice(); // Clone the foot poly
+
+  var foot0_offset = [-50, 40];
+  var foot0_joint_offset = [40, 0];
+
+  var foot0_T = composeTransforms(
+      rotationAboutPoint(ankle_angles[0], foot0_joint_offset),
+      translateByOffset(foot0_offset)
+  );
+
+  foot0_T = composeTransforms(foot0_T, leg0_T);
+
+  foot0_poly = transformPolygon(foot0_poly, foot0_T);
+  drawPolygon(ctx, foot0_poly);
+
+  // ANKLE 0
+  ankle_joints[0] = transformPoint(foot0_joint_offset, foot0_T);
+  drawCircle(ctx, ankle_joints[0][0], ankle_joints[0][1], ankle_joint_r);
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  // FOOT 1
+
+  var foot1_poly = foot_poly.slice(); // Clone the foot poly
+
+  var foot1_offset = [-50, 40];
+  var foot1_joint_offset = [40, 0];
+
+  var foot1_T = composeTransforms(
+      rotationAboutPoint(ankle_angles[1], foot1_joint_offset),
+      translateByOffset(foot1_offset)
+  );
+
+  foot1_T = composeTransforms(foot1_T, leg1_T);
+
+  foot1_poly = transformPolygon(foot1_poly, foot1_T);
+  drawPolygon(ctx, foot1_poly);
+
+  // ANKLE 0
+  ankle_joints[1] = transformPoint(foot1_joint_offset, foot1_T);
+  drawCircle(ctx, ankle_joints[1][0], ankle_joints[1][1], ankle_joint_r);
+
 }
 
 
