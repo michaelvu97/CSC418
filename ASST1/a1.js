@@ -252,7 +252,7 @@ function drawPenguin(ctx)
   // Joint positions
   var hip_joints = [[0, 0], [0, 0]];
   var ankle_joints = [[0, 0], [0, 0]];
-  var arm_joint = [0, 0];
+  var arm_joint = [0,0];
   var head_joint = [0, 0];
   /** END OF POLYGON DEFINITIONS **/
 
@@ -291,6 +291,17 @@ function drawPenguin(ctx)
   head_joint = transformPoint(head_joint, torso_T);
   drawCircle(ctx, head_joint[0], head_joint[1], head_joint_r);
 
+  // EYE
+  var eye_offset = [-30, -20];
+  var eye_T = translateByOffset(eye_offset);
+  eye = transformPoint(eye, eye_T);
+  eye = transformPoint(eye, head_T);
+  eye = transformPoint(eye, torso_T);
+  drawCircle(ctx, eye[0], eye[1], eye_r);
+
+  // IRIS
+  // This has the same transformation as the eye
+  drawCircle(ctx, eye[0], eye[1], iris_r);
 
   // UPPER BEAK
   var beak_offset = [-90, 0];
@@ -311,6 +322,24 @@ function drawPenguin(ctx)
   lower_beak_poly = transformPolygon(lower_beak_poly, torso_T);
   drawPolygon(ctx, lower_beak_poly);
   
+  // ARM JOINT
+  var arm_joint_offset = [20,-70];
+  arm_joint_T = translateByOffset(arm_joint_offset);
+  arm_joint = transformPoint(arm_joint, arm_joint_T);
+  arm_joint = transformPoint(arm_joint, torso_T);
+  drawCircle(ctx, arm_joint[0], arm_joint[1], arm_joint_r);
+
+  // ARM
+  var arm_offset = [0, 50]; // Offset from joint
+  var neg_arm_offset = [0, -50];
+  arm_poly = transformPolygon(arm_poly, rotationAboutPoint(arm_angle, neg_arm_offset));
+  var arm_T = translateByOffset(arm_offset);
+
+  arm_poly = transformPolygon(arm_poly, arm_T);
+  arm_poly = transformPolygon(arm_poly, arm_joint_T)
+  arm_poly = transformPolygon(arm_poly, torso_T);
+
+  drawPolygon(ctx, arm_poly);
   
 }
 
