@@ -191,25 +191,55 @@ $T_1 \neq T_2$, therefore **translation and rotation are not commutative**.
 
 ### 2.d Scaling and Scaling, with the same fixed point.
 
-Two combined scaling transformations have the form
+A scaling transformation about a fixed point $p$ can be expressed as a series of transformations:
+
+1. Translate such that $p$ is at the new origin
+2. Scale (denoted $S$) about the origin
+3. Translate the inverse of $1$.
+
+Let Two scaling transformations (denoted $T_a,T_b$) about the same fixed point has the form
 $$
-T_1*T_2=
+\begin{align}
+T_{a}T_{b}&=(T_1S_{a}T_3)(T_1S_{b}T_3)\\
+&=T_1S_{a}T_3T_3^{-1}S_{b}T_3\\
+&=T_1(S_{a}S_{b})T_3
+\end{align}
+$$
+And reversing the order of $a,b$ will yield a similar result
+$$
+\begin{align}
+T_{b}T_{a}&=(T_1S_{b}T_3)(T_1S_{a}T_3)\\
+&=T_1S_{b}T_3T_3^{-1}S_{a}T_3\\
+&=T_1(S_{b}S_{a})T_3
+\end{align}
+$$
+We then observe that
+$$
+T_{a}T_{b}=T_{b}T_a\iff S_aS_b=S_b S_a
+$$
+The implication here is that since both $T_a$ and $T_b$ share the same $T_1$ and $T_3$, the overall transformation will be commutative if arbitrary origin-centred scale transformations $S_a$ and $S_b$ are also commutative.
+
+Two origin-scale transformations will take the following form
+$$
+T=
 \begin{bmatrix}
-S_{x1} & 0 & 0 \\
-0 & S_{y1} & 0\\
+S_{x1} & 0 &  0\\
+0 & S_{y1} & 0 \\
 0 & 0 & 1
 \end{bmatrix}
 \begin{bmatrix}
-S_{x2} & 0 & 0 \\
-0 & S_{y2} & 0\\
+S_{x2} & 0 &  0\\
+0 & S_{y2} & 0 \\
 0 & 0 & 1
-\end{bmatrix}=\begin{bmatrix}
-S_{x1}S_{x2} & 0 & 0 \\
-0 & S_{y1}S_{y2} & 0\\
+\end{bmatrix}
+=
+\begin{bmatrix}
+S_{x1}S_{x2} & 0 &  0\\
+0 & S_{y1}S_{y2} & 0 \\
 0 & 0 & 1
 \end{bmatrix}
 $$
-which is clearly commutative for *any* input points, therefore **scaling and scaling with the same fixed point is commutative**.
+which is clearly commutative. Therefore, since scaling about the origin is commutative, **scaling transformations with the same fixed point are commutative**.
 
 ## 3. Homography
 
