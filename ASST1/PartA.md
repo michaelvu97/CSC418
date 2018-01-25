@@ -185,93 +185,67 @@ $T_1 \neq T_2$  which is a contradiction, therefore **translation and rotation a
 
 ### 2.c Scaling and Rotation, with different fixed points
 
-A matrix composed of rotation followed by scaling with two different fixed points has the form:
+Assume towards a contradiction that scaling and rotation with differing fixed points is commutative.
+
+Consider the following transformations:
 $$
 \begin{align}
-&=\Bigg(
-\begin {bmatrix}
-1 & 0 & t_{x1}\\
-0 & 1 & t_{y1}\\
-0 & 0 & 1
-\end{bmatrix}
+T_{scale}&=
 \begin{bmatrix}
-S_x & 0 & 0 \\
-0 & S_y & 0\\
+2 & 0 & 0 \\
+0 & 2 & -1 \\
 0 & 0 & 1
-\end{bmatrix}
-\begin{bmatrix}
-1 & 0 & -t_{x1} \\
-0 & 1 & -t_{y1}\\
-0 & 0 & 1
-\end{bmatrix}
-\Bigg)
-\Bigg(
-\begin {bmatrix}
-1 & 0 & t_{x2}\\
-0 & 1 & t_{y2}\\
-0 & 0 & 1
-\end{bmatrix}
-\begin{bmatrix}
-\cos\theta & -\sin\theta  & 0\\
-\sin\theta & \cos\theta & 0 \\
-0 & 0 & 1
-\end{bmatrix}
-\begin{bmatrix}
-1 & 0 & -t_{x2} \\
-0 & 1 & -t_{y2}\\
-0 & 0 & 1
-\end{bmatrix}
-\Bigg)
+\end{bmatrix}\text{(fixed point at (0,1))}
 \\
-&=\Bigg(
+T_{rotate}&=
 \begin{bmatrix}
-S_x & 0 & t_{x1}(1-S_x)\\
-0 & S_y & t_{y1}(1-S_y)\\
+0 & -1 & 0\\
+1 & 0 & 0 \\
 0 & 0 & 1
 \end{bmatrix}
-\Bigg)
-\Bigg(
+\text{(90 degrees, fixed point at (0,0))}
+\end{align}
+$$
+If scaling and rotation are commutative, then in this example:
+$$
+\begin{align}
+T_{scale}T_{rotate}&=T_{rotate}T_{scale}\\
 \begin{bmatrix}
-\cos\theta & -\sin\theta & t_{y2}\sin\theta+t_{x2}(1-\cos\theta)\\
-\sin\theta & \cos\theta & -t_{x2}\sin\theta+t_{y2}(1-\cos\theta)\\
+2 & 0 & 0 \\
+0 & 2 & -1 \\
 0 & 0 & 1
 \end{bmatrix}
-\Bigg)
-\\
+\begin{bmatrix}
+0 & -1 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
 &=
 \begin{bmatrix}
-S_x\cos\theta & -S_x\sin\theta & S_x(t_{y2}\sin\theta+t_{x2}(1-\cos\theta)) + t_{x1}(1-S_x)\\
-S_y\sin\theta & S_y\cos\theta & S_y(-t_{x2}\sin\theta+t_{y2}(1-\cos\theta))+t_{y1}(1-S_y)\\
+0 & -1 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+2 & 0 & 0 \\
+0 & 2 & -1 \\
+0 & 0 & 1
+\end{bmatrix}
+\\
+\begin{bmatrix}
+0 & -2 & 0\\
+2 & 0 & -1\\
+0 & 0 & 1
+\end{bmatrix}
+&=
+\begin{bmatrix}
+0 & -2 & 1\\
+2 & 0 & 0 \\
 0 & 0 & 1
 \end{bmatrix}
 \end{align}
 $$
-Conversely, a matrix composed of a scaling followed by a rotation with two different fixed points has the form:
-$$
-\begin{align}
-&=
-\Bigg(
-\begin{bmatrix}
-\cos\theta & -\sin\theta & t_{y2}\sin\theta+t_{x2}(1-\cos\theta)\\
-\sin\theta & \cos\theta & -t_{x2}\sin\theta+t_{y2}(1-\cos\theta)\\
-0 & 0 & 1
-\end{bmatrix}
-\Bigg)
-\Bigg(
-\begin{bmatrix}
-S_x & 0 & t_{x1}(1-S_x)\\
-0 & S_y & t_{y1}(1-S_y)\\
-0 & 0 & 1
-\end{bmatrix}
-\Bigg)
-\\
-&=
-\begin{bmatrix}
-S_x\cos\theta & -S_y\sin\theta & t_{x1}\cos\theta (1-S_x)-t_{y1}\sin\theta(1-S_y) + t_{y2}\sin\theta+t_{x2}(1-\cos\theta)\\
-S_x\sin\theta & S_y\cos\theta & t_{x1}\sin\theta(1-S_x)
-\end{bmatrix}
-\end{align}
-$$
+Which is a contradiction, therefore **scaling and rotation around different fixed points is not commutative**.
 
 
 ### 2.d Scaling and Scaling, with the same fixed point.
@@ -304,24 +278,27 @@ T_{a}T_{b}=T_{b}T_a\iff S_aS_b=S_b S_a
 $$
 The implication here is that since both $T_a$ and $T_b$ share the same $T_1$ and $T_3$, the overall transformation will be commutative if arbitrary origin-centred scale transformations $S_a$ and $S_b$ are also commutative.
 
-Two origin-scale transformations will take the following form
+Two $N \times N $ origin-scale transformations will take the following form
 $$
 T=
 \begin{bmatrix}
-S_{x1} & 0 &  0\\
-0 & S_{y1} & 0 \\
-0 & 0 & 1
+S_{x1} & 0 & \dots &  0\\
+0 & S_{y1} & \dots & 0 \\
+\vdots & \vdots & \ddots & \vdots\\
+0 & 0 & \dots & 1
 \end{bmatrix}
 \begin{bmatrix}
-S_{x2} & 0 &  0\\
-0 & S_{y2} & 0 \\
-0 & 0 & 1
+S_{x2} & 0 & \dots &  0\\
+0 & S_{y2} & \dots & 0 \\
+\vdots & \vdots & \ddots & \vdots\\
+0 & 0 & \dots & 1
 \end{bmatrix}
 =
 \begin{bmatrix}
-S_{x1}S_{x2} & 0 &  0\\
-0 & S_{y1}S_{y2} & 0 \\
-0 & 0 & 1
+S_{x1}S_{x2} & 0 & \dots &  0\\
+0 & S_{y1}S_{y2} & \dots & 0 \\
+\vdots & \vdots & \ddots & \vdots\\
+0 & 0 & \dots & 1
 \end{bmatrix}
 $$
 which is clearly commutative. Therefore, since scaling about the origin is commutative, **scaling transformations with the same fixed point are commutative**.
