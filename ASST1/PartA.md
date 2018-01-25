@@ -74,15 +74,27 @@ f(x)&=\sqrt{\frac{25}{4}x^2-\frac{25}{16}x^4}=\frac{5}{4}x\sqrt{4-x^2}\\
 \text{let }j&=4-x^2\\
 dx&=\frac{1}{-2x}dj\\
 A &= \frac52\int_0^4\sqrt{j} dj\\
-A &=\frac52 \cdot\frac{16}{3}=15
+A &=\frac52 \cdot\frac{16}{3}=\frac{40}{3}
 \end{align}
 $$
 
-Therefore the area under the bowtie is $15$.
+Therefore the area under the bowtie is $\frac{40}{3}$.
 
 ### 1.6 Perimeter
 
 **TODO**
+$$
+\begin{align}
+L&=4\int_0^2\sqrt{4\cos^2(t) + 100\cos^2(2t)}dt\\
+&=8\int_0^2\sqrt{\cos^2(t) + 25\cos^2(2t)}dt\\
+&=8\int_0^2\sqrt{\frac{1}{2}\cos(2t)+\frac{1}2 + 25\cos^2(2t)}dt\\
+\text{let }j&=\cos(2t)\\
+dj&=-2\sin(2t)dt\\
+L&=8\int_1^{\cos(4t)}\sqrt{\frac{1}{2}+\frac{1}{2}j+25j^2}\frac{dj}{-2\sin(2t)}
+
+\end{align}
+$$
+
 
 ## 2. Transformations
 
