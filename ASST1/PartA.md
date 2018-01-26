@@ -82,18 +82,38 @@ Therefore the area under the bowtie is $\frac{40}{3}$.
 
 ### 1.6 Perimeter
 
-**TODO**
-$$
-\begin{align}
-L&=4\int_0^2\sqrt{4\cos^2(t) + 100\cos^2(2t)}dt\\
-&=8\int_0^2\sqrt{\cos^2(t) + 25\cos^2(2t)}dt\\
-&=8\int_0^2\sqrt{\frac{1}{2}\cos(2t)+\frac{1}2 + 25\cos^2(2t)}dt\\
-\text{let }j&=\cos(2t)\\
-dj&=-2\sin(2t)dt\\
-L&=8\int_1^{\cos(4t)}\sqrt{\frac{1}{2}+\frac{1}{2}j+25j^2}\frac{dj}{-2\sin(2t)}
+The perimeter of the curve can be algorithmically approximated by dividing the curve into a reasonable number of segments and taking the linear euclidean distance between the endpoints of each segment.
 
-\end{align}
-$$
+```
+function X(t):
+	return 2 * sin(t)
+
+function Y(t):
+	return 5 * sin(t) * cos(t)
+	
+// N is the number of segments to break the curve into
+function ApproximatePerimeter(N):
+	distance = 0
+	lastX = X(0)
+	lastY = Y(0)
+	dt = 2 * pi / N
+	for t = dt; t <= 2 * pi; t = t + dt:
+		currentX = X(t)
+		currentY = Y(t)
+		
+		// Increment by euclidean distance between current point and last
+		distance = distance + sqrt(pow(currentX - lastX, 2) + pow(currentY - lastY, 2))
+		
+		lastX = currentX
+		lastY = currentY
+	
+	return distance
+```
+
+
+
+Running this code with $N=20$ results in a distance of $22.1$.
+
 
 
 ## 2. Transformations
