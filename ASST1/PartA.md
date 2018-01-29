@@ -399,4 +399,27 @@ The point $(2,5)$ maps to $(5,7)$ under this transformation.
 
 ## 4. Polygons
 
-**TODO**
+### 4.1 Point inside triangle
+
+Let $\vec{p}$ represent a test point, and
+$$
+\vec{l_{ij}}=\vec{v_j}-\vec{v_k},\vec{l_{ik}}=\vec{v_k}-\vec{v_i}
+$$
+are line segments formed from $v_i \rightarrow v_j,v_i\rightarrow v_k$, respectively (i.e. two vectors originating from one triangle vertex to the other two vertices).
+
+If $\text{sign}(\vec{l_{ij}}\times\vec{l_{ik}})=\text{sign}(\vec{l_{ij}} \times\vec{p})$, then the point $p$ lies on the "inside" region of the triangle [*fig 4.1*].
+
+Checking this equality for all three points of the triangle creates an intersection which determines if the point lies within the triangle [*fig 4.2*]. That is,
+$$
+\text{if }\sum_{i=0}^21\{\text{sign}(\vec{l_{ij}}\times \vec{l_{ik}})=\text{sign}(\vec{l_{ij}}\times \vec{p})\}=3\text{, then the point is in the traingle.}
+$$
+Where $1\{\dots\}$ is the indicator function and $j,k$ are the other points of the triangle.
+
+![Graphics 1.4.1](Graphics 1.4.1.jpg)
+
+*Fig 4.1*
+
+![Graphics 1.4.2](Graphics 1.4.2.jpg)
+
+*Fig 4.2*
+
