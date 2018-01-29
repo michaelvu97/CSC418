@@ -407,13 +407,13 @@ $$
 $$
 are line segments formed from $v_i \rightarrow v_j,v_i\rightarrow v_k$, respectively (i.e. two vectors originating from one triangle vertex to the other two vertices).
 
-If $\text{sign}(\vec{l_{ij}}\times\vec{l_{ik}})=\text{sign}(\vec{l_{ij}} \times\vec{p})$, then the point $p$ lies on the "inside" region of the triangle [*fig 4.1*].
+If $\text{sign}(\vec{l_{ij}}\times\vec{l_{ik}})=\text{sign}(\vec{l_{ij}} \times(\vec{p}-\vec{v_i}))$, then the point $p$ lies on the "inside" region of the triangle [*fig 4.1*].
 
 Checking this equality for all three points of the triangle creates an intersection which determines if the point lies within the triangle [*fig 4.2*]. That is,
 $$
-\text{if }\sum_{i=0}^21\{\text{sign}(\vec{l_{ij}}\times \vec{l_{ik}})=\text{sign}(\vec{l_{ij}}\times \vec{p})\}=3\text{, then the point is in the traingle.}
+\text{if }\sum_{i=0}^21\{\text{sign}(\vec{l_{ij}}\times \vec{l_{ik}})=\text{sign}(\vec{l_{ij}}\times (\vec{p}-\vec{v_i}))\}=3\text{, then the point is in the traingle.}
 $$
-Where $1\{\dots\}$ is the indicator function and $j,k$ are the other points of the triangle.
+Where $1\{\dots\}​$ is the indicator function and $j,k​$ are the other points of the triangle.
 
 ![Graphics 1.4.1](Graphics 1.4.1.jpg)
 
@@ -423,3 +423,64 @@ Where $1\{\dots\}$ is the indicator function and $j,k$ are the other points of t
 
 *Fig 4.2*
 
+### 4.2 Point on Perimeter
+
+#### Background
+
+$$
+\text{point on line segment}\iff\vec{p}\times \vec{l} =0 \text{ and } l_{1x}\le\vec{p}_x\le l_{2x} \text{ and } l_{1y} \le \vec{p}_y 
+\le l_{2y}\\
+\text{where } l_1,l_2 \text{ are sorted properly by ascending value for each comparison}
+$$
+
+#### Algorithm
+
+```
+// Sorts a pair of values by ascending value
+function Sort(a, b):
+	if a > b:
+		return b, a
+	else
+		return a, b
+		
+// Determines if a point lies on a line between start, end
+function IsPointOnLine(p, start, end)
+	relative_point = p - start // Vector for the point relative to one of the start point
+	
+	if CrossProduct(p, end - start) != 0:
+		return False
+    
+    // Check if the point lies within the bounds of the line
+    xStart, xEnd = Sort(start.x, end.x)
+    yStart, yEnd = Sort(start.y, end.y)
+    if xStart <= p.x and p.x <= xEnd and yStart <= p.y and p.y <= yEnd:
+    	return True
+    else
+    	return False
+   
+// Master function
+function IsPointOnTriangle(p, v0, v1, v2):
+	return IsPointOnLine(p, v0, v1) or IsPointOnLine(p, v1, v2) or IsPointOnLine(p, v2, v0)
+```
+
+### 4.3 Area
+
+The area of a triangle is solvable exactly and computationally using `Heron's Formula`, that is:
+$$
+\begin{align}
+S&=\frac{||a||+||b||+||c||}{2}\\
+A&=\sqrt{S(S-||a||)(S-||b||)(S-||c||)}
+\end{align}
+$$
+Where $a,b,c$ are the sides of the triangle.
+
+### 4.4 Centroid
+
+Geometrically, the centroid of a triangle is the mean of the vertex coordinates. The computation would be:
+$$
+\vec{C}=\frac{\vec{v_0}+\vec{v_1} + \vec{v_2}}{3}=\frac13
+\begin{bmatrix}
+v_{0x} + v_{1x}+v_{2x} \\
+v_{0y} + v_{1y} + v_{2y}
+\end{bmatrix}
+$$
