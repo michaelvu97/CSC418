@@ -8,7 +8,7 @@ Michael Vu
 $$
 \begin{align}
 x(t)^2&=4\sin^2(t)\\
-y(t)^2&=25\sin^2(t)\cos^2(t)\\
+y(t)^2&=25\sin ^2(t)\cos^2(t)\\
 y(t)^2&=\frac{25}{16}x^2(4-x^2)\\
 0&=y^2+\frac{25}{16}x^4-\frac{25}{4}x^2
 \end{align}
@@ -20,9 +20,9 @@ $$
 \begin{align}
 \vec{T}(t)&=\frac{\langle\frac{dx}{dt},\frac{dy}{dt}\rangle}{||\langle\frac{dx}{dt},\frac{dy}{dt}\rangle||}\\
 \frac{dx}{dt}&=2\cos(t)\\
-\frac{dy}{dt}&=10\cos(2t)\\
-\langle\frac{dx}{dt},\frac{dy}{dt}\rangle&=2\langle\cos (t),5\cos(2t)\rangle\\
-\vec{T}(t)&=\frac{\langle \cos(t), 5\cos (2t)\rangle}{\sqrt{\cos^2(t)+25\cos^2(2t)}}
+\frac{dy}{dt}&=5\cos(2t)\\
+\langle\frac{dx}{dt},\frac{dy}{dt}\rangle&=\langle2\cos (t),5\cos(2t)\rangle\\
+\vec{T}(t)&=\frac{\langle 2\cos(t), 5\cos (2t)\rangle}{\sqrt{4\cos^2(t)+25\cos^2(2t)}}
 \end{align}
 $$
 
@@ -110,11 +110,7 @@ function ApproximatePerimeter(N):
 	return distance
 ```
 
-
-
 Running this code with $N=20$ results in a distance of $22.1$.
-
-
 
 ## 2. Transformations
 
