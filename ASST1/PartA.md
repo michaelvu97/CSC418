@@ -36,6 +36,8 @@ $$
 \end{align}
 $$
 
+<div style="page-break-after: always"></div>
+
 ### 1.4 Symmetry
 
 #### 1.4.1 X-axis  Symmetry
@@ -80,6 +82,8 @@ $$
 
 Therefore the area under the bowtie is $\frac{40}{3}$.
 
+<div style="page-break-after: always"></div>
+
 ### 1.6 Perimeter
 
 The perimeter of the curve can be algorithmically approximated by dividing the curve into a reasonable number of segments and taking the linear euclidean distance between the endpoints of each segment.
@@ -111,6 +115,8 @@ function ApproximatePerimeter(N):
 ```
 
 Running this code with $N=20$ results in a distance of $22.1$.
+
+<div style="page-break-after: always"></div>
 
 ## 2. Transformations
 
@@ -211,6 +217,8 @@ T_2=
 $$
 $T_1 \neq T_2$  which is a contradiction, therefore **translation and rotation are not commutative**.
 
+<div style="page-break-after: always"></div>
+
 ### 2.c Scaling and Rotation, with different fixed points
 
 Assume towards a contradiction that scaling and rotation with differing fixed points is commutative.
@@ -275,6 +283,7 @@ T_{scale}T_{rotate}&=T_{rotate}T_{scale}\\
 $$
 Which is a contradiction, therefore **scaling and rotation around different fixed points is not commutative**.
 
+<div style="page-break-after: always"></div>
 
 ### 2.d Scaling and Scaling, with the same fixed point.
 
@@ -330,6 +339,8 @@ S_{x1}S_{x2} & 0 & \dots &  0\\
 \end{bmatrix}
 $$
 which is clearly commutative. Therefore, since scaling about the origin is commutative, **scaling transformations with the same fixed point are commutative**.
+
+<div style="page-break-after: always"></div>
 
 ## 3. Homography
 
@@ -397,6 +408,8 @@ $$
 
 The point $(2,5)$ maps to $(5,7)$ under this transformation.
 
+<div style="page-break-after: always"></div>
+
 ## 4. Polygons
 
 ### 4.1 Point inside triangle
@@ -422,6 +435,8 @@ Where $1\{\dots\}​$ is the indicator function and $j,k​$ are the other point
 ![Graphics 1.4.2](Graphics 1.4.2.jpg)
 
 *Fig 4.2*
+
+<div style="page-break-after: always"></div>
 
 ### 4.2 Point on Perimeter
 
