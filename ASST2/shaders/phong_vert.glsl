@@ -14,9 +14,17 @@ varying vec3 viewVec; // Vector from the eye to the vertex
 void main(){
   // Your solution should go here.
   // Only the ambient colour calculations have been provided as an example.
+
+  // Move the vertex from it's object-local space to the view space.
   vec4 vertPos4 = modelview * vec4(position, 1.0);
+
+  // Transform the vertex from view space to projected space.
   gl_Position = projection * vertPos4;
 
-  viewVec = - (mat3(modelview) * position);
-  normalInterp = mat3(normalMat) * normal;
+  // viewVec = - (mat3(modelview) * position);
+  viewVec = (mat3(modelview) * position);
+
+  // Transform the vertex from object space to view space.
+  vertPos = vec3(vertPos4);
+  normalInterp = normalize(mat3(normalMat) * normal);
 }
