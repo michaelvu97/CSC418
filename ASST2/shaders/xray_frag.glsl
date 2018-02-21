@@ -16,11 +16,16 @@ uniform vec3 ambientColor;
 uniform vec3 diffuseColor;
 uniform vec3 specularColor;
 
-uniform vec3 lightPos; // Light position in camera space
+uniform vec3 lightPos; // Light position in view space
+// I don't think that's correct, because it appears to be the ray from vertex to light source.
 
 void main() {
   // Your solution should go here.
-  
-  // The model is currently rendered in black
-  gl_FragColor = vec4(vec3(0.0), 1.0);
+  // Only the ambient colour calculations have been provided as an example.
+  // [0,1]
+  float diffuseIntensity = dot(normalInterp, vec3(0,0,1.0));
+
+  diffuseIntensity = 1.0 - (diffuseIntensity * diffuseIntensity);
+
+  gl_FragColor = vec4(Kd * diffuseColor * diffuseIntensity, 1.0);
 }

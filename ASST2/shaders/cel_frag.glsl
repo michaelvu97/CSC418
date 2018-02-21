@@ -49,7 +49,7 @@ void main() {
   vec3 mirrorRay = normalize(reflect(vertPos - lightPos, normalInterp));
 
   // [0,1]
-  float specularIntensity = diffuseIntensity1 * clamp(0.0, pow(dot(normalize(vertPos),-mirrorRay), shininessVal), 1.0);
+  float specularIntensity = clamp(0.0, diffuseIntensity2 + diffuseIntensity1, 1.0) * clamp(0.0, pow(dot(normalize(vertPos),-mirrorRay), shininessVal), 1.0);
 
   specularIntensity = step_threshold(specularIntensity, shininessVal / 128.0);
 
