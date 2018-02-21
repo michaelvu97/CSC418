@@ -51,7 +51,7 @@ void main() {
   // [0,1]
   float specularIntensity = diffuseIntensity1 * clamp(0.0, pow(dot(normalize(vertPos),-mirrorRay), shininessVal), 1.0);
 
-  specularIntensity = step_threshold(specularIntensity, (128.1 - shininessVal) / 128.0);
+  specularIntensity = step_threshold(specularIntensity, shininessVal / 128.0);
 
   gl_FragColor = vec4(
             (ambientColor * Ka) + 
