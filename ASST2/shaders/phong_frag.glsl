@@ -34,7 +34,7 @@ void main() {
   vec3 mirrorRay = normalize(reflect(vertPos - lightPos, normalInterp));
 
   // [0,1]
-  float specularIntensity = diffuseIntensity * pow(dot(normalize(vertPos),-mirrorRay), shininessVal);
+  float specularIntensity = pow(max(0.0, dot(normalize(vertPos),-mirrorRay)), shininessVal);
 
 
 
