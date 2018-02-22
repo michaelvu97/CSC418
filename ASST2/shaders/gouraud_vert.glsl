@@ -29,5 +29,20 @@ void main(){
 
   vec4 vertPos4 = modelview * vec4(position, 1.0);
   gl_Position = projection * vertPos4;
-  color = vec4(ambientColor, 1.0); 
+
+  vertPos = vec3(vertPos4);
+
+  // Normal in camera space
+  normalInterp = normalize(vec3(normalMat * vec4(normal, 1.0)));
+
+  // Calculate diffuse for this vertex
+  float diffuseIntensity = dot(normalize(lightPos - vertPos), normalInterp);
+
+  vec3 mirrorRay = normalize(reflect(vertPos - lightPos, normalInterp));
+
+  float specularIntensity = diffuseIntensity * 
+        pow(dot(normalize(vertPos),-mirrorRay), shininessVal);
+
+  color = vec4(ambientColor + (diffuseIntensity * Kd * diffuseColor) + 
+        (specularIntensity * Ks * specularColor), 1.0); 
 }
