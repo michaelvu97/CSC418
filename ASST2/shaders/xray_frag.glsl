@@ -23,7 +23,7 @@ void main() {
   // Your solution should go here.
   // Only the ambient colour calculations have been provided as an example.
   // [0,1]
-  float diffuseIntensity = dot(normalInterp, vec3(0,0,1.0));
+  float diffuseIntensity = dot(normalInterp, -normalize(vertPos));
 
   diffuseIntensity = 1.0 - (diffuseIntensity * diffuseIntensity);
 
