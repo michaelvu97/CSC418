@@ -36,12 +36,12 @@ void main(){
   normalInterp = normalize(vec3(normalMat * vec4(normal, 1.0)));
 
   // Calculate diffuse for this vertex
-  float diffuseIntensity = dot(normalize(lightPos - vertPos), normalInterp);
+  float diffuseIntensity = max(0.0, dot(normalize(lightPos - vertPos), normalInterp));
 
   vec3 mirrorRay = normalize(reflect(vertPos - lightPos, normalInterp));
 
   float specularIntensity = pow(max(0.0, dot(normalize(vertPos),-mirrorRay)), shininessVal);
 
-  color = vec4(ambientColor + (diffuseIntensity * Kd * diffuseColor) + 
+  color = vec4((ambientColor * Ka) + (diffuseIntensity * Kd * diffuseColor) + 
         (specularIntensity * Ks * specularColor), 1.0); 
 }

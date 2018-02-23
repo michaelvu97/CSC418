@@ -26,5 +26,5 @@ void main(){
 
   // Transform the vertex from object space to view space.
   vertPos = vec3(vertPos4);
-  normalInterp = normalize(mat3(normalMat) * normal);
+  normalInterp = normalize(vec3(normalMat * vec4(normal,1.0)));
 }

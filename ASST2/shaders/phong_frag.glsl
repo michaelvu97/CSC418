@@ -28,15 +28,11 @@ void main() {
   // [0,1]
   float diffuseIntensity = max(0.0, dot(normalInterp, testLightPosNorm));
 
-  // Reflect the light ray
-  // vec3 mirrorRay = vertPos - lightPos - ((2.0 * dot(normalInterp, vertPos - lightPos)) * normalInterp);
-  // mirrorRay = normalize(mirrorRay);
+  // Reflect the light ray]
   vec3 mirrorRay = normalize(reflect(vertPos - lightPos, normalInterp));
 
   // [0,1]
   float specularIntensity = pow(max(0.0, dot(normalize(vertPos),-mirrorRay)), shininessVal);
-
-
 
   gl_FragColor = vec4((ambientColor * Ka) + (Kd * diffuseColor * diffuseIntensity) + (Ks * specularIntensity * specularColor), 1.0);
 }
