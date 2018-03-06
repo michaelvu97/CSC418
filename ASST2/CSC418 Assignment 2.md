@@ -9,7 +9,8 @@
 ### 1.1 2D Affine Transformation
 
 $$
-TA=B\\
+\begin{align}
+TA&=B\\
 \begin{bmatrix}
 t_{11} & t_{21} & t_{31}\\
 t_{12} & t_{22} & t_{32}\\
@@ -20,20 +21,160 @@ a_{1x} & a_{2x} & a_{3x}\\
 a_{1y} & a_{2y} & a_{3y}\\
 1 & 1 & 1
 \end{bmatrix}
-=
+&=
 \begin{bmatrix}
 b_{1x} & b_{2x} & b_{3x}\\
 b_{1y} & b_{2y} & b_{3y}\\
 c_1 & c_2 & c_3
 \end{bmatrix}
 \\
+TAA^{-1}=T&=BA^{-1}\\
+\end{align}
 $$
 
 
+$$
+\begin{align}
+A^{-1}=
+\frac{1}{\big|a_{1x}(a_{2y}-a_{3y})+a_{2x}(a_{3y}-a_{1y})+a_{3x}(a_{1y}-a_{2y})\big|}
+\begin{bmatrix}
+a_{2y}-a_{3y} & a_{3x}-a_{2x} & a_{2x}a_{3y}-a_{2y}a_{3x}\\
+ a_{3y}-a_{1y}& a_{1x}-a_{3x} & a_{1y}a_{3x}-a_{1x}a_{3y}\\
+a_{1y}-a_{2y} & a_{2x}-a_{1x} & a_{1x}a_{2y} - a_{1y}a_{2x}
+\end{bmatrix}
+\end{align}
+$$
+The next step would be right multiplying $B$ by $A^{-1}$ but that'll be a huge, tedious calculation and I doubt you want to see that either.
+
+The exception to forming this transformation matrix is when $A$ is not invertible (i.e. the input points form a degenerate triangle), otherwise the mapping is fully determined.
 
 ## 2. Viewing and Projection
 
+
+
 ## 3. Surfaces
+
+### 3.1 Surface Normal at $p$
+
+$$
+\begin{align}
+f(x,y,z)&=(R-\sqrt{x^2+y^2})^2+z^2-r^2=0\\
+\nabla f(x,y,z)&=
+\begin{bmatrix}
+2(R-\sqrt{x^2+y^2})(-\frac{1}{2}(x^2+y^2)^{-0.5})(2x) \\
+2(R-\sqrt{x^2+y^2})(-\frac{1}{2}(x^2+y^2)^{-0.5})(2y) \\
+2z
+\end{bmatrix}\\
+&=\begin{bmatrix}
+2x\Big[1-\frac{R}{\sqrt{x^2+y^2}}\Big]\\
+2y\Big[1-\frac{R}{\sqrt{x^2+y^2}}\Big]\\
+2z
+\end{bmatrix}
+=\text{surface normal at } (x,y,z)
+\end{align}
+$$
+
+### 3.2 Tangent Plane at $p$
+
+$$
+\begin{align}
+p=\begin{bmatrix}
+a\\
+b\\
+c
+\end{bmatrix}\\
+\nabla f(a,b,c) \cdot\begin{bmatrix}
+x\\
+y\\
+z\\
+\end{bmatrix}
+&=0\\
+\end{align}
+$$
+
+$$
+2a\Big[1-\frac{R}{\sqrt{a^2+b^2}}\Big]x+2b\Big[1-\frac{R}{\sqrt{a^2+b^2}}\Big]y+2cz=0
+$$
+
+### 3.3 Parametric Curve
+
+$$
+\begin{align}
+f(R\cos\lambda,R\sin\lambda,r)&=\Bigg[R-\sqrt{(R\cos\lambda)^2+(R\sin\lambda)^2}\Bigg]^2+r^2-r^2\\
+&=\Bigg[R-R\sqrt{\cos^2\lambda + \sin^2\lambda}\Bigg]^2+0\\
+&=0\\
+&\therefore \text{the curve lies on the surface}
+\end{align}
+$$
+
+### 3.4 Tangent of $q$
+
+$$
+\begin{align}
+\text{tangent}(q(\lambda))&=\frac{d}{d\lambda}q(\lambda)\\
+&= \begin{bmatrix}
+\frac{d}{d\lambda}R\cos\lambda\\
+\frac{d}{d\lambda}R\sin\lambda\\
+\frac{d}{d\lambda}r
+\end{bmatrix}\\
+&=\begin{bmatrix}
+-R\sin\lambda\\
+R\cos\lambda\\
+0
+\end{bmatrix}
+\end{align}
+$$
+
+### 3.5 Tangent of $q$ on Tangent Plane
+
+$$
+\text{tangent}(q(\lambda))\in \text{tangent plane} \iff \text{tangent}(q(\lambda))\cdot\text{(tangent plane normal)}=0 \space \forall \space \lambda \in[0,2\pi]\\
+$$
+
+$$
+\begin{align}
+
+\begin{bmatrix}
+-R\sin\lambda \\
+R\cos\lambda \\
+0
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+2x\Big[1-\frac{R}{\sqrt{x^2+y^2}}\Big]\\
+2y\Big[1-\frac{R}{\sqrt{x^2+y^2}}\Big]\\
+2z
+\end{bmatrix}_{(x,y,z)=p}
+&=
+\begin{bmatrix}
+-R\sin\lambda \\
+R\cos\lambda \\
+0
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+2R\cos\lambda\Big[1-\frac{R}{R}\Big]\\
+2R\sin\lambda\Big[1-\frac{R}{R}\Big]\\
+2r
+\end{bmatrix}
+\\
+&=\begin{bmatrix}
+-R\sin\lambda\\
+R\cos\lambda\\
+0
+\end{bmatrix}
+\cdot
+\begin{bmatrix}
+0\\
+0\\
+2r
+\end{bmatrix}\\
+&=0\\
+&\therefore \text{ the tangent vector of }q \text{ lies on the tangent plane}
+\end{align}
+$$
+
+
 
 ## 4. Curves
 
