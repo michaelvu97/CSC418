@@ -48,9 +48,15 @@ The next step would be right multiplying $B$ by $A^{-1}$ but that'll be a huge, 
 
 The exception to forming this transformation matrix is when $A$ is not invertible (i.e. the input points form a degenerate triangle), otherwise the mapping is fully determined.
 
+### 1.2 ???
+
+### 1.3 ???
+
 ## 2. Viewing and Projection
 
+### 2.1 Pinhole Camera ???
 
+### 2.2 World to Camera Transformation ???
 
 ## 3. Surfaces
 
