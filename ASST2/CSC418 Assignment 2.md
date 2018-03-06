@@ -56,7 +56,34 @@ The exception to forming this transformation matrix is when $A$ is not invertibl
 
 ### 2.1 Pinhole Camera ???
 
-### 2.2 World to Camera Transformation ???
+### 2.2 World to Camera Transformation
+
+#### Translation
+
+The first and most simple transformation that can be applied is a translation from the world's centre to the camera's centre.
+$$
+T_1= \textbf{0 } \rightarrow\textbf{c }=
+\begin{bmatrix}
+1 & 0 & 0 & -c_x\\
+0 & 1 & 0 & -c_y\\
+0 & 0 & 1 & -c_z\\
+0 & 0 & 0 & 1
+\end{bmatrix}
+$$
+Assuming that $\textbf{p}$ is given in world coordinates, let $\textbf{p}'=T_1\textbf{p}$ in translated camera coordinates. Find the ray from $\textbf{p}'$ to the origin:
+$$
+\vec{r}=\textbf{p}'\rightarrow\textbf{0}=\langle -p'_x,-p'_y,-p'_z, 1 \rangle=\langle  c_x-p_y,c_y-p_y,c_z-p_z,1\rangle\\
+\hat{r}=\frac{\vec{r}}{||\vec{r}||} \text{ for convenience}
+$$
+We now need to rotate the coordinate system about $\hat{z}\times\hat{r}$.
+$$
+\begin{align}
+\vec{s}&=[0,0,1]\times\frac{1}{\sqrt{{p'_x}^2+{p'_y}^2+{p'_z}^2}}[-p'_x,-p'_y,-p'_z]\\
+&=\frac{1}{\sqrt{{p'_x}^2+{p'_y}^2+{p'_z}^2}}[-p'_y,p'_x,0]\\
+||\vec{s}||&=\sin\theta_{z\rightarrow r}
+\end{align}
+$$
+
 
 ## 3. Surfaces
 
