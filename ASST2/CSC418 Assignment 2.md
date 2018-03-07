@@ -1,3 +1,5 @@
+
+
 # CSC418 Assignment 2
 
 **Michael Vu**
@@ -34,19 +36,17 @@ $$
 
 
 $$
+\det(A)=(a_{2x}a_{3y}-a_{2y}a_{3x})+(a_{3x}a_{1y}-a_{1x}a_{3y})+(a_{1x}a_{2y}-a_{1y}a_{2x})
+$$
+The mapping is fully determined when $\det(A)\neq 0$ , since the matrix would not be invertible and the transformation could not be specified.
+$$
 \begin{align}
-A^{-1}=
-\frac{1}{\big|a_{1x}(a_{2y}-a_{3y})+a_{2x}(a_{3y}-a_{1y})+a_{3x}(a_{1y}-a_{2y})\big|}
-\begin{bmatrix}
-a_{2y}-a_{3y} & a_{3x}-a_{2x} & a_{2x}a_{3y}-a_{2y}a_{3x}\\
- a_{3y}-a_{1y}& a_{1x}-a_{3x} & a_{1y}a_{3x}-a_{1x}a_{3y}\\
-a_{1y}-a_{2y} & a_{2x}-a_{1x} & a_{1x}a_{2y} - a_{1y}a_{2x}
-\end{bmatrix}
+\det(A)=0&=(a_{2x}a_{3y}-a_{2y}a_{3x})+(a_{3x}a_{1y}-a_{1x}a_{3y})+(a_{1x}a_{2y}-a_{1y}a_{2x})\\
+0&=a_2\times a_3+a_3 \times a_1 + a_1 \times a_2\\
+0&=\sin\theta_{23}+\sin\theta_{31}+\sin\theta_{12}
 \end{align}
 $$
-The next step would be right multiplying $B$ by $A^{-1}$ but that'll be a huge, tedious calculation and I doubt you want to see that either.
-
-The exception to forming this transformation matrix is when $A$ is not invertible (i.e. the input points form a degenerate triangle), otherwise the mapping is fully determined.
+Using CFG, this represents the sum of lines formed from $p_1\rightarrow p_2$, $p_2 \rightarrow p_3$, and $p_3 \rightarrow p_1$.
 
 ### 1.2 ???
 
@@ -54,7 +54,9 @@ The exception to forming this transformation matrix is when $A$ is not invertibl
 
 ## 2. Viewing and Projection
 
-### 2.1 Pinhole Camera ???
+### 2.1 Pinhole Camera
+
+Since light rays propagate by straight lines, a screen pixel can be determined as a sum of the light sources in a cone through the aperture (assuming a circular aperture). As the aperture size decreases to a "pinhole", the cone of light rays collapses into approximately a straight line through the aperture. Assuming the aperture is $(0,0)$, screen pixel $(x,y, depth)$  will be determined by the light source in the direction $\langle-x,-y,-depth \rangle$. The resulting image formed is an $xy$ inverted image of the world.
 
 ### 2.2 World to Camera Transformation
 
