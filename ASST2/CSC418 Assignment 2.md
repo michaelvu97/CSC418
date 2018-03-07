@@ -77,15 +77,38 @@ $$
 \vec{r}=\textbf{p}'\rightarrow\textbf{0}=\langle -p'_x,-p'_y,-p'_z, 1 \rangle=\langle  c_x-p_y,c_y-p_y,c_z-p_z,1\rangle\\
 \hat{r}=\frac{\vec{r}}{||\vec{r}||} \text{ for convenience}
 $$
-We now need to rotate the coordinate system about $\hat{z}\times\hat{r}$.
+First, rotate about $\hat{x}$ to make $\hat{y}'$  perpendicular to $\vec{r}$.
 $$
 \begin{align}
-\vec{s}&=[0,0,1]\times\frac{1}{\sqrt{{p'_x}^2+{p'_y}^2+{p'_z}^2}}[-p'_x,-p'_y,-p'_z]\\
-&=\frac{1}{\sqrt{{p'_x}^2+{p'_y}^2+{p'_z}^2}}[-p'_y,p'_x,0]\\
-||\vec{s}||&=\sin\theta_{z\rightarrow r}
+0&=(T_{rotx}\hat{y})\cdot\hat{r}\\
+0&=\begin{bmatrix}
+1 & 0 & 0\\
+0 & \cos\theta & -\sin\theta\\
+0 & \sin\theta & \cos\theta
+\end{bmatrix}
+\begin{bmatrix}
+0\\1\\0
+\end{bmatrix}
+\cdot\hat{r}\\
+0&=\begin{bmatrix}
+0\\
+\cos\theta\\
+\sin\theta
+\end{bmatrix}
+\cdot
+\hat{r}
+\\
+0&=\hat{r}_y\cos\theta+\hat{r}_z\sin\theta\\
+\implies\theta&=\arctan(-\frac{\hat{r}_y}{\hat{r}_z})\\
+\theta&=-\arctan\Big(\frac{c_y-p_y}{c_z-p_z}\Big)\\
+\implies T_{rotx}&=\begin{bmatrix}
+1 & 0 & 0\\
+0 & \cos\Bigg(\frac{c_z-p_z}{\sqrt{(c_z-p_z)^2+(c_y-p_y)^2}}\Bigg) & -\sin\Bigg(\frac{c_y-p_y}{\sqrt{(c_z-p_z)^2+(c_y-p_y)^2}}\Bigg) \\ 
+0 & -\sin\Bigg(\frac{c_y-p_y}{\sqrt{(c_z-p_z)^2+(c_y-p_y)^2}}\Bigg) & \cos\Bigg(\frac{c_z-p_z}{\sqrt{(c_z-p_z)^2+(c_y-p_y)^2}}\Bigg)
+\end{bmatrix}
 \end{align}
 $$
-
+CONSTrAIN Y to U
 
 ## 3. Surfaces
 
