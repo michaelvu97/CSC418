@@ -1,5 +1,3 @@
-
-
 # CSC418 Assignment 2
 
 **Michael Vu**
@@ -74,41 +72,90 @@ T_1= \textbf{0 } \rightarrow\textbf{c }=
 $$
 Assuming that $\textbf{p}$ is given in world coordinates, let $\textbf{p}'=T_1\textbf{p}$ in translated camera coordinates. Find the ray from $\textbf{p}'$ to the origin:
 $$
-\vec{r}=\textbf{p}'\rightarrow\textbf{0}=\langle -p'_x,-p'_y,-p'_z, 1 \rangle=\langle  c_x-p_y,c_y-p_y,c_z-p_z,1\rangle\\
+\vec{r}=\textbf{p}'\rightarrow\textbf{0}=\langle -p'_x,-p'_y,-p'_z, 1 \rangle=\langle  c_x-p_x,c_y-p_y,c_z-p_z,1\rangle\\
 \hat{r}=\frac{\vec{r}}{||\vec{r}||} \text{ for convenience}
 $$
-First, rotate about $\hat{x}$ to make $\hat{y}'$  perpendicular to $\vec{r}$.
 $$
-\begin{align}
-0&=(T_{rotx}\hat{y})\cdot\hat{r}\\
-0&=\begin{bmatrix}
-1 & 0 & 0\\
-0 & \cos\theta & -\sin\theta\\
-0 & \sin\theta & \cos\theta
+\begin{bmatrix}
+x\\y\\z\\1
+\end{bmatrix}_{camera}
+=R\hat{r} =\frac{1}{||\vec{r}||}\begin{bmatrix}
+r_{11} & r_{12} & r_{13} & 0 \\
+r_{21} & r_{22} & r_{23} & 0\\
+r_{31} & r_{32} & r_{33} & 0\\
+0 & 0 & 0 & 1
 \end{bmatrix}
 \begin{bmatrix}
-0\\1\\0
+c_x-p_x\\
+c_y-p_y\\
+c_z-p_z\\
+1
+\end{bmatrix}\\
+$$
+
+Under the [Orthogonality Condition](http://mathworld.wolfram.com/OrthogonalityCondition.html), $R^{1}=R^T$
+$$
+\begin{bmatrix}
+r_{11} & r_{21} & r_{31} & 0\\
+r_{12} & r_{22} & r_{32} & 0\\
+r_{13} & r_{23} & r_{33} & 0\\
+0& 0 &0& 1
 \end{bmatrix}
-\cdot\hat{r}\\
-0&=\begin{bmatrix}
+\begin{bmatrix}
+x\\y\\z\\1
+\end{bmatrix}_{camera}
+=\frac{1}{||\vec{r}||}\begin{bmatrix}
+c_x-p_x\\
+c_y-p_y\\
+c_z-p_z\\
+1
+\end{bmatrix}\\
+$$
+Align camera $z$ with $\vec{r}$
+$$
+\begin{bmatrix}
+r_{11} & r_{21} & r_{31} & 0\\
+r_{12} & r_{22} & r_{32} & 0\\
+r_{13} & r_{23} & r_{33} & 0\\
+0& 0 &0& 1
+\end{bmatrix}
+\begin{bmatrix}
+0\\0\\z\\1
+\end{bmatrix}_{camera}
+=\begin{bmatrix}
+r_{31}\\
+r_{32}\\
+r_{33}\\
+1
+\end{bmatrix}=\frac{1}{||\vec{r}||}\begin{bmatrix}
+c_x-p_x\\
+c_y-p_y\\
+c_z-p_z\\
+1
+\end{bmatrix}\\
+$$
+Now align $x$ perpendicular to	 $u$
+$$
+\begin{bmatrix}
+1\\
 0\\
-\cos\theta\\
-\sin\theta
+0\\
+1
 \end{bmatrix}
 \cdot
-\hat{r}
-\\
-0&=\hat{r}_y\cos\theta+\hat{r}_z\sin\theta\\
-\implies\theta&=\arctan(-\frac{\hat{r}_y}{\hat{r}_z})\\
-\theta&=-\arctan\Big(\frac{c_y-p_y}{c_z-p_z}\Big)\\
-\implies T_{rotx}&=\begin{bmatrix}
-1 & 0 & 0\\
-0 & \cos\Bigg(\frac{c_z-p_z}{\sqrt{(c_z-p_z)^2+(c_y-p_y)^2}}\Bigg) & -\sin\Bigg(\frac{c_y-p_y}{\sqrt{(c_z-p_z)^2+(c_y-p_y)^2}}\Bigg) \\ 
-0 & -\sin\Bigg(\frac{c_y-p_y}{\sqrt{(c_z-p_z)^2+(c_y-p_y)^2}}\Bigg) & \cos\Bigg(\frac{c_z-p_z}{\sqrt{(c_z-p_z)^2+(c_y-p_y)^2}}\Bigg)
+\Bigg(
+\begin{bmatrix}
+r_{11} & r_{21} & r_{31} & 0\\
+r_{12} & r_{22} & r_{32} & 0\\
+r_{13} & r_{23} & r_{33} & 0\\
+0& 0 &0& 1
 \end{bmatrix}
-\end{align}
+u
+\Bigg)=0
 $$
-CONSTrAIN Y to U
+
+
+
 
 ## 3. Surfaces
 
@@ -141,17 +188,17 @@ a\\
 b\\
 c
 \end{bmatrix}\\
-\nabla f(a,b,c) \cdot\begin{bmatrix}
-x\\
-y\\
-z\\
+\nabla f(x,y,z)\Big|_{(x,y,z)=a,b,c} \cdot\begin{bmatrix}
+x-a\\
+y-b\\
+z-c\\
 \end{bmatrix}
 &=0\\
 \end{align}
 $$
 
 $$
-2a\Big[1-\frac{R}{\sqrt{a^2+b^2}}\Big]x+2b\Big[1-\frac{R}{\sqrt{a^2+b^2}}\Big]y+2cz=0
+2a\Big[1-\frac{R}{\sqrt{a^2+b^2}}\Big](x-a)+2b\Big[1-\frac{R}{\sqrt{a^2+b^2}}\Big](y-c)+2c(z-c)=0
 $$
 
 ### 3.3 Parametric Curve
@@ -186,7 +233,8 @@ $$
 ### 3.5 Tangent of $q$ on Tangent Plane
 
 $$
-\text{tangent}(q(\lambda))\in \text{tangent plane} \iff \text{tangent}(q(\lambda))\cdot\text{(tangent plane normal)}=0 \space \forall \space \lambda \in[0,2\pi]\\
+\text{tangent}(q(\lambda))\in \text{tangent plane} \iff \text{tangent}(q(\lambda))\cdot\text{(surface plane normal)}=0 \space \forall \space \lambda \in[0,2\pi]\\
+\text{since the tangent and surface normal originate from the same point}
 $$
 
 $$
