@@ -58,101 +58,49 @@ Since light rays propagate by straight lines, a screen pixel can be determined a
 
 ### 2.2 World to Camera Transformation
 
-#### Translation
-
-The first and most simple transformation that can be applied is a translation from the world's centre to the camera's centre.
 $$
-T_1= \textbf{0 } \rightarrow\textbf{c }=
+\begin{align}
+\hat{z}'&=\frac{\vec p- \vec c}{||\vec p - \vec c||}\\
+\hat{y}'&=\hat{u}\\
+x'&=\hat{y}' \times \hat z '=\hat u \times \frac{\vec p - \vec c}{||\vec p - \vec c||}\\
+\text{from lecture:}\\
+M_{camera}&=\begin{bmatrix}
+\hat x'^T &&&0\\
+\hat y'^T&&&0\\
+\hat z'^T&&&0\\
+0 &0 & 0 & 1
+\end{bmatrix}
 \begin{bmatrix}
 1 & 0 & 0 & -c_x\\
 0 & 1 & 0 & -c_y\\
 0 & 0 & 1 & -c_z\\
 0 & 0 & 0 & 1
-\end{bmatrix}
-$$
-Assuming that $\textbf{p}$ is given in world coordinates, let $\textbf{p}'=T_1\textbf{p}$ in translated camera coordinates. Find the ray from $\textbf{p}'$ to the origin:
-$$
-\vec{r}=\textbf{p}'\rightarrow\textbf{0}=\langle -p'_x,-p'_y,-p'_z, 1 \rangle=\langle  c_x-p_x,c_y-p_y,c_z-p_z,1\rangle\\
-\hat{r}=\frac{\vec{r}}{||\vec{r}||} \text{ for convenience}
-$$
-$$
-\begin{bmatrix}
-x\\y\\z\\1
-\end{bmatrix}_{camera}
-=R\hat{r} =\frac{1}{||\vec{r}||}\begin{bmatrix}
-r_{11} & r_{12} & r_{13} & 0 \\
-r_{21} & r_{22} & r_{23} & 0\\
-r_{31} & r_{32} & r_{33} & 0\\
-0 & 0 & 0 & 1
-\end{bmatrix}
-\begin{bmatrix}
-c_x-p_x\\
-c_y-p_y\\
-c_z-p_z\\
-1
 \end{bmatrix}\\
+&=\begin{bmatrix}
+\Big[\hat{u} \times \frac{\vec p - \vec c}{||\vec p - \vec c}\Big]^T &  & &0\\
+\hat u ^T & & & 0\\
+\Big[\frac{ \vec p - \vec c}{||\hat p - \hat c||}\Big]^T&& & 0\\
+0 &0 &0 &1
+\end{bmatrix}
+\begin{bmatrix}
+1 & 0 & 0 & -c_x\\
+0 & 1 & 0 & -c_y\\
+0 & 0 & 1 & -c_z\\
+0 & 0 & 0 & 1
+\end{bmatrix}\\
+\end{align}
 $$
 
-Under the [Orthogonality Condition](http://mathworld.wolfram.com/OrthogonalityCondition.html), $R^{1}=R^T$
-$$
-\begin{bmatrix}
-r_{11} & r_{21} & r_{31} & 0\\
-r_{12} & r_{22} & r_{32} & 0\\
-r_{13} & r_{23} & r_{33} & 0\\
-0& 0 &0& 1
-\end{bmatrix}
-\begin{bmatrix}
-x\\y\\z\\1
-\end{bmatrix}_{camera}
-=\frac{1}{||\vec{r}||}\begin{bmatrix}
-c_x-p_x\\
-c_y-p_y\\
-c_z-p_z\\
-1
-\end{bmatrix}\\
-$$
-Align camera $z$ with $\vec{r}$
-$$
-\begin{bmatrix}
-r_{11} & r_{21} & r_{31} & 0\\
-r_{12} & r_{22} & r_{32} & 0\\
-r_{13} & r_{23} & r_{33} & 0\\
-0& 0 &0& 1
-\end{bmatrix}
-\begin{bmatrix}
-0\\0\\z\\1
-\end{bmatrix}_{camera}
-=\begin{bmatrix}
-r_{31}\\
-r_{32}\\
-r_{33}\\
-1
-\end{bmatrix}=\frac{1}{||\vec{r}||}\begin{bmatrix}
-c_x-p_x\\
-c_y-p_y\\
-c_z-p_z\\
-1
-\end{bmatrix}\\
-$$
-Now align $x$ perpendicular to	 $u$
-$$
-\begin{bmatrix}
-1\\
-0\\
-0\\
-1
-\end{bmatrix}
-\cdot
-\Bigg(
-\begin{bmatrix}
-r_{11} & r_{21} & r_{31} & 0\\
-r_{12} & r_{22} & r_{32} & 0\\
-r_{13} & r_{23} & r_{33} & 0\\
-0& 0 &0& 1
-\end{bmatrix}
-u
-\Bigg)=0
-$$
+### 2.3 Parallel Conditions
+
+Logically, any set of line families that is not perpendicular to $z$ will have a non uniform directional change by the perspective frustrum. That is, any vector with a $z$ component will result in a family of lines with differing $z$ components after the projection, depending on their initial location. Since the frustrum projection will uniformly scale $x,y$ magnitudes along a fixed $z$, any initial $x,y$ parallel family will be parallel following projection.
+
+#### Conditions
+
+1. $v \neq \vec 0$
+2. $v_{z} \perp \hat z$, where all vectors are in the camera space.
+
+### 2.4 Line Convergence
 
 
 

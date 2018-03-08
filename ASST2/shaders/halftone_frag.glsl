@@ -36,8 +36,6 @@ void main() {
   // Your solution should go here.
   // Only the background color calculations have been provided as an example.
 
-  float intensity = Kd * 
-      max(0.0, dot(normalInterp, normalize(lightPos - vertPos)));
 
   // The screen will be divided into NxN circles
   float dist = 10.0;
@@ -49,6 +47,10 @@ void main() {
 
   float radiusGrowthMagicNumber = 0.5;
 
+  float intensity = Kd * 
+    max(0.0, dot(normalInterp, normalize(lightPos - vertPos)));
+
+  // Cutoff is the radius to draw the ambient colour, as a function of intensity
   float cutoff = radiusGrowthMagicNumber * dist * dist * 
       (1.0 - intensity) * (1.0 - intensity);
 
