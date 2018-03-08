@@ -98,7 +98,7 @@ Logically, any set of line families that is not perpendicular to $z$ will have a
 #### Conditions
 
 1. $v \neq \vec 0$
-2. $v_{z} \perp \hat z$, where all vectors are in the camera space.
+2. $v \perp \hat z \implies v_z=0$, where all vectors are in the camera space.
 
 ### 2.4 Line Convergence
 
