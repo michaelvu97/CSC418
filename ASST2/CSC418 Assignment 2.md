@@ -46,6 +46,8 @@ $$
 $$
 Using CFG, this represents the sum of lines formed from $p_1\rightarrow p_2$, $p_2 \rightarrow p_3$, and $p_3 \rightarrow p_1$.
 
+<div style="page-break-after: always;"></div>
+
 ## 2. Viewing and Projection
 
 ### 2.1 Pinhole Camera
@@ -96,6 +98,8 @@ Logically, any set of line families that is not perpendicular to $z$ will have a
 1. $v \neq \vec 0$
 2. $v \perp \hat z \implies v_z=0$, where all vectors are in the camera space.
 
+<div style="page-break-after: always;"></div>
+
 ### 2.4 Line Convergence
 
 $$
@@ -131,6 +135,7 @@ yt+y_0\\
 \end{bmatrix}\\
 $$
 
+<div style="page-break-after: always;"></div>
 
 ## 3. Surfaces
 
@@ -186,6 +191,8 @@ f(R\cos\lambda,R\sin\lambda,r)&=\Bigg[R-\sqrt{(R\cos\lambda)^2+(R\sin\lambda)^2}
 &\therefore \text{the curve lies on the surface}
 \end{align}
 $$
+
+<div style="page-break-after: always;"></div>
 
 ### 3.4 Tangent of $q$
 
@@ -257,6 +264,8 @@ $$
 
 
 
+<div style="page-break-after: always;"></div>
+
 ## 4. Curves
 
 ### 4.1 Tangents at $P_4$
@@ -315,6 +324,8 @@ P_2-P_3+P_4-P_3&=P_5-P_6+P_7-P_6\\
 \end{align}
 $$
 $P_{5,7}$ are constrained by the above equality.
+
+<div style="page-break-after: always;"></div>
 
 ### 4.4 Bezier Popularity
 
