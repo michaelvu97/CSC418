@@ -8,6 +8,5 @@ varying vec4 color;
 
 
 void main() {
-  // Your solution goes here.
   gl_FragColor = color;
 }

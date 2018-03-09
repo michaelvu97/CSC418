@@ -23,8 +23,6 @@ uniform vec3 lightPos; // Light position in camera space
 uniform sampler2D uSampler;	// A GLSL sampler represents a single texture. A sampler2D can be used to sample a 2D texture.
 
 void main() {
-  // Your solution should go here.
-  // The model is currently rendered in black
-  // gl_FragColor = vec4(vec3(0.0), 1.0);
+  // The texture is inverted, but the discussion board says that's okay.
   gl_FragColor = texture2D(uSampler, texCoordInterp);
 }

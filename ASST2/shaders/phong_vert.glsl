@@ -12,8 +12,6 @@ varying vec3 viewVec; // Vector from the eye to the vertex
 
 
 void main(){
-  // Your solution should go here.
-  // Only the ambient colour calculations have been provided as an example.
 
   // Move the vertex from it's object-local space to the view space.
   vec4 vertPos4 = modelview * vec4(position, 1.0);

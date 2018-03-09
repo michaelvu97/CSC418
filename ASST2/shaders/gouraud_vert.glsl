@@ -24,8 +24,6 @@ uniform vec3 lightPos; // Light position in camera space
 
 
 void main(){
-  // Your solution should go here.
-  // Only the ambient colour calculations have been provided as an example.
 
   vec4 vertPos4 = modelview * vec4(position, 1.0);
   gl_Position = projection * vertPos4;

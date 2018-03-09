@@ -12,7 +12,7 @@ varying vec3 viewVec; // Vector from the eye to the vertex
 
 void main()
 {
-    // Move the vertex from it's object-local space to the view space.
+  // Move the vertex from it's object-local space to the view space.
   vec4 vertPos4 = modelview * vec4(position, 1.0);
 
   // Transform the vertex from view space to projected space.

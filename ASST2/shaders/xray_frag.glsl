@@ -17,11 +17,9 @@ uniform vec3 diffuseColor;
 uniform vec3 specularColor;
 
 uniform vec3 lightPos; // Light position in view space
-// I don't think that's correct, because it appears to be the ray from vertex to light source.
 
 void main() {
-  // Your solution should go here.
-  // Only the ambient colour calculations have been provided as an example.
+    
   // [0,1]
   float diffuseIntensity = dot(normalInterp, -normalize(vertPos));
 

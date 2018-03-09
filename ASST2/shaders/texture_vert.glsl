@@ -13,7 +13,8 @@ varying vec3 viewVec; // Vector from the eye to the vertex
 varying highp vec2 texCoordInterp;
 
 void main() {
-  // Your solution should go here.
+    
+  // The texture is inverted, but the discussion board says that's okay.
   vec4 vertPos4 = modelview * vec4(position, 1.0);
   gl_Position = projection * vertPos4;
 

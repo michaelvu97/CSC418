@@ -17,18 +17,16 @@ uniform vec3 diffuseColor;
 uniform vec3 specularColor;
 
 uniform vec3 lightPos; // Light position in view space
-// I don't think that's correct, because it appears to be the ray from vertex to light source.
 
 void main() {
-  // Your solution should go here.
-  // Only the ambient colour calculations have been provided as an example.
+
   vec3 lightPosNormalized = normalize(lightPos);
   vec3 testLightPosNorm = normalize(lightPos - vertPos);
 
   // [0,1]
   float diffuseIntensity = max(0.0, dot(normalInterp, testLightPosNorm));
 
-  // Reflect the light ray]
+  // Reflect the light ray
   vec3 mirrorRay = normalize(reflect(vertPos - lightPos, normalInterp));
 
   // [0,1]
