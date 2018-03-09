@@ -18,8 +18,6 @@ uniform vec3 specularColor;
 
 uniform vec3 lightPos; // Light position in camera space
 
-// HINT: Use the built-in variable gl_FragCoord to get the screen-space coordinates
-
 float round(float x) {
   if (x > 0.0)
     return floor(x + 0.5);
@@ -33,11 +31,8 @@ float segment(float position, float divisor) {
 }
 
 void main() {
-  // Your solution should go here.
-  // Only the background color calculations have been provided as an example.
 
-
-  // The screen will be divided into NxN circles
+  // The screen will be divided into circles with <dist> between them
   float dist = 10.0;
 
   // Find the nearest centroid
@@ -45,15 +40,18 @@ void main() {
   centre.x = segment(centre.x, dist);
   centre.y = segment(centre.y, dist);
 
-  float radiusGrowthMagicNumber = 0.5;
+  // Makes the halftone look really nice
+  float radiusGrowthMagicNumber = 0.25;
 
-  float intensity = Kd * 
-    max(0.0, dot(normalInterp, normalize(lightPos - vertPos)));
+  float intensity = max(0.0, dot(normalInterp, normalize(lightPos - vertPos)));
+  intensity = intensity * Kd;
 
   // Cutoff is the radius to draw the ambient colour, as a function of intensity
-  float cutoff = radiusGrowthMagicNumber * dist * dist * 
-      (1.0 - intensity) * (1.0 - intensity);
+  float cutoff = radiusGrowthMagicNumber * dist * (1.0 - intensity);
+  cutoff = cutoff * cutoff;
 
+  // Draw ambient if the "darkness" cutoff is greater than the dist to the
+  // nearest centroid.
   if (dot(gl_FragCoord - centre, gl_FragCoord - centre) <= cutoff) {
 
     gl_FragColor = vec4(ambientColor, 1.0);

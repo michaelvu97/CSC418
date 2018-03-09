@@ -2,7 +2,7 @@
 
 **Michael Vu**
 
-**<CDF ID>**
+1002473272
 
 ## 1. Transformations
 
@@ -45,10 +45,6 @@ $$
 \end{align}
 $$
 Using CFG, this represents the sum of lines formed from $p_1\rightarrow p_2$, $p_2 \rightarrow p_3$, and $p_3 \rightarrow p_1$.
-
-### 1.2 ???
-
-### 1.3 ???
 
 ## 2. Viewing and Projection
 
@@ -102,7 +98,38 @@ Logically, any set of line families that is not perpendicular to $z$ will have a
 
 ### 2.4 Line Convergence
 
-
+$$
+\begin{bmatrix}
+x'\\
+y'\\
+z'\\
+1
+\end{bmatrix}
+=\lim_{t\rightarrow \infty}\begin{bmatrix}
+1 & 0 & 0 & 0\\
+0 & 1 & 0 & 0\\
+0 & 0 & 1+\frac fn& -f\\
+0 & 0 & \frac1n &0
+\end{bmatrix}
+\begin{bmatrix}
+xt+x_0\\
+yt+y_0\\
+zt+z_0\\
+1
+\end{bmatrix}\\
+=\lim_{t\rightarrow\infty}\begin{bmatrix}
+xt+x_0\\
+yt+y_0\\
+(zt+z_0)(1+\frac fn) -f\\
+\frac{zt+z_0}{n}
+\end{bmatrix}\\
+=\lim_{t\rightarrow\infty}\begin{bmatrix}
+\frac{n(xt+x_0)}{zt+z_0}\\
+yt+y_0\\
+(zt+z_0)(1+\frac fn) -f\\
+1
+\end{bmatrix}\\
+$$
 
 
 ## 3. Surfaces
@@ -294,4 +321,5 @@ $P_{5,7}$ are constrained by the above equality.
 1. Bezier curves are serializable: They can be modeled continuously by a designer/modeller, and can be serialized into a small set of discrete-valued points. A 3D program can then "deserialize" the points and recreate the exact curve that was modelled.
 2. Bezier curves can be interpolated to any level of detail. Since the curve models a continuous function, the curve can be interpolated by a graphics program to any level of detail/number of linear segments.
 3. Bezier curves are intuitive to design: Humans can easily model with bezier curves, since the control points alone give a rough idea of what the curve should look like. The first two and last two control points control the endpoint tangents, which is also useful in design.
-4. ???
+4. Bezier curves have easily computable derivatives.
+
