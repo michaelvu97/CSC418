@@ -43,13 +43,21 @@ bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	double x = rayPosOnPlane[0];
 	double y = rayPosOnPlane[1];
 
-	if (x >= -0.5 && x <= 0.5 && y >= -0.5 && y <= 0.5) {
-		ray.intersection.point = modelToWorld * (rayPosOnPlane);
-		ray.intersection.normal = 
-				(worldToModel.transpose() * Vector3D(0,0,1));
-		ray.intersection.normal.normalize();
-		ray.intersection.none = false;
-		return true;
+	if (x >= - 0.5 && x <= 0.5 && y >= -0.5 && y <= 0.5) {
+
+		
+
+		if ((t < ray.intersection.t_value && !ray.intersection.none) ||
+			ray.intersection.none) {
+			ray.intersection.point = modelToWorld * (rayPosOnPlane);
+			ray.intersection.normal = 
+					(worldToModel.transpose() * Vector3D(0,0,1));
+			ray.intersection.normal.normalize();
+			ray.intersection.none = false;
+			ray.intersection.t_value = t;
+			return true;
+		}
+		return false;
 	} else {
 		ray.intersection.none = true;
 		return false;
@@ -77,7 +85,7 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	int nIntersections = SolveQuadratic(
 			rayModelSpace.dir.dot(rayModelSpace.dir),
 			2.0 * rayModelSpace.dir.dot(rayModelSpace.origin.ToVector()),
-			rayModelSpace.origin.ToVector().dot(rayModelSpace.origin.ToVector()),
+			(rayModelSpace.origin.ToVector().dot(rayModelSpace.origin.ToVector())) - 1,
 			intersections
 	);
 
@@ -102,6 +110,7 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	}
 
 	if (nIntersections == 2) {
+
 		/*
 		 * Find the closest to the camera, given by the intersection with the
 		 * smallest magnitude
@@ -127,16 +136,24 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 		}
 	}
 
-	// Valid intersection
-	rayPosOnSphere = rayModelSpace.origin + (t * rayModelSpace.dir);
-	ray.intersection.point = modelToWorld * (rayPosOnSphere);
-	ray.intersection.normal = (worldToModel.transpose() * 
-			(rayPosOnSphere.ToVector()));
-	ray.intersection.normal.normalize();
-
-	ray.intersection.none = false;
 	free(intersections);
-	return true;
+
+
+	// Valid intersection
+	if ((t < ray.intersection.t_value && !ray.intersection.none) ||
+			ray.intersection.none) {
+		rayPosOnSphere = rayModelSpace.origin + (t * rayModelSpace.dir);
+		ray.intersection.point = modelToWorld * (rayPosOnSphere);
+		ray.intersection.normal = (worldToModel.transpose() * 
+				(rayPosOnSphere.ToVector()));
+		ray.intersection.normal.normalize();
+		ray.intersection.t_value = t;
+
+		ray.intersection.none = false;
+		return true;
+	}
+
+	return false;
 
 no_intersections:
 	ray.intersection.none = true;

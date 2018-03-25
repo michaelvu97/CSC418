@@ -23,6 +23,7 @@ void PointLight::shade(Ray3D& ray) {
 			((this -> pos) - ray.intersection.point);
 	lightDirection.normalize();
 
+	// in [0,1]
 	double diffuseIntensity = 
 			std::max(0.0, ray.intersection.normal.dot(lightDirection));
 
@@ -36,7 +37,7 @@ void PointLight::shade(Ray3D& ray) {
 	ray.dir.normalize();
 
 	double specularIntensity = pow(
-			std::max(0.0,ray.dir.dot(-1 * mirrorRay)), 
+			std::max(0.0, ray.dir.dot(-1 * mirrorRay)), 
 			ray.intersection.mat -> specular_exp
 	);
 
@@ -47,7 +48,12 @@ void PointLight::shade(Ray3D& ray) {
 	Color specularColor = specularIntensity * this -> col_specular;
 	specularColor.clamp();
 
-	ray.col = ((this -> col_ambient * ray.intersection.mat -> ambient) + (diffuseColor * ray.intersection.mat -> diffuse) + (specularColor * ray.intersection.mat -> specular));
+	ray.col = (
+			(this -> col_ambient * ray.intersection.mat -> ambient) + 
+			(diffuseColor * ray.intersection.mat -> diffuse) + 
+			(specularColor * ray.intersection.mat -> specular)
+	);
+	// ray.col.clamp();
 
 }
 

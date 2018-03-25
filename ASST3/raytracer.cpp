@@ -12,6 +12,7 @@
 #include <cmath>
 #include <iostream>
 #include <cstdlib>
+#include <float.h>
 
 void Raytracer::traverseScene(Scene& scene, Ray3D& ray)  {
 	for (size_t i = 0; i < scene.size(); ++i) {
@@ -19,7 +20,7 @@ void Raytracer::traverseScene(Scene& scene, Ray3D& ray)  {
 
 		if (node->obj->intersect(ray, node->worldToModel, node->modelToWorld)) {
 			ray.intersection.mat = node->mat;
-		}
+	 	}
 	}
 }
 
@@ -87,7 +88,9 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 			// TODO: Convert ray to world space  
 			ray.origin = camera.eye;
 			ray.dir = (imagePlane - camera.eye);
-			
+			ray.dir.normalize();
+			ray.intersection.t_value = DBL_MAX;
+
 			Color col = shadeRay(ray, scene, light_list); 
 			image.setColorAtPixel(i, j, col);			
 		}

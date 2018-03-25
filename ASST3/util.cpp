@@ -389,6 +389,7 @@ std::ostream& operator <<(std::ostream& os, const Matrix4x4& M) {
 }
 
 int SolveQuadratic(double a, double b, double c, double *intersections) {
+
 	double thing = (b*b) - (4.0 * a * c);
 
 	if (thing < 0)
