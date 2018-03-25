@@ -77,14 +77,16 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 			// image plane is at z = -1.
 			Point3D origin(0, 0, 0);
 			Point3D imagePlane;
-			imagePlane[0] = (-double(image.width)/2 + 0.5 + j)/factor;
-			imagePlane[1] = (-double(image.height)/2 + 0.5 + i)/factor;
-			imagePlane[2] = -1;
+			imagePlane[0] = ( -double(image.width)/2 + 0.5 + j) / factor;
+			imagePlane[1] = ( -double(image.height)/2 + 0.5 + i) / factor;
+			imagePlane[2] = -1; // Camera depth
 
 			
 			
 			Ray3D ray;
 			// TODO: Convert ray to world space  
+			ray.origin = camera.eye;
+			ray.dir = (imagePlane - camera.eye);
 			
 			Color col = shadeRay(ray, scene, light_list); 
 			image.setColorAtPixel(i, j, col);			

@@ -41,6 +41,10 @@ double Point3D::operator[](int i) const {
 	return m_data[i];
 }
 	
+Vector3D Point3D::ToVector() {
+	return Vector3D(m_data[0], m_data[1], m_data[2]);
+}
+
 Vector3D::Vector3D() {
 	m_data[0] = 0.0;
 	m_data[1] = 0.0;
@@ -384,5 +388,18 @@ std::ostream& operator <<(std::ostream& os, const Matrix4x4& M) {
 		<< M[3][2] << " " << M[3][3] << "]";
 }
 
+int SolveQuadratic(double a, double b, double c, double *intersections) {
+	double thing = (b*b) - (4.0 * a * c);
 
+	if (thing < 0)
+		return 0;
 
+	if (thing > -QUADRATIC_EPSILON && thing < QUADRATIC_EPSILON) {
+		intersections[0] = (-b) / (2.0 * a);
+		return 1;
+	}
+
+	intersections[0] = (-b + sqrt(thing))/ (2.0 * a);
+	intersections[1] = (-b - sqrt(thing))/ (2.0 * a);
+	return 2;
+}

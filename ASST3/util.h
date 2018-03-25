@@ -16,25 +16,13 @@
 #define M_PI	3.14159265358979323846
 #endif
 
-class Point3D {
-public:
-	Point3D(); 
-	Point3D(double x, double y, double z);  
-	Point3D(const Point3D& other); 
 
-	Point3D& operator =(const Point3D& other); 
-	double& operator[](int i); 
-	double operator[](int i) const; 
-
-private:
-	double m_data[3];
-};
 
 class Vector3D {
 public:
 	Vector3D(); 
 	Vector3D(double x, double y, double z); 
-	Vector3D(const Vector3D& other); 
+	Vector3D(const Vector3D& other);
 
 	Vector3D& operator =(const Vector3D& other); 
 	double& operator[](int i);  
@@ -44,6 +32,22 @@ public:
 	double normalize();
 	double dot(const Vector3D& other) const; 
 	Vector3D cross(const Vector3D& other) const; 
+
+private:
+	double m_data[3];
+};
+
+class Point3D {
+public:
+	Point3D(); 
+	Point3D(double x, double y, double z);  
+	Point3D(const Point3D& other); 
+
+	Point3D& operator =(const Point3D& other); 
+	double& operator[](int i); 
+	double operator[](int i) const;
+
+	Vector3D ToVector();
 
 private:
 	double m_data[3];
@@ -264,6 +268,10 @@ private:
 	unsigned char* bbuffer; // blue channel
 };
 
+// Returns number of intersections
+// intersections must have two doubles in it
+#define QUADRATIC_EPSILON 0.0001
+int SolveQuadratic(double a, double b, double c, double *intersections);
 
-
-
+// #define max(x,y) x > y ? x : y
+// #define min(x,y) x < y ? x : y

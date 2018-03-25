@@ -16,7 +16,36 @@ void PointLight::shade(Ray3D& ray) {
 	//
 	// It is assumed at this point that the intersection information in ray 
 	// is available.  So be sure that traverseScene() is called on the ray 
-	// before this function.  
+	// before this function. 
+
+	// Find the position of the light from the intersection position.
+	Vector3D lightDirection = 
+			((this -> pos) - ray.intersection.point);
+	lightDirection.normalize();
+
+	double diffuseIntensity = 
+			std::max(0.0, ray.intersection.normal.dot(lightDirection));
+
+	Vector3D mirrorRay = (
+			(2.0 * ray.intersection.normal.dot(lightDirection) * ray.intersection.normal)
+			 - lightDirection
+	);
+	mirrorRay.normalize();
+
+	// Just in case
+	ray.dir.normalize();
+
+	double specularIntensity = pow(
+			std::max(0.0,ray.dir.dot(-1 * mirrorRay)), 
+			ray.intersection.mat -> specular_exp
+	);
+
+	// todo ADD material coloring
+
+	Color diffuseColor = diffuseIntensity * this -> col_diffuse;
+	Color specularColor = specularIntensity * this -> col_specular;
+	ray.col = (this -> col_ambient + diffuseColor + specularColor);
+	// ray.col.clamp();
 
 }
 

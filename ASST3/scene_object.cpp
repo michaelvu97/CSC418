@@ -23,7 +23,38 @@ bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	// HINT: Remember to first transform the ray into object space  
 	// to simplify the intersection test.
 
-	return false;
+	// Copy the ray to transform to model space
+	Ray3D rayModelSpace;
+	rayModelSpace.origin = worldToModel * ray.origin;
+	rayModelSpace.dir = worldToModel * ray.dir;
+
+	// Find the ray parameter/position at the plane.
+	double t = -rayModelSpace.origin[2] / rayModelSpace.dir[2];
+
+	// t must be positive.
+	if (t < 0.0) {
+		ray.intersection.none = true;
+		return false;
+	}
+
+	// Compute the ray's xy-position on the plane.
+	Point3D rayPosOnPlane = rayModelSpace.origin + (t * rayModelSpace.dir);
+
+	double x = rayPosOnPlane[0];
+	double y = rayPosOnPlane[1];
+
+	if (x >= -0.5 && x <= 0.5 && y >= -0.5 && y <= 0.5) {
+		ray.intersection.point = modelToWorld * (rayPosOnPlane);
+		ray.intersection.normal = 
+				(worldToModel.transpose() * Vector3D(0,0,1));
+		ray.intersection.normal.normalize();
+		ray.intersection.none = false;
+		return true;
+	} else {
+		ray.intersection.none = true;
+		return false;
+	}
+
 }
 
 bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
@@ -37,7 +68,79 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	//
 	// HINT: Remember to first transform the ray into object space  
 	// to simplify the intersection test.
+	Ray3D rayModelSpace;
+	rayModelSpace.origin = worldToModel * ray.origin;
+	rayModelSpace.dir = worldToModel * ray.dir;
 
+	double* intersections = (double *) malloc(sizeof(double) * 2);
+
+	int nIntersections = SolveQuadratic(
+			rayModelSpace.dir.dot(rayModelSpace.dir),
+			2.0 * rayModelSpace.dir.dot(rayModelSpace.origin.ToVector()),
+			rayModelSpace.origin.ToVector().dot(rayModelSpace.origin.ToVector()),
+			intersections
+	);
+
+	Point3D rayPosOnSphere;
+
+	if (nIntersections == 0) {
+		goto no_intersections;
+	}
+
+
+	double t;
+
+	if (nIntersections == 1) {
+
+		// Only accept positive t
+		if (intersections[0] < 0.0) {
+			goto no_intersections;
+		}
+
+		t = intersections[0];
+
+	}
+
+	if (nIntersections == 2) {
+		/*
+		 * Find the closest to the camera, given by the intersection with the
+		 * smallest magnitude
+		 */
+		if (intersections[0] < 0.0) {
+
+			if (intersections[1] < 0.0) {
+				goto no_intersections;
+			}
+
+			// Pick 1
+			t = intersections[1];
+
+
+		} else if (intersections[1] < 0.0) {
+
+			// pick 0
+			t = intersections[0];
+
+		} else {
+			// pick the closest to the camera
+			t = std::min(intersections[0],intersections[1]);
+		}
+	}
+
+	// Valid intersection
+	rayPosOnSphere = rayModelSpace.origin + (t * rayModelSpace.dir);
+	ray.intersection.point = modelToWorld * (rayPosOnSphere);
+	ray.intersection.normal = (worldToModel.transpose() * 
+			(rayPosOnSphere - Point3D(0,0,0)));
+	ray.intersection.normal.normalize();
+
+	ray.intersection.none = false;
+	free(intersections);
+	return true;
+
+no_intersections:
+	ray.intersection.none = true;
+	free(intersections);
 	return false;
 }
 
