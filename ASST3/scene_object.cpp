@@ -131,7 +131,7 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	rayPosOnSphere = rayModelSpace.origin + (t * rayModelSpace.dir);
 	ray.intersection.point = modelToWorld * (rayPosOnSphere);
 	ray.intersection.normal = (worldToModel.transpose() * 
-			(rayPosOnSphere - Point3D(0,0,0)));
+			(rayPosOnSphere.ToVector()));
 	ray.intersection.normal.normalize();
 
 	ray.intersection.none = false;

@@ -43,9 +43,11 @@ void PointLight::shade(Ray3D& ray) {
 	// todo ADD material coloring
 
 	Color diffuseColor = diffuseIntensity * this -> col_diffuse;
+	diffuseColor.clamp();
 	Color specularColor = specularIntensity * this -> col_specular;
-	ray.col = (this -> col_ambient + diffuseColor + specularColor);
-	// ray.col.clamp();
+	specularColor.clamp();
+
+	ray.col = ((this -> col_ambient * ray.intersection.mat -> ambient) + (diffuseColor * ray.intersection.mat -> diffuse) + (specularColor * ray.intersection.mat -> specular));
 
 }
 
