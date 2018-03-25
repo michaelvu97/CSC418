@@ -53,7 +53,7 @@ void PointLight::shade(Ray3D& ray) {
 			(diffuseColor * ray.intersection.mat -> diffuse) + 
 			(specularColor * ray.intersection.mat -> specular)
 	);
-	// ray.col.clamp();
+	ray.col.clamp();
 
 }
 

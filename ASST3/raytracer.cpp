@@ -87,7 +87,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 			Ray3D ray;
 			// TODO: Convert ray to world space  
 			ray.origin = camera.eye;
-			ray.dir = (imagePlane - camera.eye);
+			ray.dir = ((viewToWorld * imagePlane) - camera.eye);
 			ray.dir.normalize();
 			ray.intersection.t_value = DBL_MAX;
 

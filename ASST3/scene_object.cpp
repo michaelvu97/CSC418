@@ -59,7 +59,6 @@ bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 		}
 		return false;
 	} else {
-		ray.intersection.none = true;
 		return false;
 	}
 
@@ -156,7 +155,6 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	return false;
 
 no_intersections:
-	ray.intersection.none = true;
 	free(intersections);
 	return false;
 }
