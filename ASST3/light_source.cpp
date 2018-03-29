@@ -19,6 +19,7 @@ void PointLight::shade(Ray3D& ray) {
 	// before this function. 
 
 	// Find the position of the light from the intersection position.
+	// TODO use phong()
 	Vector3D lightDirection = 
 			((this -> pos) - ray.intersection.point);
 	lightDirection.normalize();
@@ -41,13 +42,12 @@ void PointLight::shade(Ray3D& ray) {
 			ray.intersection.mat -> specular_exp
 	);
 
-	// todo ADD material coloring
-
 	Color diffuseColor = diffuseIntensity * this -> col_diffuse;
 	diffuseColor.clamp();
 	Color specularColor = specularIntensity * this -> col_specular;
 	specularColor.clamp();
 
+	// TODO: prevent light source overwrite.
 	ray.col = (
 			(this -> col_ambient * ray.intersection.mat -> ambient) + 
 			(diffuseColor * ray.intersection.mat -> diffuse) + 
@@ -56,4 +56,6 @@ void PointLight::shade(Ray3D& ray) {
 	ray.col.clamp();
 
 }
+
+
 

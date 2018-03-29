@@ -11,6 +11,8 @@
 #include "util.h"
 #include <vector>
 
+#define MIN_DIST 0.00000001
+
 // All primitives should provide an intersection function.  
 // To create more primitives, inherit from SceneObject.
 // Namely, you can create, Sphere, Cylinder, etc... classes
