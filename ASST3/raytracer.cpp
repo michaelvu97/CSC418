@@ -26,9 +26,6 @@ void Raytracer::traverseScene(Scene& scene, Ray3D& ray)  {
 }
 
 void Raytracer::computeTransforms(Scene& scene) {
-	// right now this method might seem redundant. But if you decide to implement 
-	// scene graph this is where you would propagate transformations to child nodes
-		
 	for (size_t i = 0; i < scene.size(); ++i) {
 		SceneNode* node = scene[i];
 
@@ -51,7 +48,8 @@ void Raytracer::computeShading(Ray3D& ray, LightList& light_list) {
 	}
 }
 
-Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int depth, int gatherAmbient) {
+Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, 
+		int depth, int gatherAmbient) {
 
 	Color col(0.0, 0.0, 0.0); 
 
@@ -69,8 +67,6 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int d
 	// anything.
 	if (!ray.intersection.none) {
 
-		
-
 		// Create new ray
 		if (depth > 0) {
 			Ray3D rayReflection;
@@ -84,26 +80,74 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int d
 			// Create a "fake" light source from the reflected ray.
 			//create a cone of rays
 			double g = ray.intersection.mat -> glossiness;
-			for (double dx = -g; dx <= g; dx += g) {
-				for (double dy = -g; dy <= g; dy +=  g) {
 
+			double reflectionDotNormal = ray.dir.dot(ray.intersection.normal);
+
+			if (reflectionDotNormal != 0.0) {
+				
+				Vector3D deltaYVec = ray.dir.cross(ray.intersection.normal);
+				deltaYVec.normalize();
+
+				Vector3D deltaXVec = ray.dir.cross(deltaYVec);
+				deltaXVec.normalize();
+
+				Color colorSum(0.0, 0.0, 0.0);
+
+				// Must be greater than 0, more shells is more gloss rays.
+				int shells = 2;
+
+				for (double dx = -g; dx <= g; dx += g / shells) {
+					for (double dy = -g; dy <= g; dy +=  g / shells) {
+						Ray3D tempRay;
+						tempRay.origin = ray.intersection.point;
+						tempRay.dir = rayReflection.dir + (dx * deltaXVec) + 
+								(dy * deltaYVec);
+
+						tempRay.dir.normalize();
+
+						Color c = shadeRay(tempRay, scene, light_list, depth - 1,
+								0);
+
+						colorSum = colorSum + c;
+					}
 				}
+
+				// Average
+				colorSum = ( 1.0 / pow(1.0 + 2.0 * shells, 2) ) * colorSum;
+
+				Color blankColor(0.0, 0.0, 0.0);
+				col = col + Phong(rayReflection.dir, ray.intersection.normal,
+						ray.dir, ray.intersection.mat, blankColor, blankColor, 
+						colorSum);
+				
+			} else {
+				// Do some alternate thing since the angle of incidence is 90deg
+
+				// for (double dx = -g; dx <= g; dx += g) {
+				// 	for (double dy = -g; dy <= g; dy +=  g) {
+
+				// 	}
+				// }
+				Color c = shadeRay(rayReflection, scene, light_list, depth - 1, 
+						0);
+
+				// Calculate phong using this new light.
+
+				Color blankColor(0.0, 0.0, 0.0);
+				col = col + Phong(rayReflection.dir, ray.intersection.normal,
+						ray.dir, ray.intersection.mat, blankColor, blankColor, 
+						c);
 			}
-			Color c = shadeRay(rayReflection, scene, light_list, depth - 1, 0);
-
-			// Calculate phong using this new light.
-
-			Color blankColor(0.0, 0.0, 0.0);
-			col = col + Phong(rayReflection.dir, ray.intersection.normal,
-					ray.dir, ray.intersection.mat, blankColor, blankColor, c);
 			col.clamp();
+
 		}
 
 		for (int i = 0; i < light_list.size(); i++) {
 
 			Ray3D newLightRay;
 			newLightRay.origin = ray.intersection.point;
-			newLightRay.dir = (light_list[i] -> get_position()) - newLightRay.origin;
+			newLightRay.dir = 
+					(light_list[i] -> get_position()) - newLightRay.origin;
 			newLightRay.dir.normalize();
 
 			std::vector<Ray3D*> samples = 
@@ -113,9 +157,12 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int d
 			
 			int hits = 0;
 
+			// TODO glossiness.
+
 			for (int sampleNum = 0; sampleNum < samples.size(); sampleNum++) {
 
-				traverseScene(scene, *samples[sampleNum]); // TODO allow a limit on traverse Scene dist.
+				// TODO allow a limit on traverse Scene dist.
+				traverseScene(scene, *samples[sampleNum]); 
 
 				if (samples[sampleNum] -> intersection.none) {
 					// The light was unobstructed
@@ -148,7 +195,9 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int d
 	return col; 
 }	
 
-void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Image& image) {
+void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, 
+		Image& image) {
+
 	computeTransforms(scene);
 
 	Matrix4x4 viewToWorld;
@@ -160,6 +209,9 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 
 	// Construct a ray for each pixel.
 	for (int i = 0; i < image.height; i++) {
+
+		std::cout << double(i) * 100.0 / image.height << "%\n";
+
 		for (int j = 0; j < image.width; j++) {
 			// Sets up ray origin and direction in view space, 
 			// image plane is at z = -1.
@@ -182,9 +234,17 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 
 				for (double dx = -0.3; dx < 0.7; dx += 0.6) {
 					for (double dy = -0.3; dy < 0.7; dy += 0.6) {
+
 						Point3D imagePlaneAA;
-						imagePlaneAA[0] = ( -double(image.width)/2 + j + 0.5 + dx) / factor;
-						imagePlaneAA[1] = ( -double(image.height)/2 + i + 0.5 + dy) / factor;
+
+						imagePlaneAA[0] = 
+								(-double(image.width)/2 + j + 0.5 + dx) 
+								/ factor;
+
+						imagePlaneAA[1] = 
+								(-double(image.height)/2 + i + 0.5 + dy)
+								/ factor;
+
 						imagePlaneAA[2] = -1; // Camera depth
 
 						Ray3D ray2;
@@ -193,7 +253,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 						ray2.dir.normalize();
 						ray2.intersection.t_value = DBL_MAX;
 
-						Color aa_res = shadeRay(ray2, scene, light_list, 3, 1);
+						Color aa_res = shadeRay(ray2, scene, light_list, 2, 1);
 					 	colCentre = colCentre + aa_res; 
 
 					}
