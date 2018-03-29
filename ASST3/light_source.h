@@ -11,7 +11,6 @@
 #include <vector>
 
 
-#define RADIUS 1
 #define PI 3.1415
 // Base class for a light source.  You could define different types
 // of lights here, but point light is sufficient for most scenes you
@@ -23,6 +22,7 @@ public:
 	virtual Point3D get_position() const = 0; 
 	virtual ~LightSource() {}
 	virtual Color get_ambient() = 0;
+	virtual std::vector<Ray3D*> generateSamples(Ray3D&) = 0;
 };  
 
 // List of all light sources in your scene
@@ -45,6 +45,8 @@ public:
 	Point3D get_position() const { return pos; }
 
 	Color get_ambient();
+
+	std::vector<Ray3D*> generateSamples(Ray3D&);
 	
 private:
 	Point3D pos;
@@ -55,21 +57,24 @@ private:
 
 class ExtendedPointLight : public LightSource {
 public:
-	ExtendedPointLight(Point3D pos, Color col) 
+	ExtendedPointLight(Point3D pos, Color col, double radius) 
 	: 
-	pos(pos), col_ambient(col), col_diffuse(col), col_specular(col) {}
+	pos(pos), col_ambient(col), col_diffuse(col), col_specular(col), radius(radius) {}
 	
-	ExtendedPointLight(Point3D pos, Color ambient, Color diffuse, Color specular) 
+	ExtendedPointLight(Point3D pos, Color ambient, Color diffuse, Color specular, double radius) 
 	: 
-	pos(pos), col_ambient(ambient), col_diffuse(diffuse), col_specular(specular) {}
+	pos(pos), col_ambient(ambient), col_diffuse(diffuse), col_specular(specular), radius(radius) {}
 	
 	void shade(Ray3D& ray);
 	
 	Point3D get_position() const { return pos; }
 
 	Color get_ambient();
+
+	std::vector<Ray3D*> generateSamples(Ray3D&);
 	
 private:
+	double radius;
 	Point3D pos;
 	Color col_ambient;
 	Color col_diffuse; 

@@ -38,7 +38,8 @@ int main(int argc, char* argv[])
 	// PointLight* pLight = new PointLight(Point3D(0,0,5), Color(0.1,0.1,0.1));
 	// light_list.push_back(pLight);
 
-	ExtendedPointLight* ePLight = new ExtendedPointLight(Point3D(0, 0, 5), Color(0.9, 0.9, 0.9));
+	ExtendedPointLight* ePLight = new ExtendedPointLight(Point3D(0, 0, 20), 
+			Color(0.9, 0.9, 0.9), 5);
 	light_list.push_back(ePLight);	
 
 	

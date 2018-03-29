@@ -71,18 +71,60 @@ Color PointLight::get_ambient() {
 	return this -> col_ambient;
 }
 
+std::vector<Ray3D*> PointLight::generateSamples(Ray3D& ray) {
+	std::vector<Ray3D*> retVal;
+
+
+	Ray3D* principleRay = new Ray3D();
+	principleRay -> origin = ray.origin;
+	principleRay -> dir = ray.dir;
+
+	// Push principle ray
+	retVal.push_back(principleRay);
+	return retVal;
+}
+
+#define nSamples 100
+
+std::vector<Ray3D*> ExtendedPointLight::generateSamples(Ray3D& ray) {
+
+	std::vector<Ray3D*> retVal;
+
+	Ray3D* principleRay = new Ray3D();
+	principleRay -> origin = ray.origin;
+	principleRay -> dir = ray.dir;
+
+	// Push principle ray
+	retVal.push_back(principleRay);
+
+	for (int i = 0; i < nSamples - 1; i++) {
+		// light direction is randomly pick over a radius
+		double r = radius * (rand() % 50) / 50.0;
+		double theta = 2 * PI * (rand() % 50) / 50.0;
+		double phi = 2* PI * (rand() % 50) / 50.0;
+
+		Point3D randLightPos = this-> pos + Vector3D(r* cos(theta)*sin(phi),
+				r * sin(theta)*sin(phi),
+				r * cos(phi));
+
+		Vector3D lightDirection = 
+				(randLightPos - ray.origin);
+
+		lightDirection.normalize();
+
+		Ray3D* newRay = new Ray3D();
+		newRay -> origin = ray.origin;
+		newRay -> dir = lightDirection;
+		retVal.push_back(newRay);
+	}
+	
+	
+	return retVal;
+}
+
 void ExtendedPointLight::shade(Ray3D& ray){
-	// light direction is randomly pick over a radius
-	double r = RADIUS * rand();
-	double theta = 2 * PI * rand();
-	double phi = 2* PI * rand();
-
-	Point3D randLightPos = this-> pos + Vector3D(r* cos(theta)*sin(phi),
-			r * sin(theta)*sin(phi),
-			r * cos(phi));
-
-	Vector3D lightDirection = 
-			(randLightPos - ray.intersection.point);
+	
+	Vector3D lightDirection = (this->pos) - ray.intersection.point;
 	lightDirection.normalize();
 
 	// in [0,1]

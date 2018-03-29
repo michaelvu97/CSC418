@@ -93,22 +93,42 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int d
 		}
 
 		for (int i = 0; i < light_list.size(); i++) {
+
 			Ray3D newLightRay;
 			newLightRay.origin = ray.intersection.point;
 			newLightRay.dir = (light_list[i] -> get_position()) - newLightRay.origin;
 			newLightRay.dir.normalize();
 
-			traverseScene(scene, newLightRay);
+			std::vector<Ray3D*> samples = 
+					light_list[i] -> generateSamples(newLightRay);
 
-			if (newLightRay.intersection.none) {
-				// The light was unobstructed
-				computeShading(ray, light_list[i]);
-				col = col + ray.col;
-				col.clamp();
-			} else if (gatherAmbient) {
+			Color colorSum(0, 0, 0);
+			
+			int hits = 0;
+
+			for (int sampleNum = 0; sampleNum < samples.size(); sampleNum++) {
+
+				traverseScene(scene, *samples[sampleNum]); // TODO allow a limit on traverse Scene dist.
+
+				if (samples[sampleNum] -> intersection.none) {
+					// The light was unobstructed
+					computeShading(ray, light_list[i]);
+					hits++;
+					colorSum = colorSum + ray.col;
+				}
+
+				delete samples[sampleNum];
+			}
+
+
+			if (hits == 0 && gatherAmbient) {
 				// Just use light ambient.
 				col = col + Ambient(light_list, ray.intersection.mat);
+			} else {
+				col =  (1.0 / (double) hits) * colorSum;
 			}
+
+			
 
 		}
 
@@ -129,7 +149,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 
 	viewToWorld = camera.initInvViewMatrix();
 
-	int antialiasing = 1;
+	int antialiasing = 0;
 
 	// Construct a ray for each pixel.
 	for (int i = 0; i < image.height; i++) {
