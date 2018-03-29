@@ -82,6 +82,13 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int d
 			rayReflection.dir.normalize();
 
 			// Create a "fake" light source from the reflected ray.
+			//create a cone of rays
+			double g = ray.intersection.mat -> glossiness;
+			for (double dx = -g; dx <= g; dx += g) {
+				for (double dy = -g; dy <= g; dy +=  g) {
+
+				}
+			}
 			Color c = shadeRay(rayReflection, scene, light_list, depth - 1, 0);
 
 			// Calculate phong using this new light.
@@ -170,9 +177,6 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 			ray.intersection.t_value = DBL_MAX;
 
 			Color colCentre = shadeRay(ray, scene, light_list, 3, 1); 
-
-
-
 
 			if (antialiasing) {
 
