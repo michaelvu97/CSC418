@@ -84,7 +84,7 @@ std::vector<Ray3D*> PointLight::generateSamples(Ray3D& ray) {
 	return retVal;
 }
 
-#define nSamples 100
+#define nSamples 1
 
 std::vector<Ray3D*> ExtendedPointLight::generateSamples(Ray3D& ray) {
 

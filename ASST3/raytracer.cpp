@@ -125,7 +125,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int d
 				// Just use light ambient.
 				col = col + Ambient(light_list, ray.intersection.mat);
 			} else {
-				col =  (1.0 / (double) hits) * colorSum;
+				col =  col + (1.0 / (double) samples.size()) * colorSum;
 			}
 
 			
