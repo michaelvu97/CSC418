@@ -35,14 +35,19 @@ int main(int argc, char* argv[])
 		12.8);
 
 	// Defines a point light source.
-	PointLight* pLight = new PointLight(Point3D(0,0,5), Color(0.9,0.9,0.9));
+	PointLight* pLight = new PointLight(Point3D(0,0,5), Color(0.5,0.5,0.5));
 	light_list.push_back(pLight);
+
+	PointLight* pLight2 = new PointLight(Point3D(3,-2,5), Color(0.2,0.2,0.2));
+	light_list.push_back(pLight2);
 	
 	// Add a unit square into the scene with material mat.
 	SceneNode* sphere = new SceneNode(new UnitSphere(), &gold);
 	scene.push_back(sphere);
 	SceneNode* plane = new SceneNode(new UnitSquare(), &jade);
 	scene.push_back(plane);
+	SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold);
+	scene.push_back(sphere2);
 
 	// Apply some transformations to the sphere and unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
@@ -55,6 +60,8 @@ int main(int argc, char* argv[])
 	plane->translate(Vector3D(0, 0, -7));
 	plane->rotate('z', 45);
 	plane->scale(Point3D(0, 0, 0), factor2);
+
+	sphere2->translate(Vector3D(2.5, 1.5, -5));
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	

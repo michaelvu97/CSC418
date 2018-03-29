@@ -19,6 +19,7 @@ public:
 	virtual void shade(Ray3D&) = 0;
 	virtual Point3D get_position() const = 0; 
 	virtual ~LightSource() {}
+	virtual Color get_ambient() = 0;
 };  
 
 // List of all light sources in your scene
@@ -39,6 +40,8 @@ public:
 	void shade(Ray3D& ray);
 	
 	Point3D get_position() const { return pos; }
+
+	Color get_ambient();
 	
 private:
 	Point3D pos;
@@ -46,3 +49,5 @@ private:
 	Color col_diffuse; 
 	Color col_specular; 
 };
+
+Color Ambient(LightList& lights, Material* mat);
