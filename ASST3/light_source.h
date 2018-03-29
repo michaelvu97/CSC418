@@ -10,6 +10,9 @@
 #include "util.h"
 #include <vector>
 
+
+#define RADIUS 1
+#define PI 3.1415
 // Base class for a light source.  You could define different types
 // of lights here, but point light is sufficient for most scenes you
 // might want to render.  Different light sources shade the ray 
@@ -34,6 +37,29 @@ public:
 	pos(pos), col_ambient(col), col_diffuse(col), col_specular(col) {}
 	
 	PointLight(Point3D pos, Color ambient, Color diffuse, Color specular) 
+	: 
+	pos(pos), col_ambient(ambient), col_diffuse(diffuse), col_specular(specular) {}
+	
+	void shade(Ray3D& ray);
+	
+	Point3D get_position() const { return pos; }
+
+	Color get_ambient();
+	
+private:
+	Point3D pos;
+	Color col_ambient;
+	Color col_diffuse; 
+	Color col_specular; 
+};
+
+class ExtendedPointLight : public LightSource {
+public:
+	ExtendedPointLight(Point3D pos, Color col) 
+	: 
+	pos(pos), col_ambient(col), col_diffuse(col), col_specular(col) {}
+	
+	ExtendedPointLight(Point3D pos, Color ambient, Color diffuse, Color specular) 
 	: 
 	pos(pos), col_ambient(ambient), col_diffuse(diffuse), col_specular(specular) {}
 	

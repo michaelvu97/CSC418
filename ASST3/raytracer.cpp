@@ -92,8 +92,6 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, int d
 			col.clamp();
 		}
 
-		// std::vector<Ray3D> raysToLights;
-
 		for (int i = 0; i < light_list.size(); i++) {
 			Ray3D newLightRay;
 			newLightRay.origin = ray.intersection.point;
@@ -131,11 +129,14 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 
 	viewToWorld = camera.initInvViewMatrix();
 
+	int antialiasing = 1;
+
 	// Construct a ray for each pixel.
 	for (int i = 0; i < image.height; i++) {
 		for (int j = 0; j < image.width; j++) {
 			// Sets up ray origin and direction in view space, 
 			// image plane is at z = -1.
+
 			Point3D origin(0, 0, 0);
 			Point3D imagePlane;
 			imagePlane[0] = ( -double(image.width)/2 + 0.5 + j) / factor;
@@ -143,14 +144,47 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list, Imag
 			imagePlane[2] = -1; // Camera depth
 			
 			Ray3D ray;
-			// TODO: Convert ray to world space  
 			ray.origin = camera.eye;
 			ray.dir = ((viewToWorld * imagePlane) - camera.eye);
 			ray.dir.normalize();
 			ray.intersection.t_value = DBL_MAX;
 
-			Color col = shadeRay(ray, scene, light_list, 3, 1); 
-			image.setColorAtPixel(i, j, col);			
+			Color colCentre = shadeRay(ray, scene, light_list, 3, 1); 
+
+
+
+
+			if (antialiasing) {
+
+				for (double dx = -0.3; dx < 0.7; dx += 0.6) {
+					for (double dy = -0.3; dy < 0.7; dy += 0.6) {
+						Point3D imagePlaneAA;
+						imagePlaneAA[0] = ( -double(image.width)/2 + j + 0.5 + dx) / factor;
+						imagePlaneAA[1] = ( -double(image.height)/2 + i + 0.5 + dy) / factor;
+						imagePlaneAA[2] = -1; // Camera depth
+
+						Ray3D ray2;
+						ray2.origin = camera.eye;
+						ray2.dir = ((viewToWorld * imagePlaneAA) - camera.eye);
+						ray2.dir.normalize();
+						ray2.intersection.t_value = DBL_MAX;
+
+						Color aa_res = shadeRay(ray2, scene, light_list, 3, 1);
+					 	colCentre = colCentre + aa_res; 
+
+					}
+				}
+
+
+
+				colCentre = 0.2 * colCentre; // Divide by 5 points.
+				colCentre.clamp();
+
+
+
+			}
+
+			image.setColorAtPixel(i, j, colCentre);			
 		}
 	}
 }
