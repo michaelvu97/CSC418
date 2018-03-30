@@ -299,7 +299,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 				//generate focal point for differnet ray dir
 				Point3D focalPoint = ray.origin + FOCAL_LENGTH * ray.dir;
 				//std::cout<< focalPoint << "\n";
-				for(int i =0; i < 15; i++){
+				for(int i =0; i < 50; i++){
 					//randomly pick points within the radius of the aperture 
 					Vector3D tempVec (std::fmod(rand()/50, APERTURE), std::fmod(rand()/50, APERTURE), 0);
 					Point3D randPoint = ray.origin + viewToWorld * tempVec;
@@ -318,7 +318,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 
 				}
 
-				colCentre = 0.0667 * colCentre; // Divide by 15 points.
+				colCentre = 0.02 * colCentre; // Divide by 15 points.
 				colCentre.clamp();
 
 			}
