@@ -96,15 +96,15 @@ std::vector<Ray3D*> ExtendedPointLight::generateSamples(Ray3D& ray) {
 	retVal.push_back(principleRay);
 
 
-	Vector3D deltaPos = (ray.origin - this -> pos);
-	int nSamples = (int) (
-			AREA_LIGHT_SAMPLES * PI * pow(this -> radius, 2) / 
-			(deltaPos.dot(deltaPos))
-	);
+	// Vector3D deltaPos = (ray.origin - this -> pos);
+	// int nSamples = (int) (
+	// 		AREA_LIGHT_SAMPLES * PI * pow(this -> radius, 2) / 
+	// 		(deltaPos.dot(deltaPos))
+	// );
 
-	if (nSamples < 1) {
-		nSamples = 1;
-	}
+	// if (nSamples < 1) {
+	// 	nSamples = 1;
+	// }
 
 	// for (int i = 0; i < nSamples - 1; i++) {
 	// 	// light direction is randomly pick over a radius

@@ -20,12 +20,10 @@
 #define GLOBAL_RENDERING_PREFS
 
 #define DEFAULT_GLOSS_SHELLS 0 // 2 = 25 gloss rays. Set to 0 to disable gloss.
-#define GLOSS_BRIGHTNESS_MULTIPLIER 1.5
+#define GLOSS_BRIGHTNESS_MULTIPLIER 1.5 // 1.5 is alright
 
-#define SOFT_SHADOWS_ENABLE 1
-#define SOFT_SHADOWS_DELTA 4
-#define AREA_LIGHT_SAMPLES 200 // Min 1
-#define AREA_LIGHT_AREA_MULTIPLIER (1.0/150.0)
+#define SOFT_SHADOWS_ENABLE 0
+#define SOFT_SHADOWS_DELTA 4 // 4 is a good value
 
 #define ANTI_ALIASING_ENABLED 1
 #define ANTI_ALIASING_DELTA 0.3
