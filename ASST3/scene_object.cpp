@@ -8,6 +8,7 @@
 
 #include <cmath>
 #include "scene_object.h"
+#include "stdlib.h"
 
 bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 		const Matrix4x4& modelToWorld) {

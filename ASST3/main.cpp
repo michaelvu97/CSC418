@@ -50,6 +50,7 @@ int main(int argc, char* argv[])
 	scene.push_back(plane);
 	SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold);
 	scene.push_back(sphere2);
+	
 
 	// Apply some transformations to the sphere and unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
@@ -64,6 +65,10 @@ int main(int argc, char* argv[])
 	plane->scale(Point3D(0, 0, 0), factor2);
 
 	sphere2->translate(Vector3D(2.5, 1.5, -5));
+	// sphere2->translate(Vector3D(0.0, 0.0, -2.0));
+	// sphere2->rotate('x', -45);
+	// sphere2->rotate('z', 45);
+	// sphere2->scale(Point3D(0, 0, 0), factor1);
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	

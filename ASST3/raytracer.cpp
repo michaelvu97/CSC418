@@ -231,7 +231,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 	// Construct a ray for each pixel.
 	for (int i = 0; i < image.height; i++) {
 
-		std::cout << double(i) * 100.0 / image.height << "%\n";
+		//std::cout << double(i) * 100.0 / image.height << "%\n";
 
 		for (int j = 0; j < image.width; j++) {
 			// Sets up ray origin and direction in view space, 
@@ -292,6 +292,31 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 				colCentre.clamp();
 
 
+
+			}
+
+			if(DOF_ENABLE) {
+				//generate focal point for differnet ray dir
+				Point3D focalPoint = ray.origin + FOCAL_LENGTH * ray.dir;
+				//std::cout<< focalPoint << "\n";
+				for(int i =0; i < 15; i++){
+					//randomly pick points within the radius of the aperture 
+					Vector3D tempVec (std::fmod(rand(), APERTURE), std::fmod(rand(), APERTURE), 0);
+					Point3D randPoint = ray.origin + tempVec;
+					//std::cout << randPoint << "\n";
+					Ray3D secondaryRay;
+					secondaryRay.origin = randPoint;
+					secondaryRay.dir = focalPoint - randPoint;
+					secondaryRay.dir.normalize();
+					secondaryRay.intersection.t_value = DBL_MAX;
+
+					Color dof_res = shadeRay(secondaryRay, scene, light_list, 2, 1);
+					colCentre = colCentre + dof_res;
+
+				}
+
+				colCentre = 0.0667 * colCentre; // Divide by 15 points.
+				colCentre.clamp();
 
 			}
 

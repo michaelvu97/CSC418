@@ -25,13 +25,17 @@
 #define SOFT_SHADOWS_ENABLE 0
 #define SOFT_SHADOWS_DELTA 4 // 4 is a good value
 
-#define ANTI_ALIASING_ENABLED 1
+#define ANTI_ALIASING_ENABLED 0
 #define ANTI_ALIASING_DELTA 0.3
 
 #define RAY_TRACE_DEPTH 2
 
 #define GOLD_GLOSSINESS 0.35
 #define JADE_GLOSSINESS 0.1
+
+#define DOF_ENABLE 1
+#define FOCAL_LENGTH 10.0
+#define APERTURE 1.0
 
 #endif
 
