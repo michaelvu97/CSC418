@@ -280,7 +280,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 						ray2.dir.normalize();
 						ray2.intersection.t_value = DBL_MAX;
 
-						Color aa_res = shadeRay(ray2, scene, light_list, 2, 1);
+						Color aa_res = shadeRay(ray2, scene, light_list, RAY_TRACE_DEPTH, 1);
 					 	colCentre = colCentre + aa_res; 
 
 					}
@@ -313,7 +313,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 // 					std::cout << randPoint << "\n";
 // 					std::cout<<ray.dir << " , " << secondaryRay.dir<< "\n";
 
-					Color dof_res = shadeRay(secondaryRay, scene, light_list, 2, 1);
+					Color dof_res = shadeRay(secondaryRay, scene, light_list, RAY_TRACE_DEPTH, 1);
 					colCentre = colCentre + dof_res;
 
 				}
