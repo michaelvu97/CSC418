@@ -16,6 +16,27 @@
 #define M_PI	3.14159265358979323846
 #endif
 
+#ifndef GLOBAL_RENDERING_PREFS
+#define GLOBAL_RENDERING_PREFS
+
+#define DEFAULT_GLOSS_SHELLS 0 // 2 = 25 gloss rays. Set to 0 to disable gloss.
+#define GLOSS_BRIGHTNESS_MULTIPLIER 1.5
+
+#define SOFT_SHADOWS_ENABLE 1
+#define SOFT_SHADOWS_DELTA 4
+#define AREA_LIGHT_SAMPLES 200 // Min 1
+#define AREA_LIGHT_AREA_MULTIPLIER (1.0/150.0)
+
+#define ANTI_ALIASING_ENABLED 1
+#define ANTI_ALIASING_DELTA 0.3
+
+#define RAY_TRACE_DEPTH 2
+
+#define GOLD_GLOSSINESS 0.35
+#define JADE_GLOSSINESS 0.1
+
+#endif
+
 
 
 class Vector3D {

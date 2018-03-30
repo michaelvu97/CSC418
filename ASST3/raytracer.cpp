@@ -7,7 +7,7 @@
 
 ***********************************************************/
 
-
+#include <limits>
 #include "raytracer.h"
 #include <cmath>
 #include <iostream>
@@ -81,20 +81,49 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			//create a cone of rays
 			double g = ray.intersection.mat -> glossiness;
 
-			double reflectionDotNormal = ray.dir.dot(ray.intersection.normal);
+			Vector3D deltaYVec = ray.dir.cross(ray.intersection.normal);
 
-			if (reflectionDotNormal != 0.0) {
-				
-				Vector3D deltaYVec = ray.dir.cross(ray.intersection.normal);
-				deltaYVec.normalize();
+			if (deltaYVec.length() <= std::numeric_limits<double>::epsilon()) {
+				/* 
+				 * This is a really rare corner case where the ray is parallel
+				 * to the normal. Handle accordingly
+				 */
 
-				Vector3D deltaXVec = ray.dir.cross(deltaYVec);
-				deltaXVec.normalize();
+				Vector3D testVec(0.0, 0.0, 0.1);
 
-				Color colorSum(0.0, 0.0, 0.0);
+				std::cout << "found a normal in the rare case\n";
 
-				// Must be greater than 0, more shells is more gloss rays.
-				int shells = 2;
+				deltaYVec = ray.dir.cross(testVec);
+
+				if (deltaYVec.length() <= 
+						std::numeric_limits<double>::epsilon()) {
+
+					testVec[0] = 0.0;
+					testVec[1] = 1.0;
+					testVec[2] = 0.0;
+
+					deltaYVec = ray.dir.cross(testVec);
+
+				}
+
+			} 
+
+			Vector3D deltaXVec = ray.dir.cross(deltaYVec);
+
+			deltaYVec.normalize();
+			deltaXVec.normalize();
+
+			Color colorSum(0.0, 0.0, 0.0);
+
+			// Must be greater than 0, more shells is more gloss rays.
+			int shells = DEFAULT_GLOSS_SHELLS;
+
+			if (shells > 0) {
+
+				// ISSUE TODO: gloss is allowing some rays to pass through and 
+				// see the backface.
+
+				int ignoredRays = 0;
 
 				for (double dx = -g; dx <= g; dx += g / shells) {
 					for (double dy = -g; dy <= g; dy +=  g / shells) {
@@ -105,39 +134,33 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 
 						tempRay.dir.normalize();
 
+						if (tempRay.dir.dot(ray.intersection.normal) < 0) {
+							ignoredRays++;
+							continue;
+						}
+
 						Color c = shadeRay(tempRay, scene, light_list, depth - 1,
 								0);
 
-						colorSum = colorSum + c;
+						colorSum = colorSum + 
+								(pow(tempRay.dir.dot(rayReflection.dir),
+								ray.intersection.mat -> specular_exp) * c);
 					}
 				}
 
 				// Average
-				colorSum = ( 1.0 / pow(1.0 + 2.0 * shells, 2) ) * colorSum;
-
-				Color blankColor(0.0, 0.0, 0.0);
-				col = col + Phong(rayReflection.dir, ray.intersection.normal,
-						ray.dir, ray.intersection.mat, blankColor, blankColor, 
-						colorSum);
-				
+				colorSum = ( GLOSS_BRIGHTNESS_MULTIPLIER / 
+						(pow(1.0 + 2.0 * shells, 2) - ignoredRays) ) * colorSum;
 			} else {
-				// Do some alternate thing since the angle of incidence is 90deg
-
-				// for (double dx = -g; dx <= g; dx += g) {
-				// 	for (double dy = -g; dy <= g; dy +=  g) {
-
-				// 	}
-				// }
-				Color c = shadeRay(rayReflection, scene, light_list, depth - 1, 
-						0);
-
-				// Calculate phong using this new light.
-
-				Color blankColor(0.0, 0.0, 0.0);
-				col = col + Phong(rayReflection.dir, ray.intersection.normal,
-						ray.dir, ray.intersection.mat, blankColor, blankColor, 
-						c);
+				colorSum = shadeRay(rayReflection, scene, light_list, 
+					depth - 1, 0);
 			}
+
+			Color blankColor(0.0, 0.0, 0.0);
+			col = col + Phong(rayReflection.dir, ray.intersection.normal,
+					ray.dir, ray.intersection.mat, blankColor, blankColor, 
+					colorSum);
+			
 			col.clamp();
 
 		}
@@ -205,8 +228,6 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 
 	viewToWorld = camera.initInvViewMatrix();
 
-	int antialiasing = 0;
-
 	// Construct a ray for each pixel.
 	for (int i = 0; i < image.height; i++) {
 
@@ -228,12 +249,18 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 			ray.dir.normalize();
 			ray.intersection.t_value = DBL_MAX;
 
-			Color colCentre = shadeRay(ray, scene, light_list, 3, 1); 
+			Color colCentre = shadeRay(ray, scene, light_list, RAY_TRACE_DEPTH, 
+					1); 
 
-			if (antialiasing) {
+			if (ANTI_ALIASING_ENABLED) {
 
-				for (double dx = -0.3; dx < 0.7; dx += 0.6) {
-					for (double dy = -0.3; dy < 0.7; dy += 0.6) {
+				for (	double dx = -ANTI_ALIASING_DELTA; 
+						dx <= ANTI_ALIASING_DELTA; 
+						dx += 2 * ANTI_ALIASING_DELTA) {
+
+					for (	double dy = -ANTI_ALIASING_DELTA; 
+							dy <= ANTI_ALIASING_DELTA; 
+							dy += 2 * ANTI_ALIASING_DELTA) {
 
 						Point3D imagePlaneAA;
 
