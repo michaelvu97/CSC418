@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 
 	// Apply some transformations to the sphere and unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
-	sphere->translate(Vector3D(0, 0, -5));
+	sphere->translate(Vector3D(0, 0, -2));
 	sphere->rotate('x', -45);
 	sphere->rotate('z', 45);
 	sphere->scale(Point3D(0, 0, 0), factor1);

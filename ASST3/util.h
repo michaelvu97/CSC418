@@ -33,9 +33,9 @@
 #define GOLD_GLOSSINESS 0.35
 #define JADE_GLOSSINESS 0.1
 
-#define DOF_ENABLE 1
-#define FOCAL_LENGTH 10.0
-#define APERTURE 1.0
+#define DOF_ENABLE 0
+#define FOCAL_LENGTH 5.0
+#define APERTURE 1.1
 
 #endif
 

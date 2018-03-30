@@ -301,14 +301,17 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 				//std::cout<< focalPoint << "\n";
 				for(int i =0; i < 15; i++){
 					//randomly pick points within the radius of the aperture 
-					Vector3D tempVec (std::fmod(rand(), APERTURE), std::fmod(rand(), APERTURE), 0);
-					Point3D randPoint = ray.origin + tempVec;
-					//std::cout << randPoint << "\n";
+					Vector3D tempVec (std::fmod(rand()/50, APERTURE), std::fmod(rand()/50, APERTURE), 0);
+					Point3D randPoint = ray.origin + viewToWorld * tempVec;
+					
 					Ray3D secondaryRay;
 					secondaryRay.origin = randPoint;
 					secondaryRay.dir = focalPoint - randPoint;
 					secondaryRay.dir.normalize();
 					secondaryRay.intersection.t_value = DBL_MAX;
+// 					std::cout<< ray.origin << "\n";
+// 					std::cout << randPoint << "\n";
+// 					std::cout<<ray.dir << " , " << secondaryRay.dir<< "\n";
 
 					Color dof_res = shadeRay(secondaryRay, scene, light_list, 2, 1);
 					colCentre = colCentre + dof_res;
