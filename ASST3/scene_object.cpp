@@ -33,7 +33,7 @@ bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	double t = -rayModelSpace.origin[2] / rayModelSpace.dir[2];
 
 	// t must be positive.
-	if (t < MIN_DIST) {
+	if (t < EPSILON) {
 		// ray.intersection.none = true;
 		return false;
 	}
@@ -101,7 +101,7 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	if (nIntersections == 1) {
 
 		// Only accept positive t
-		if (intersections[0] < MIN_DIST) {
+		if (intersections[0] < EPSILON) {
 			goto no_intersections;
 		}
 
@@ -115,9 +115,9 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 		 * Find the closest to the camera, given by the intersection with the
 		 * smallest magnitude
 		 */
-		if (intersections[0] < MIN_DIST) {
+		if (intersections[0] < EPSILON) {
 
-			if (intersections[1] < MIN_DIST) {
+			if (intersections[1] < EPSILON) {
 				goto no_intersections;
 			}
 
@@ -125,7 +125,7 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 			t = intersections[1];
 
 
-		} else if (intersections[1] < MIN_DIST) {
+		} else if (intersections[1] < EPSILON) {
 
 			// pick 0
 			t = intersections[0];

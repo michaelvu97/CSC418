@@ -34,6 +34,9 @@ int main(int argc, char* argv[])
 		Color(0.316228,0.316228,0.316228),
 		12.8, JADE_GLOSSINESS);
 
+	Material mirror(Color(0.0, 0.0, 0.0), Color(0.2, 0.2, 0.2), 
+		Color(0.95, 1.0, 0.95), 70, MIRROR_GLOSSINESS);
+
 	// Defines a point light source.
 	// PointLight* pLight = new PointLight(Point3D(0,0,5), Color(0.1,0.1,0.1));
 	// light_list.push_back(pLight);
@@ -42,19 +45,26 @@ int main(int argc, char* argv[])
 			Color(0.9, 0.9, 0.9), 5);
 	light_list.push_back(ePLight);	
 
+	ExtendedPointLight* ePLight2 = new ExtendedPointLight(Point3D(-7, -7, -6), 
+			Color(0.2, 0.2, 0.7), 3);
+	light_list.push_back(ePLight2);	
 	
 	// Add a unit square into the scene with material mat.
 	SceneNode* sphere = new SceneNode(new UnitSphere(), &gold);
 	scene.push_back(sphere);
-	SceneNode* plane = new SceneNode(new UnitSquare(), &jade);
+	SceneNode* plane = new SceneNode(new UnitSquare(), &mirror);
 	scene.push_back(plane);
+	SceneNode* plane2 = new SceneNode(new UnitSquare(), &gold);
+	scene.push_back(plane2);
+	// SceneNode* plane3 = new SceneNode(new UnitSquare(), &gold);
+	// scene.push_back(plane3);
 	SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold);
 	scene.push_back(sphere2);
 	
 
 	// Apply some transformations to the sphere and unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
-	sphere->translate(Vector3D(0, 0, -2));
+	sphere->translate(Vector3D(0, 0, -5));
 	sphere->rotate('x', -45);
 	sphere->rotate('z', 45);
 	sphere->scale(Point3D(0, 0, 0), factor1);
@@ -63,6 +73,14 @@ int main(int argc, char* argv[])
 	plane->translate(Vector3D(0, 0, -7));
 	plane->rotate('z', 45);
 	plane->scale(Point3D(0, 0, 0), factor2);
+
+	plane2->translate(Vector3D(0, 0, -8));
+	plane2->rotate('x', 45);
+	plane2->scale(Point3D(0, 0, 0), factor2);
+
+	// plane3->translate(Vector3D(0, 0, -7));
+	// plane3->rotate('z', 45);
+	// plane3->scale(Point3D(0, 0, 0), factor2);
 
 	sphere2->translate(Vector3D(2.5, 1.5, -5));
 	// sphere2->translate(Vector3D(0.0, 0.0, -2.0));

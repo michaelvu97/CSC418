@@ -142,19 +142,37 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 						Color c = shadeRay(tempRay, scene, light_list, depth - 1,
 								0);
 
-						colorSum = colorSum + 
-								(pow(tempRay.dir.dot(rayReflection.dir),
-								ray.intersection.mat -> specular_exp) * c);
+						double multiplier = pow(
+								tempRay.dir.dot(rayReflection.dir),
+								ray.intersection.mat -> specular_exp
+						);
+
+						if (isnan(multiplier)){
+							continue;
+						}
+
+						colorSum = colorSum + multiplier * c;
+
+						colorSum.clamp();
+
 					}
 				}
 
+				// Add the original ray.
+
 				// Average
-				colorSum = ( GLOSS_BRIGHTNESS_MULTIPLIER / 
+				colorSum = ( GLOSS_REGULARIZER / 
 						(pow(1.0 + 2.0 * shells, 2) - ignoredRays) ) * colorSum;
+
+				colorSum = colorSum + shadeRay(rayReflection, scene, light_list, 
+					depth - 1, 0);
+
 			} else {
 				colorSum = shadeRay(rayReflection, scene, light_list, 
 					depth - 1, 0);
 			}
+
+			colorSum.clamp();
 
 			Color blankColor(0.0, 0.0, 0.0);
 			col = col + Phong(rayReflection.dir, ray.intersection.normal,
@@ -200,7 +218,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 
 			if (hits == 0 && gatherAmbient) {
 				// Just use light ambient.
-				col = col + Ambient(light_list, ray.intersection.mat);
+				// col = col + Ambient(light_list, ray.intersection.mat);
 			} else {
 				col =  col + (1.0 / (double) samples.size()) * colorSum;
 			}
@@ -231,7 +249,23 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 	// Construct a ray for each pixel.
 	for (int i = 0; i < image.height; i++) {
 
-		//std::cout << double(i) * 100.0 / image.height << "%\n";
+		if (i % (image.height / 10) == 0) {
+			std::cout << '[';
+
+			int k = 0;
+
+			while (k < 10 * (double(i) / image.height)) {
+				std::cout << '=';
+				k++;
+			}
+
+			while (k < 10) {
+				std::cout << '-';
+				k++;
+			}
+
+			std::cout << "]\n";
+		}
 
 		for (int j = 0; j < image.width; j++) {
 			// Sets up ray origin and direction in view space, 

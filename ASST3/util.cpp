@@ -233,8 +233,10 @@ double Color::operator[](int i) const {
 
 void Color::clamp() {
 	for (int i = 0; i < 3; i++) {
+		if (isnan(m_data[i])) m_data[i] = 0.0;
 		if (m_data[i] > 1.0) m_data[i] = 1.0; 
 		if (m_data[i] < 0.0) m_data[i] = 0.0; 
+
 	}
 }
 
@@ -435,9 +437,8 @@ Color Phong(Vector3D& _lightDirection, Vector3D& _normal, Vector3D _eyeDirection
 	Color specularColor = specularIntensity * col_specular;
 	specularColor.clamp();
 
-	// TODO: prevent light source overwrite.
 	Color c(
-			(col_ambient * mat -> ambient) + 
+			// (col_ambient * mat -> ambient) + 
 			(diffuseColor * mat -> diffuse) + 
 			(specularColor * mat -> specular)
 	);
@@ -445,3 +446,26 @@ Color Phong(Vector3D& _lightDirection, Vector3D& _normal, Vector3D _eyeDirection
 	return c;
 }
 
+int Vector3D::isZero() const {
+	return (this -> m_data[0] < EPSILON &&
+			this -> m_data[1] < EPSILON &&
+			this -> m_data[2] < EPSILON);
+}
+
+Vector3D GetArbitraryTangentFromNorm(Vector3D& n) {
+	Vector3D test(1.0, 1.0, 1.0);
+
+
+	Vector3D crossRes = n.cross(test);
+
+	if (crossRes.isZero()) {
+		test[0] = 0.0;
+
+		crossRes = n.cross(test);
+	}
+
+	crossRes.normalize();
+
+	return crossRes;
+
+}

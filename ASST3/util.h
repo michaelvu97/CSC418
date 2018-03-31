@@ -11,6 +11,7 @@
 #include <iostream>
 #include <cmath>
 #include "bmp_io.h"
+#include <math.h>
 
 #ifndef M_PI
 #define M_PI	3.14159265358979323846
@@ -19,8 +20,8 @@
 #ifndef GLOBAL_RENDERING_PREFS
 #define GLOBAL_RENDERING_PREFS
 
-#define DEFAULT_GLOSS_SHELLS 0 // 2 = 25 gloss rays. Set to 0 to disable gloss.
-#define GLOSS_BRIGHTNESS_MULTIPLIER 1.5 // 1.5 is alright
+#define DEFAULT_GLOSS_SHELLS 2 // Set to 0 to disable gloss.
+#define GLOSS_REGULARIZER 1.5
 
 #define SOFT_SHADOWS_ENABLE 0
 #define SOFT_SHADOWS_DELTA 4 // 4 is a good value
@@ -28,14 +29,20 @@
 #define ANTI_ALIASING_ENABLED 0
 #define ANTI_ALIASING_DELTA 0.3
 
-#define RAY_TRACE_DEPTH 2
+#define RAY_TRACE_DEPTH 3
 
-#define GOLD_GLOSSINESS 0.35
-#define JADE_GLOSSINESS 0.1
+// [0,1], 1 means perfect mirror, 0 means very diffuse.
+#define GOLD_GLOSSINESS 0.5
+#define JADE_GLOSSINESS 0.8
+#define MIRROR_GLOSSINESS 0.99
 
-#define DOF_ENABLE 1
+#define DOF_ENABLE 0
 #define FOCAL_LENGTH 5.0
 #define APERTURE 1.1
+
+#ifndef EPSILON
+#define EPSILON 0.0001
+#endif
 
 #endif
 
@@ -55,6 +62,8 @@ public:
 	double normalize();
 	double dot(const Vector3D& other) const; 
 	Vector3D cross(const Vector3D& other) const; 
+
+	int isZero() const;
 
 private:
 	double m_data[3];
@@ -306,3 +315,4 @@ Color Phong(Vector3D& _lightDirection, Vector3D& _normal,
 		Vector3D _eyeDirection, Material* mat, Color& col_ambient, 
 		Color& col_diffuse, Color& col_specular);
 
+Vector3D GetArbitraryTangentFromNorm(Vector3D& n);
