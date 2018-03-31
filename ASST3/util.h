@@ -21,7 +21,7 @@
 #define GLOBAL_RENDERING_PREFS
 
 #define DEFAULT_GLOSS_SHELLS 2 // Set to 0 to disable gloss.
-#define GLOSS_REGULARIZER 1.5
+#define GLOSS_REGULARIZER 0.001
 
 #define SOFT_SHADOWS_ENABLE 0
 #define SOFT_SHADOWS_DELTA 4 // 4 is a good value

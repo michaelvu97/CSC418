@@ -144,7 +144,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 
 						double multiplier = pow(
 								tempRay.dir.dot(rayReflection.dir),
-								ray.intersection.mat -> specular_exp
+								ray.intersection.mat -> specular_exp * g * GLOSS_REGULARIZER
 						);
 
 						if (isnan(multiplier)){
@@ -161,7 +161,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 				// Add the original ray.
 
 				// Average
-				colorSum = ( GLOSS_REGULARIZER / 
+				colorSum = ( 1.0 / 
 						(pow(1.0 + 2.0 * shells, 2) - ignoredRays) ) * colorSum;
 
 				colorSum = colorSum + shadeRay(rayReflection, scene, light_list, 
