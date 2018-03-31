@@ -58,13 +58,16 @@ void PointLight::shade(Ray3D& ray) {
 }
 
 Color Ambient(LightList& lights, Material* mat) {
+    /*
 	Color c(0.0,0.0,0.0);
 	for (int i = 0 ; i < lights.size(); i++) {
 		c = c + ((lights[i] -> get_ambient()) * mat -> ambient);
 	}
 	c.clamp();
 	return c;
-
+    */
+    Color c(0.0, 0.0, 0.0);
+    return c + mat -> ambient;
 }
 
 Color PointLight::get_ambient() {
