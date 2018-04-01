@@ -42,6 +42,15 @@
 
 #ifndef EPSILON
 #define EPSILON 0.0001
+
+//0 means not refractive at all
+#define GOLD_REFRACTIVE 0
+#define JADE_REFRACTIVE 0
+#define MIRROR_REFRACTIVE 0
+#define REFRACTIVE 1.5
+
+#define MOTION_BLUR_ENABLE 0
+
 #endif
 
 #endif
@@ -162,9 +171,9 @@ std::ostream& operator <<(std::ostream& o, const Color& c);
 
 struct Material {
 	Material(Color ambient, Color diffuse, Color specular, double exp, 
-		double glossiness) :
+		double glossiness, double index) :
 		ambient(ambient), diffuse(diffuse), specular(specular), 
-		specular_exp(exp), glossiness(glossiness) {}
+		specular_exp(exp), glossiness(glossiness), index(index) {}
 	
 	// Ambient components for Phong shading.
 	Color ambient; 
@@ -177,6 +186,8 @@ struct Material {
 
 	// [0,1]
 	double glossiness;
+
+	double index;
 };
 
 struct Intersection {
