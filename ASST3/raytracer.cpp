@@ -125,10 +125,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			// Must be greater than 0, more shells is more gloss rays.
 			int shells = DEFAULT_GLOSS_SHELLS;
 
-			if (shells > 0 && !insideObject) {
-
-				// ISSUE TODO: gloss is allowing some rays to pass through and 
-				// see the backface.
+			if (shells > 0 && g > EPSILON) {
 
 				int ignoredRays = 0;
 
@@ -264,7 +261,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			for (int sampleNum = 0; sampleNum < samples.size(); sampleNum++) {
 
 				traverseScene(scene, *samples[sampleNum], 
-						TRANSPARENT_OBJECTS_CAST_SHADOWS
+						!TRANSPARENT_OBJECTS_CAST_SHADOWS
 				); 
 
 				if (samples[sampleNum] -> intersection.none) {

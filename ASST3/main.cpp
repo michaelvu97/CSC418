@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 		Color(0.0, 0.0, 0.0), 70, JADE_GLOSSINESS, REFRACTIVE);
 
 	Material glass(Color(0.0, 0.0, 0.0), Color(0.0, 0.0, 0.0), 
-		Color(0.0, 0.0, 0.0), 70, 0.0, REFRACTIVE);
+		Color(0.0, 0.0, 0.0), 70, GLASS_GLOSSINESS, REFRACTIVE);
 	glass.opacity = 0.2;
 
 	// Defines a point light source.
