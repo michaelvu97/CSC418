@@ -19,7 +19,7 @@ void Raytracer::traverseScene(Scene& scene, Ray3D& ray, bool ignoreTransparent) 
 	for (size_t i = 0; i < scene.size(); ++i) {
 		SceneNode* node = scene[i];
 
-		if (ignoreTransparent && node -> mat -> opacity < EPSILON)
+		if (ignoreTransparent && node -> mat -> opacity < 1.0 - EPSILON)
 			continue;
 
 		if (node->obj->intersect(ray, node->worldToModel, node->modelToWorld)) {
@@ -232,18 +232,13 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 							
 
 					Color res = shadeRay(
-								refractedRay,
-								scene,
-								light_list,
-								depth - 1,
-								0,
-								n2
-						);
-
-					// TODO add in the glass's color.
-
-					// Transparent objects will use ambient color to determine
-					// coloring of refracted rays.
+							refractedRay,
+							scene,
+							light_list,
+							depth - 1,
+							0,
+							n2
+					);
 
 					col = col + transparency * res;
 				}
@@ -266,12 +261,11 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			
 			int hits = 0;
 
-			// TODO glossiness.
-
 			for (int sampleNum = 0; sampleNum < samples.size(); sampleNum++) {
 
-				// TODO allow a limit on traverse Scene dist.
-				traverseScene(scene, *samples[sampleNum], !insideObject); 
+				traverseScene(scene, *samples[sampleNum], 
+						TRANSPARENT_OBJECTS_CAST_SHADOWS
+				); 
 
 				if (samples[sampleNum] -> intersection.none) {
 					// The light was unobstructed
