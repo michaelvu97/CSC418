@@ -17,7 +17,7 @@
 
 Color ambientLightColor;
 
-void Raytracer::traverseScene(Scene& scene, Ray3D& ray, bool ignoreTransparent)  {
+void Raytracer::traverseScene(Scene& scene, Ray3D& ray, bool ignoreTransparent){
 	for (size_t i = 0; i < scene.size(); ++i) {
 		SceneNode* node = scene[i];
 
@@ -54,7 +54,7 @@ void Raytracer::computeShading(Ray3D& ray, LightList& light_list) {
 }
 
 Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, 
-		int depth, int gatherAmbient, float index) {
+		int depth, float index) {
 
 	Color col(0.0, 0.0, 0.0); 
 
@@ -145,12 +145,18 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 							continue;
 						}
 
-						Color c = shadeRay(tempRay, scene, light_list, depth - 1,
-								0, index);
+						Color c = shadeRay(
+								tempRay,
+								scene,
+								light_list, 
+								depth - 1,
+								index
+						);
 
 						double multiplier = pow(
 								tempRay.dir.dot(rayReflection.dir),
-								ray.intersection.mat -> specular_exp * g * GLOSS_REGULARIZER
+								ray.intersection.mat -> specular_exp * g 
+										* GLOSS_REGULARIZER
 						);
 
 						if (std::isnan(multiplier)){
@@ -171,11 +177,11 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 						(pow(1.0 + 2.0 * shells, 2) - ignoredRays) ) * colorSum;
 
 				colorSum = colorSum + shadeRay(rayReflection, scene, light_list, 
-					depth - 1, 0, index);
+					depth - 1, index);
 
 			} else {
 				colorSum = shadeRay(rayReflection, scene, light_list, 
-					depth - 1, 0, index);
+					depth - 1, index);
 			}
 
 			colorSum.clamp();
@@ -212,14 +218,17 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 
 				double normalMultiplier = insideObject ? -1.0 : 1.0;
 
-				double c1 = -1.0 * normalMultiplier * (ray.intersection.normal.dot(ray.dir));
+				double c1 = -1.0 * normalMultiplier * 
+						(ray.intersection.normal.dot(ray.dir));
+
 				double c2_inside = 1.0 - pow(n, 2.0) *( 1 - pow(c1, 2.0));
 
 				if (c2_inside >= EPSILON) {
 					// Don't refract, total internal reflection.
 
 					double c2 = sqrt(c2_inside);
-					refractedRay.dir = (n * ray.dir) + (n * c1 - c2) * normalMultiplier * ray.intersection.normal;
+					refractedRay.dir = (n * ray.dir) + (n * c1 - c2) * 
+							normalMultiplier * ray.intersection.normal;
 					refractedRay.dir.normalize();
 
 					// refractedRay.origin = refractedRay.origin + 
@@ -235,7 +244,6 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 							scene,
 							light_list,
 							depth - 1,
-							0,
 							n2
 					);
 
@@ -278,7 +286,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 
 
 
-			if (hits == 0 && gatherAmbient) {
+			if (hits == 0) {
 				// Just use light ambient.
 				col = col + ambientLightColor;
 			} else {
@@ -358,7 +366,13 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 			ray.dir.normalize();
 			ray.intersection.t_value = DBL_MAX;
 
-			Color colCentre = shadeRay(ray, scene, light_list, RAY_TRACE_DEPTH, 1, 1); 
+			Color colCentre = shadeRay(
+					ray, 
+					scene, 
+					light_list, 
+					RAY_TRACE_DEPTH, 
+					AIR_REFRACTIVE
+			); 
 			
 			if (ANTI_ALIASING_ENABLED) {
 
@@ -388,7 +402,14 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 						ray2.dir.normalize();
 						ray2.intersection.t_value = DBL_MAX;
 
-						Color aa_res = shadeRay(ray2, scene, light_list, RAY_TRACE_DEPTH, 1, 1);
+						Color aa_res = shadeRay(
+								ray2,
+								scene,
+								light_list, 
+								RAY_TRACE_DEPTH,
+								AIR_REFRACTIVE
+						);
+
 					 	colCentre = colCentre + aa_res; 
 
 					}
@@ -424,7 +445,13 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 					// std::cout << randPoint << "\n";
 					// std::cout<<ray.dir << " , " << secondaryRay.dir<< "\n";
 
-					Color dof_res = shadeRay(secondaryRay, scene, light_list, RAY_TRACE_DEPTH, 1, 1);
+					Color dof_res = shadeRay(
+							secondaryRay,
+							scene,
+							light_list,
+							RAY_TRACE_DEPTH,
+							AIR_REFRACTIVE
+					);
 					colCentre = colCentre + dof_res;
 
 				}
@@ -447,7 +474,12 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 						scene[j]->translate(trans);
 					}
 
-					Color MB_res = shadeRay(ray, scene, light_list, RAY_TRACE_DEPTH, 1, 1);
+					Color MB_res = shadeRay(ray,
+							scene,
+							light_list, 
+							RAY_TRACE_DEPTH,
+							AIR_REFRACTIVE
+					);
 				
 					for ( int j = 0; j< scene.size(); j++){
 						// std::cout<< time << "\n";
