@@ -15,9 +15,12 @@
 #include <float.h>
 #include <vector>
 
-void Raytracer::traverseScene(Scene& scene, Ray3D& ray)  {
+void Raytracer::traverseScene(Scene& scene, Ray3D& ray, bool ignoreTransparent)  {
 	for (size_t i = 0; i < scene.size(); ++i) {
 		SceneNode* node = scene[i];
+
+		if (ignoreTransparent && node -> mat -> opacity < 1.0 - EPSILON)
+			continue;
 
 		if (node->obj->intersect(ray, node->worldToModel, node->modelToWorld)) {
 			ray.intersection.mat = node->mat;
@@ -49,7 +52,7 @@ void Raytracer::computeShading(Ray3D& ray, LightList& light_list) {
 }
 
 Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list, 
-		int depth, int gatherAmbient) {
+		int depth, int gatherAmbient, float index) {
 
 	Color col(0.0, 0.0, 0.0); 
 
@@ -61,7 +64,11 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 	// 	return col;
 	// }
 
-	traverseScene(scene, ray); 
+	traverseScene(scene, ray, false); 
+
+
+
+	bool insideObject = index > AIR_REFRACTIVE + EPSILON;
 
 	// Don't bother shading if the ray didn't hit 
 	// anything.
@@ -118,10 +125,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			// Must be greater than 0, more shells is more gloss rays.
 			int shells = DEFAULT_GLOSS_SHELLS;
 
-			if (shells > 0) {
-
-				// ISSUE TODO: gloss is allowing some rays to pass through and 
-				// see the backface.
+			if (shells > 0 && g > EPSILON) {
 
 				int ignoredRays = 0;
 
@@ -140,14 +144,14 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 						}
 
 						Color c = shadeRay(tempRay, scene, light_list, depth - 1,
-								0);
+								0, index);
 
 						double multiplier = pow(
 								tempRay.dir.dot(rayReflection.dir),
 								ray.intersection.mat -> specular_exp * g * GLOSS_REGULARIZER
 						);
 
-						if (isnan(multiplier)){
+						if (std::isnan(multiplier)){
 							continue;
 						}
 
@@ -165,22 +169,78 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 						(pow(1.0 + 2.0 * shells, 2) - ignoredRays) ) * colorSum;
 
 				colorSum = colorSum + shadeRay(rayReflection, scene, light_list, 
-					depth - 1, 0);
+					depth - 1, 0, index);
 
 			} else {
 				colorSum = shadeRay(rayReflection, scene, light_list, 
-					depth - 1, 0);
+					depth - 1, 0, index);
 			}
 
 			colorSum.clamp();
 
 			Color blankColor(0.0, 0.0, 0.0);
-			col = col + Phong(rayReflection.dir, ray.intersection.normal,
-					ray.dir, ray.intersection.mat, blankColor, blankColor, 
-					colorSum);
+
+			double opacity = ray.intersection.mat -> opacity;
+			double transparency = 1.0 - opacity;
+
+			col = col + opacity * 
+					Phong(
+						rayReflection.dir,
+						ray.intersection.normal,
+						ray.dir,
+						ray.intersection.mat,
+						blankColor,
+						blankColor,
+						colorSum
+					);
 			
 			col.clamp();
+			
+			//handle refraction
 
+			if (transparency > EPSILON) {
+
+				//generate refracted ray
+				Ray3D refractedRay;
+				refractedRay.origin = ray.intersection.point;
+				float n1 = index;
+				float n2 = insideObject ? 
+						AIR_REFRACTIVE : ray.intersection.mat->refraction_index;
+				float n = n1 / n2;
+
+				double normalMultiplier = insideObject ? -1.0 : 1.0;
+
+				double c1 = -1.0 * normalMultiplier * (ray.intersection.normal.dot(ray.dir));
+				double c2_inside = 1.0 - pow(n, 2.0) *( 1 - pow(c1, 2.0));
+
+				if (c2_inside >= EPSILON) {
+					// Don't refract, total internal reflection.
+
+					double c2 = sqrt(c2_inside);
+					refractedRay.dir = (n * ray.dir) + (n * c1 - c2) * normalMultiplier * ray.intersection.normal;
+					refractedRay.dir.normalize();
+
+					// refractedRay.origin = refractedRay.origin + 
+					// 	0.1 *  refractedRay.dir;
+
+					if (refractedRay.dir.dot(ray.dir) < 0) {
+						std::cout << "something went very wrong\n";
+					}
+							
+
+					Color res = shadeRay(
+							refractedRay,
+							scene,
+							light_list,
+							depth - 1,
+							0,
+							n2
+					);
+
+					col = col + transparency * res;
+				}
+
+			}
 		}
 
 		for (int i = 0; i < light_list.size(); i++) {
@@ -198,12 +258,11 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			
 			int hits = 0;
 
-			// TODO glossiness.
-
 			for (int sampleNum = 0; sampleNum < samples.size(); sampleNum++) {
 
-				// TODO allow a limit on traverse Scene dist.
-				traverseScene(scene, *samples[sampleNum]); 
+				traverseScene(scene, *samples[sampleNum], 
+						!TRANSPARENT_OBJECTS_CAST_SHADOWS
+				); 
 
 				if (samples[sampleNum] -> intersection.none) {
 					// The light was unobstructed
@@ -216,14 +275,13 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			}
 
 
+
 			if (hits == 0 && gatherAmbient) {
 				// Just use light ambient.
 				// col = col + Ambient(light_list, ray.intersection.mat);
 			} else {
 				col =  col + (1.0 / (double) samples.size()) * colorSum;
 			}
-
-			
 
 		}
 
@@ -246,25 +304,29 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 
 	viewToWorld = camera.initInvViewMatrix();
 
+	int numCompleted = 0;
+
+	//multithreading
+	#pragma omp parallel for
 	// Construct a ray for each pixel.
 	for (int i = 0; i < image.height; i++) {
 
 		if (i % (image.height / 10) == 0) {
-			std::cout << '[';
+			std::cout << ++numCompleted << " done\n";
 
-			int k = 0;
+			// int k = 0;
 
-			while (k < 10 * (double(i) / image.height)) {
-				std::cout << '=';
-				k++;
-			}
+			// while (k < 10 * (double(i) / image.height)) {
+			// 	std::cout << '=';
+			// 	k++;
+			// }
 
-			while (k < 10) {
-				std::cout << '-';
-				k++;
-			}
+			// while (k < 10) {
+			// 	std::cout << '-';
+			// 	k++;
+			// }
 
-			std::cout << "]\n";
+			// std::cout << "]\n";
 		}
 
 		for (int j = 0; j < image.width; j++) {
@@ -283,9 +345,8 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 			ray.dir.normalize();
 			ray.intersection.t_value = DBL_MAX;
 
-			Color colCentre = shadeRay(ray, scene, light_list, RAY_TRACE_DEPTH, 
-					1); 
-
+			Color colCentre = shadeRay(ray, scene, light_list, RAY_TRACE_DEPTH, 1, 1); 
+			
 			if (ANTI_ALIASING_ENABLED) {
 
 				for (	double dx = -ANTI_ALIASING_DELTA; 
@@ -314,7 +375,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 						ray2.dir.normalize();
 						ray2.intersection.t_value = DBL_MAX;
 
-						Color aa_res = shadeRay(ray2, scene, light_list, RAY_TRACE_DEPTH, 1);
+						Color aa_res = shadeRay(ray2, scene, light_list, RAY_TRACE_DEPTH, 1, 1);
 					 	colCentre = colCentre + aa_res; 
 
 					}
@@ -335,7 +396,10 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 				//std::cout<< focalPoint << "\n";
 				for(int i =0; i < 50; i++){
 					//randomly pick points within the radius of the aperture 
-					Vector3D tempVec (std::fmod(rand()/50, APERTURE), std::fmod(rand()/50, APERTURE), 0);
+					float temp1 =  APERTURE *((float)rand()/(float)(RAND_MAX));
+					float temp2 =  APERTURE *((float)rand()/(float)(RAND_MAX));
+					Vector3D tempVec (temp1, temp2, 0);
+					// Vector3D tempVec (std::fmod(rand()/50, APERTURE), std::fmod(rand()/50, APERTURE), 0);
 					Point3D randPoint = ray.origin + viewToWorld * tempVec;
 					
 					Ray3D secondaryRay;
@@ -343,16 +407,47 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 					secondaryRay.dir = focalPoint - randPoint;
 					secondaryRay.dir.normalize();
 					secondaryRay.intersection.t_value = DBL_MAX;
-// 					std::cout<< ray.origin << "\n";
-// 					std::cout << randPoint << "\n";
-// 					std::cout<<ray.dir << " , " << secondaryRay.dir<< "\n";
+					// std::cout<< ray.origin << "\n";
+					// std::cout << randPoint << "\n";
+					// std::cout<<ray.dir << " , " << secondaryRay.dir<< "\n";
 
-					Color dof_res = shadeRay(secondaryRay, scene, light_list, RAY_TRACE_DEPTH, 1);
+					Color dof_res = shadeRay(secondaryRay, scene, light_list, RAY_TRACE_DEPTH, 1, 1);
 					colCentre = colCentre + dof_res;
 
 				}
 
-				colCentre = 0.02 * colCentre; // Divide by 15 points.
+				colCentre = 0.02 * colCentre; // Divide by 25 points.
+				colCentre.clamp();
+
+			}
+
+			if(MOTION_BLUR_ENABLE) {
+				float time = 0;
+
+				for (int i = 0 ; i < 100 ; ++i){
+					float time = ((float)rand()/(float)(RAND_MAX));   
+					
+					for ( int j = 0; j< scene.size(); j++){
+						// std::cout<< time << "\n";
+						Vector3D trans(scene[j]->velocity * time, scene[j]->velocity * time, scene[j]->velocity * time);
+						// std::cout << trans << "\n";
+						scene[j]->translate(trans);
+					}
+
+					Color MB_res = shadeRay(ray, scene, light_list, RAY_TRACE_DEPTH, 1, 1);
+				
+					for ( int j = 0; j< scene.size(); j++){
+						// std::cout<< time << "\n";
+						Vector3D trans(- 1.0 * scene[j]->velocity * time, - 1.0 *scene[j]->velocity * time, - 1.0 *scene[j]->velocity * time);
+						// std::cout << trans << "\n";
+						scene[j]->translate(trans);
+					}
+
+					colCentre = colCentre + MB_res; 
+					
+				}
+
+				colCentre = 0.01 * colCentre; // Divide by 25 points.
 				colCentre.clamp();
 
 			}

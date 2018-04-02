@@ -29,9 +29,9 @@ struct SceneNode {
 	: 
 	obj(NULL), mat(NULL) {}	
 
-	SceneNode(SceneObject* obj, Material* mat) 
+	SceneNode(SceneObject* obj, Material* mat, double velocity) 
 	: 
-	obj(obj), mat(mat) {}
+	obj(obj), mat(mat), velocity(velocity) {}
 	
 	~SceneNode() {
 		if (obj) delete obj;
@@ -52,6 +52,7 @@ struct SceneNode {
 	// Pointer to material of the object, used in shading.
 	Material* mat;
 	
+	double velocity;
 	// Each node maintains a transformation matrix, which maps the 
 	// geometry from object space to world space and the inverse.
 	Matrix4x4 trans;
