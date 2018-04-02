@@ -34,7 +34,7 @@ class PointLight : public LightSource {
 public:
 	PointLight(Point3D pos, Color col) 
 	: 
-	pos(pos), col_ambient(col), col_diffuse(col), col_specular(col) {}
+	pos(pos), col_ambient(0.2 * col), col_diffuse(col), col_specular(col) {}
 	
 	PointLight(Point3D pos, Color ambient, Color diffuse, Color specular) 
 	: 
@@ -59,7 +59,7 @@ class ExtendedPointLight : public LightSource {
 public:
 	ExtendedPointLight(Point3D pos, Color col, double radius) 
 	: 
-	pos(pos), col_ambient(col), col_diffuse(col), col_specular(col), radius(radius) {}
+	pos(pos), col_ambient(0.2 * col), col_diffuse(col), col_specular(col), radius(radius) {}
 	
 	ExtendedPointLight(Point3D pos, Color ambient, Color diffuse, Color specular, double radius) 
 	: 

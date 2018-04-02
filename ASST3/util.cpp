@@ -438,7 +438,7 @@ Color Phong(Vector3D& _lightDirection, Vector3D& _normal, Vector3D _eyeDirection
 	specularColor.clamp();
 
 	Color c(
-			// (col_ambient * mat -> ambient) + 
+			(col_ambient * mat -> ambient) + 
 			(diffuseColor * mat -> diffuse) + 
 			(specularColor * mat -> specular)
 	);

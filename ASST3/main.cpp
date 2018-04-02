@@ -52,8 +52,12 @@ int main(int argc, char* argv[])
 	// light_list.push_back(pLight);
 
 	ExtendedPointLight* ePLight = new ExtendedPointLight(Point3D(20, 20, 20), 
-			Color(0.9, 0.9, 0.9), 5);
+			Color(0.9, 0.2, 0.2), 5);
 	light_list.push_back(ePLight);	
+
+	ExtendedPointLight* ePLight2 = new ExtendedPointLight(Point3D(-20, 0, 15), 
+			Color(0.2, 0.2, 0.9), 5);
+	light_list.push_back(ePLight2);	
 
 	// ExtendedPointLight* ePLight2 = new ExtendedPointLight(Point3D(-7, -7, -6), 
 	// 		Color(0.2, 0.2, 0.7), 3);
@@ -61,7 +65,7 @@ int main(int argc, char* argv[])
 	
 	// Add a unit square into the scene with material mat.
 	SceneNode* sphere = new SceneNode(new UnitSphere(), &glass, 0.1);
-	scene.push_back(sphere);
+	// scene.push_back(sphere);
 	SceneNode* plane = new SceneNode(new UnitSquare(), &jade, 0);
 	scene.push_back(plane);
 	SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold, 0.1);

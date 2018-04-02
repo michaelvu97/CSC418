@@ -15,6 +15,8 @@
 #include <float.h>
 #include <vector>
 
+Color ambientLightColor;
+
 void Raytracer::traverseScene(Scene& scene, Ray3D& ray, bool ignoreTransparent)  {
 	for (size_t i = 0; i < scene.size(); ++i) {
 		SceneNode* node = scene[i];
@@ -189,7 +191,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 						ray.intersection.normal,
 						ray.dir,
 						ray.intersection.mat,
-						blankColor,
+						ambientLightColor,
 						blankColor,
 						colorSum
 					);
@@ -278,7 +280,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 
 			if (hits == 0 && gatherAmbient) {
 				// Just use light ambient.
-				// col = col + Ambient(light_list, ray.intersection.mat);
+				col = col + ambientLightColor;
 			} else {
 				col =  col + (1.0 / (double) samples.size()) * colorSum;
 			}
@@ -305,6 +307,17 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 	viewToWorld = camera.initInvViewMatrix();
 
 	int numCompleted = 0;
+
+	// Compute the ambient light.
+	ambientLightColor[0] = 0.0;
+	ambientLightColor[1] = 0.0;
+	ambientLightColor[2] = 0.0;
+
+	for (int i = 0; i < light_list.size(); i++) {
+		ambientLightColor = ambientLightColor + light_list[i] -> get_ambient();
+	}
+
+	ambientLightColor = (1.0 / light_list.size()) * ambientLightColor;
 
 	//multithreading
 	#pragma omp parallel for
