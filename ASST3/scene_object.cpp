@@ -58,10 +58,10 @@ bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 			ray.intersection.t_value = t;
 			return true;
 		}
-		return false;
-	} else {
-		return false;
 	}
+	
+	return false;
+	
 
 }
 

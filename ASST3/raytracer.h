@@ -26,7 +26,7 @@ private:
 
 	// Traversal code for the scene, the ray is transformed into 
 	// the object space of each node where intersection is performed.
-	void traverseScene(Scene& scene, Ray3D& ray);
+	void traverseScene(Scene& scene, Ray3D& ray, bool ignoreTransparent);
 
 	// After intersection, calculate the color of the ray by shading it
 	// with all light sources in the scene.

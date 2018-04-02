@@ -42,11 +42,16 @@ int main(int argc, char* argv[])
 
 	Material blue_trans(Color(0.0, 0.0, 0.5), Color(0.0, 0.0, 0.5), 
 		Color(0.0, 0.0, 0.0), 70, JADE_GLOSSINESS, REFRACTIVE);
+
+	Material glass(Color(0.0, 0.0, 0.0), Color(0.0, 0.0, 0.0), 
+		Color(0.0, 0.0, 0.0), 70, 0.0, REFRACTIVE);
+	glass.opacity = 0.2;
+
 	// Defines a point light source.
 	// PointLight* pLight = new PointLight(Point3D(0,0,5), Color(0.1,0.1,0.1));
 	// light_list.push_back(pLight);
 
-	ExtendedPointLight* ePLight = new ExtendedPointLight(Point3D(0, 0, 20), 
+	ExtendedPointLight* ePLight = new ExtendedPointLight(Point3D(20, 20, 20), 
 			Color(0.9, 0.9, 0.9), 5);
 	light_list.push_back(ePLight);	
 
@@ -55,12 +60,16 @@ int main(int argc, char* argv[])
 	// light_list.push_back(ePLight2);	
 	
 	// Add a unit square into the scene with material mat.
-	SceneNode* sphere = new SceneNode(new UnitSphere(), &red_trans, 0.1);
+	SceneNode* sphere = new SceneNode(new UnitSphere(), &glass, 0.1);
 	scene.push_back(sphere);
 	SceneNode* plane = new SceneNode(new UnitSquare(), &jade, 0);
 	scene.push_back(plane);
-	SceneNode* sphere2 = new SceneNode(new UnitSphere(), &blue_trans, 0.1);
+	SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold, 0.1);
 	scene.push_back(sphere2);
+	SceneNode* sphere3 = new SceneNode(new UnitSphere(), &gold, 0.1);
+		scene.push_back(sphere3);
+
+
 	// SceneNode* plane2 = new SceneNode(new UnitSquare(), &gold);
 	// scene.push_back(plane2);
 	// SceneNode* plane3 = new SceneNode(new UnitSquare(), &gold);
@@ -71,15 +80,17 @@ int main(int argc, char* argv[])
 
 	// Apply some transformations to the sphere and unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
-	sphere->translate(Vector3D(0, 0, -2));
-	sphere->rotate('x', -45);
-	sphere->rotate('z', 45);
-	sphere->scale(Point3D(0, 0, 0), factor1);
+	sphere->translate(Vector3D(0, 0, -3));
 
-	sphere2->translate(Vector3D(1, 0, -5));
+	sphere2->translate(Vector3D(1.5, 1.5, -5));
 	sphere2->rotate('x', -45);
 	sphere2->rotate('z', 45);
 	sphere2->scale(Point3D(0, 0, 0), factor1);
+
+	sphere3->translate(Vector3D(-1.5, -1.5, -5));
+	sphere3->rotate('x', -45);
+	sphere3->rotate('z', 45);
+	sphere3->scale(Point3D(0, 0, 0), factor1);
 
 	double factor2[3] = { 6.0, 6.0, 6.0 };
 	plane->translate(Vector3D(0, 0, -7));

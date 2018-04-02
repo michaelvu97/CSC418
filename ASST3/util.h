@@ -20,16 +20,16 @@
 #ifndef GLOBAL_RENDERING_PREFS
 #define GLOBAL_RENDERING_PREFS
 
-#define DEFAULT_GLOSS_SHELLS 2 // Set to 0 to disable gloss.
+#define DEFAULT_GLOSS_SHELLS 0 // Set to 0 to disable gloss.
 #define GLOSS_REGULARIZER 0.001
 
-#define SOFT_SHADOWS_ENABLE 0
+#define SOFT_SHADOWS_ENABLE 1
 #define SOFT_SHADOWS_DELTA 4 // 4 is a good value
 
 #define ANTI_ALIASING_ENABLED 0
 #define ANTI_ALIASING_DELTA 0.3
 
-#define RAY_TRACE_DEPTH 3
+#define RAY_TRACE_DEPTH 8
 
 // [0,1], 1 means perfect mirror, 0 means very diffuse.
 #define GOLD_GLOSSINESS 0.5
@@ -41,17 +41,19 @@
 #define APERTURE 1.1
 
 #ifndef EPSILON
-#define EPSILON 0.0001
+#define EPSILON 0.001
+#endif
+
 
 //0 means not refractive at all
 #define GOLD_REFRACTIVE 0
 #define JADE_REFRACTIVE 0
 #define MIRROR_REFRACTIVE 0
-#define REFRACTIVE 1.5
+#define REFRACTIVE 2.0
+#define AIR_REFRACTIVE 1.0
 
 #define MOTION_BLUR_ENABLE 0
 
-#endif
 
 #endif
 
@@ -173,7 +175,7 @@ struct Material {
 	Material(Color ambient, Color diffuse, Color specular, double exp, 
 		double glossiness, double index) :
 		ambient(ambient), diffuse(diffuse), specular(specular), 
-		specular_exp(exp), glossiness(glossiness), index(index) {}
+		specular_exp(exp), glossiness(glossiness), refraction_index(index) {}
 	
 	// Ambient components for Phong shading.
 	Color ambient; 
@@ -187,7 +189,11 @@ struct Material {
 	// [0,1]
 	double glossiness;
 
-	double index;
+	// Refraction index
+	double refraction_index;
+
+	// [0,1], 1.0 for no light passthrough, 0.0 for no light absorbtion
+	double opacity = 1.0;
 };
 
 struct Intersection {
@@ -223,6 +229,12 @@ struct Ray3D {
 	// Current colour of the ray, should be computed by the shading
 	// function.
 	Color col;
+
+	/*
+	 * What is the index of refraction for this ray? i.e. what material is it
+	 * currently inside of?
+	 */
+	double refraction_index = AIR_REFRACTIVE;
 };
 
 struct Camera {    
