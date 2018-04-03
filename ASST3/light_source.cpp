@@ -190,7 +190,7 @@ void ExtendedPointLight::shade(Ray3D& ray){
 	diffuseColor.clamp();
 	Color specularColor = specularIntensity * this -> col_specular;
 	specularColor.clamp();
-
+	
 	// TODO: prevent light source overwrite.
 	ray.col = (
 			(this -> col_ambient * ray.intersection.mat -> ambient) + 

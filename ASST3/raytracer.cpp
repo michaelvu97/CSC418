@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <float.h>
 #include <vector>
+#include <algorithm>
 
 Color ambientLightColor;
 
@@ -71,10 +72,41 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 
 
 	bool insideObject = index > AIR_REFRACTIVE + EPSILON;
-
+	double reflectance;
 	// Don't bother shading if the ray didn't hit 
 	// anything.
 	if (!ray.intersection.none) {
+		// calculate frensnel
+		// this is simply clamping between -1 and 1
+		double cosi = std::max(-1.0, std::min(ray.dir.dot(ray.intersection.normal), 1.0));
+		double ni = insideObject ? ray.intersection.mat->refraction_index : AIR_REFRACTIVE;
+		double nt = insideObject ? AIR_REFRACTIVE : ray.intersection.mat ->refraction_index;
+		double sint = (ni/nt) *sqrt(std::max(0.0, 1 - cosi * cosi));
+		
+		if(sint >= 1 ){
+			//total internal reflection
+			//reflectance = 1
+			reflectance = 1;
+			
+		}
+		else{
+			//calculate frensnel 
+			double cost = sqrt(std::max(0.0, 1- sint * sint));
+			cosi = std::abs(cosi);
+			double frensnel_TM = pow(((nt * cosi) - (ni * cost)) / ((nt * cosi) + (ni * cost)), 2.0);
+			double frensnel_TE = pow(((ni * cost) - (nt * cosi)) / ((ni * cost) + (nt * cosi)), 2.0);
+			reflectance = ((frensnel_TE + frensnel_TM) / 2.0);
+			//this is a ratio
+			if(reflectance > 1.0){
+				std::cout<< reflectance << " ,"<< ni << " ," << nt << "\n";
+			}
+		}
+		double transmittance = 1.0 - reflectance; 
+
+		if(ray.intersection.mat->opacity == 1.0){
+			//if it is opaque, reflectance tends to 1.0
+			// std:: cout<< reflectance << "\n";
+		}
 
 		// Create new ray
 		if (depth > 0) {
@@ -191,7 +223,8 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			double opacity = ray.intersection.mat -> opacity;
 			double transparency = 1.0 - opacity;
 
-			col = col + opacity * 
+			// Could potentially use ambientLightColor as the diffuse component to give more realistic result
+			col = col + reflectance * 
 					Phong(
 						rayReflection.dir,
 						ray.intersection.normal,
@@ -201,6 +234,16 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 						blankColor,
 						colorSum
 					);
+			// col = col + opacity * 
+			// 		Phong(
+			// 			rayReflection.dir,
+			// 			ray.intersection.normal,
+			// 			ray.dir,
+			// 			ray.intersection.mat,
+			// 			ambientLightColor,
+			// 			blankColor,
+			// 			colorSum
+			// 		);
 			
 			col.clamp();
 			
@@ -222,10 +265,10 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 						(ray.intersection.normal.dot(ray.dir));
 
 				double c2_inside = 1.0 - pow(n, 2.0) *( 1 - pow(c1, 2.0));
-
+				
+				// Don't refract otherwise, total internal reflection.
 				if (c2_inside >= EPSILON) {
-					// Don't refract, total internal reflection.
-
+					
 					double c2 = sqrt(c2_inside);
 					refractedRay.dir = (n * ray.dir) + (n * c1 - c2) * 
 							normalMultiplier * ray.intersection.normal;
@@ -234,8 +277,11 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 					// refractedRay.origin = refractedRay.origin + 
 					// 	0.1 *  refractedRay.dir;
 
+					// Somehow this always happen
 					if (refractedRay.dir.dot(ray.dir) < 0) {
-						std::cout << "something went very wrong\n";
+
+						//LOL of course this happen when they are travelling at the negative z direction in the first place
+						// std::cout << "Interesting\n";
 					}
 							
 
@@ -247,7 +293,8 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 							n2
 					);
 
-					col = col + transparency * res;
+					// col = col + transparency * res;
+					col = col + transmittance  * res;
 				}
 
 			}
@@ -289,7 +336,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			if (hits == 0) {
 				// Just use light ambient.
 				col = col + ambientLightColor;
-			} else {
+			} else { 
 				col =  col + (1.0 / (double) samples.size()) * colorSum;
 			}
 
