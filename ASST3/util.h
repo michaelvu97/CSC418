@@ -24,13 +24,13 @@
 #define GLOSS_REGULARIZER 3
 #define GLOSS_EXPONENT_REGULARIZER 7
 
-#define SOFT_SHADOWS_ENABLE 1
+#define SOFT_SHADOWS_ENABLE 0
 #define SOFT_SHADOWS_DELTA 4 // 4 is a good value
 
 #define ANTI_ALIASING_ENABLED 1
 #define ANTI_ALIASING_DELTA 0.3
 
-#define RAY_TRACE_DEPTH 3
+#define RAY_TRACE_DEPTH 25
 
 // [0,1], 1 means perfect mirror, 0 means very diffuse.
 #define GOLD_GLOSSINESS 0.6
@@ -40,8 +40,9 @@
 #define BLOO_GLOSSINESS 0.2
 
 #define DOF_ENABLE 0
-#define FOCAL_LENGTH 5.0
-#define APERTURE 1.1
+#define FOCAL_LENGTH 4.0
+#define APERTURE 0.1
+#define DOF_NUM_RAYS 30
 
 #ifndef EPSILON
 #define EPSILON 0.001
@@ -53,7 +54,7 @@
 #define GOLD_REFRACTIVE EPSILON
 #define JADE_REFRACTIVE EPSILON
 #define MIRROR_REFRACTIVE EPSILON
-#define REFRACTIVE 3.0
+#define REFRACTIVE 1.3
 #define AIR_REFRACTIVE 1.0
 
 #define MOTION_BLUR_ENABLE 0

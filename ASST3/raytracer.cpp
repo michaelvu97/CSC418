@@ -261,9 +261,9 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 					// refractedRay.origin = refractedRay.origin + 
 					// 	0.1 *  refractedRay.dir;
 
-					if (refractedRay.dir.dot(ray.dir) < 0) {
-						std::cout << "This shouldn't happen\n";
-					}
+					// if (refractedRay.dir.dot(ray.dir) < 0) {
+					// 	std::cout << "This shouldn't happen\n";
+					// }
 							
 
 					Color res = shadeRay(
@@ -456,7 +456,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 				//generate focal point for differnet ray dir
 				Point3D focalPoint = ray.origin + FOCAL_LENGTH * ray.dir;
 				//std::cout<< focalPoint << "\n";
-				for(int i =0; i < 50; i++){
+				for(int i =0; i < DOF_NUM_RAYS; i++){
 					//randomly pick points within the radius of the aperture 
 					float temp1 =  APERTURE *((float)rand()/(float)(RAND_MAX));
 					float temp2 =  APERTURE *((float)rand()/(float)(RAND_MAX));
@@ -484,7 +484,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 
 				}
 
-				colCentre = 0.02 * colCentre; // Divide by 25 points.
+				colCentre = (1.0 / DOF_NUM_RAYS) * colCentre; // Divide by 25 points.
 				colCentre.clamp();
 
 			}

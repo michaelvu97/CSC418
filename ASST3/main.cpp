@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 		10, BLOO_GLOSSINESS, JADE_REFRACTIVE);
 
 	Material mirror(Color(0.0, 0.0, 0.0), Color(0.2, 0.2, 0.2), 
-		Color(0.95, 1.0, 0.95), 100, MIRROR_GLOSSINESS, MIRROR_REFRACTIVE);
+		Color(0.98, 1.0, 0.98), 100, MIRROR_GLOSSINESS, MIRROR_REFRACTIVE);
 
 	Material red_trans(Color(1, 0.0, 0.0), Color(1, 0.0, 0.0), 
 		Color(0.0, 0.0, 0.0), 70, JADE_GLOSSINESS, REFRACTIVE);
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 			Color(0.0, 0.0, 0.0), Color(1.0, 1.0, 1.0), Color(1.0, 1.0, 1.0), 5);
 	light_list.push_back(ePLight);	
 
-	ExtendedPointLight* ePLight2 = new ExtendedPointLight(Point3D(-20, 0, 15), 
+	ExtendedPointLight* ePLight2 = new ExtendedPointLight(Point3D(0.5, 0.5, -1), 
 			Color(0.0, 0.0, 0.0), Color(0.2, 0.2, 0.9), Color(0.2, 0.2, 0.9), 5);
 	//light_list.push_back(ePLight2);	
 
@@ -71,86 +71,108 @@ int main(int argc, char* argv[])
 	// light_list.push_back(ePLight2);	
 	
 	// Add a unit square into the scene with material mat.
+
+
+
+
+
+	/*
+	 * PRETTY SCENE
+	 */
+	// SceneNode* sphere = new SceneNode(new UnitSphere(), &glass, 0.1);
+	// scene.push_back(sphere);
+	// SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold, 0.1);
+	// scene.push_back(sphere2);
+	// SceneNode* sphere3 = new SceneNode(new UnitSphere(), &gold, 0.1);
+	// scene.push_back(sphere3);
+	// SceneNode* sphere4 = new SceneNode(new UnitSphere(), &mirror, 0.1);
+	// scene.push_back(sphere4);
+	// SceneNode* sphere5 = new SceneNode(new UnitSphere(), &mirror, 0.1);
+	// scene.push_back(sphere5);
+	// SceneNode* plane = new SceneNode(new UnitSquare(), &jade, 0);
+	// scene.push_back(plane);
+
+	// SceneNode* plane2 = new SceneNode(new UnitSquare(), &bloo, 0);
+	// scene.push_back(plane2);
+
+	// double factor1[3] = { 1.0, 2.0, 1.0 };
+
+	// double factor3[3] = { 2.0, 2.0, 2.0 };
+	// sphere->translate(Vector3D(0, 0, -3));
+
+	// sphere2->translate(Vector3D(-1.0, -1.0, -5));
+
+	// sphere3->translate(Vector3D(-1.0, 1.0, -5));
+
+	// sphere4->translate(Vector3D(1.0, -1.0, -5));
+	// sphere5->translate(Vector3D(1.0, 1.0, -5));
+
+	// double factor2[3] = { 6.0, 6.0, 6.0 };
+
+	// plane->translate(Vector3D(0, 0, -7));
+	// plane->rotate('z', 45);
+	// plane->scale(Point3D(0, 0, 0), factor2);
+
+	// plane2 -> translate(Vector3D(-2, -2, -7 + 3));
+	// plane2 -> rotate('y', 90);
+	// plane2 -> rotate('x', -45);
+	// plane2 -> scale(Point3D(0,0,0), factor2);
+	/*
+	 * END PRETTY SCENE
+	 */
+
 	SceneNode* sphere = new SceneNode(new UnitSphere(), &glass, 0.1);
 	scene.push_back(sphere);
-	SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold, 0.1);
-	scene.push_back(sphere2);
-	SceneNode* sphere3 = new SceneNode(new UnitSphere(), &gold, 0.1);
-	scene.push_back(sphere3);
-	SceneNode* sphere4 = new SceneNode(new UnitSphere(), &mirror, 0.1);
-	scene.push_back(sphere4);
-	SceneNode* sphere5 = new SceneNode(new UnitSphere(), &mirror, 0.1);
-	scene.push_back(sphere5);
-	SceneNode* plane = new SceneNode(new UnitSquare(), &jade, 0);
+
+	SceneNode* plane = new SceneNode(new UnitSquare(), &mirror, 0);
 	scene.push_back(plane);
-
-	SceneNode* plane2 = new SceneNode(new UnitSquare(), &bloo, 0);
+	SceneNode* plane2 = new SceneNode(new UnitSquare(), &mirror, 0);
 	scene.push_back(plane2);
+	SceneNode* plane3 = new SceneNode(new UnitSquare(), &mirror, 0);
+	scene.push_back(plane3);
+	SceneNode* plane4 = new SceneNode(new UnitSquare(), &mirror, 0);
+	scene.push_back(plane4);
+
+	SceneNode* plane5 = new SceneNode(new UnitSquare(), &mirror, 0);
+	scene.push_back(plane5);
+
+	SceneNode* plane6 = new SceneNode(new UnitSquare(), &mirror, 0);
+	scene.push_back(plane6);
+
+
+
+	double factor1[3] = {6, 6, 6};
+	double factor2[3] = {10, 6, 1};
+	plane -> translate(Vector3D(0, 0, -8));
+	plane -> scale (Point3D(0, 0, 0), factor1);
+
+	sphere -> translate(Vector3D(0, 0, -3));
+
+	plane2 -> translate(Vector3D(0, 0, 2));
+	plane2 -> scale(Point3D(0,0,0), factor1);
+
+	plane3 -> translate(Vector3D(-3, 0, -5));
+	plane3 -> rotate('y', 90);
+	plane3 -> scale(Point3D(0,0,0), factor2);
+
+	plane4 -> translate(Vector3D(3, 0, -5));
+	plane4 -> rotate('y', -90);
+	plane4 -> scale(Point3D(0,0,0), factor2);
 	
+	plane5 -> translate(Vector3D(0, 3, -5));
+	plane5 -> rotate('x', 90);
+	plane5 -> scale(Point3D(0,0,0), factor2);
 
-
-	// SceneNode* plane2 = new SceneNode(new UnitSquare(), &gold);
-	// scene.push_back(plane2);
-	// SceneNode* plane3 = new SceneNode(new UnitSquare(), &gold);
-	// scene.push_back(plane3);
-	// SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold, -1);
-	// scene.push_back(sphere2);
-	
-
-	// Apply some transformations to the sphere and unit square.
-	double factor1[3] = { 1.0, 2.0, 1.0 };
-
-	double factor3[3] = { 2.0, 2.0, 2.0 };
-	sphere->translate(Vector3D(0, 0, -3));
-	//sphere->scale(Point3D(0, 0 ,0), factor3);
-
-	sphere2->translate(Vector3D(-1.0, -1.0, -5));
-	// sphere2->rotate('x', -45);
-	// sphere2->rotate('z', 45);
-	// sphere2->scale(Point3D(0, 0, 0), factor1);
-
-	sphere3->translate(Vector3D(-1.0, 1.0, -5));
-	// sphere3->rotate('x', -45);
-	// sphere3->rotate('z', 45);
-	// sphere3->scale(Point3D(0, 0, 0), factor1);
-
-	sphere4->translate(Vector3D(1.0, -1.0, -5));
-	sphere5->translate(Vector3D(1.0, 1.0, -5));
-
-	double factor2[3] = { 6.0, 6.0, 6.0 };
-
-	plane->translate(Vector3D(0, 0, -7));
-	plane->rotate('z', 45);
-	plane->scale(Point3D(0, 0, 0), factor2);
-
-	plane2 -> translate(Vector3D(-2, -2, -7 + 3));
-	plane2 -> rotate('y', 90);
-	plane2 -> rotate('x', -45);
-	plane2 -> scale(Point3D(0,0,0), factor2);
-
-	// plane2->translate(Vector3D(0, 0, -8));
-	// plane2->rotate('x', 45);
-	// plane2->scale(Point3D(0, 0, 0), factor2);
-
-	// plane3->translate(Vector3D(0, 0, -7));
-	// plane3->rotate('z', 45);
-	// plane3->scale(Point3D(0, 0, 0), factor2);
-
-	// sphere2->translate(Vector3D(2.5, 1.5, -5));
-
-	// sphere2->translate(Vector3D(0.0, 0.0, -2.0));
-	// sphere2->rotate('x', -45);
-	// sphere2->rotate('z', 45);
-	// sphere2->scale(Point3D(0, 0, 0), factor1);
-
-	//sphere2->translate(Vector3D(2, 2, -5));
+	plane6 -> translate(Vector3D(0, -3, -5));
+	plane6 -> rotate('x', -90);
+	plane6 -> scale(Point3D(0,0,0), factor2);
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	
-	// Camera camera1(Point3D(0, 0, 1), Vector3D(0, 0, -1), Vector3D(0, 1, 0), 60.0);
-	// Image image1(width, height);
-	// raytracer.render(camera1, scene, light_list, image1); //render 3D scene to image
-	// image1.flushPixelBuffer("view1.bmp"); //save rendered image to file
+	Camera camera1(Point3D(0, 0, 1), Vector3D(0, 0, -1), Vector3D(0, 1, 0), 60.0);
+	Image image1(width, height);
+	raytracer.render(camera1, scene, light_list, image1); //render 3D scene to image
+	image1.flushPixelBuffer("view1.bmp"); //save rendered image to file
 
 	// Render it from a different point of view.
 	Camera camera2(Point3D(4, 2, 1), Vector3D(-4, -2, -6), Vector3D(0, 1, 0), 60.0);
