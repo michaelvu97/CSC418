@@ -76,13 +76,14 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 	// Don't bother shading if the ray didn't hit 
 	// anything.
 	if (!ray.intersection.none) {
+
 		// calculate frensnel
 		// this is simply clamping between -1 and 1
 		double cosi = std::max(-1.0, std::min(ray.dir.dot(ray.intersection.normal), 1.0));
 		double ni = insideObject ? ray.intersection.mat->refraction_index : AIR_REFRACTIVE;
 		double nt = insideObject ? AIR_REFRACTIVE : ray.intersection.mat ->refraction_index;
 		double sint = (ni/nt) *sqrt(std::max(0.0, 1 - cosi * cosi));
-		
+
 		if(sint >= 1 ){
 			//total internal reflection
 			//reflectance = 1
@@ -96,14 +97,11 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			double frensnel_TM = pow(((nt * cosi) - (ni * cost)) / ((nt * cosi) + (ni * cost)), 2.0);
 			double frensnel_TE = pow(((ni * cost) - (nt * cosi)) / ((ni * cost) + (nt * cosi)), 2.0);
 			reflectance = ((frensnel_TE + frensnel_TM) / 2.0);
-			//this is a ratio
-			if(reflectance > 1.0){
-				std::cout<< reflectance << " ,"<< ni << " ," << nt << "\n";
-			}
+
 		}
 		double transmittance = 1.0 - reflectance; 
 
-		if(ray.intersection.mat->opacity == 1.0){
+		if(ray.intersection.mat->opacity >= 1.0 - EPSILON){
 			//if it is opaque, reflectance tends to 1.0
 			// std:: cout<< reflectance << "\n";
 		}
@@ -120,7 +118,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 
 			// Create a "fake" light source from the reflected ray.
 			//create a cone of rays
-			double g = ray.intersection.mat -> glossiness;
+			double g = 1.0 - ray.intersection.mat -> glossiness;
 
 			Vector3D deltaYVec = ray.dir.cross(ray.intersection.normal);
 
@@ -163,8 +161,9 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 
 				int ignoredRays = 0;
 
-				for (double dx = -g; dx <= g; dx += g / shells) {
-					for (double dy = -g; dy <= g; dy +=  g / shells) {
+				for (double dx = -1; dx <= 1 ; dx += 1.0 / shells) {
+					for (double dy = -1; dy <= 1; dy +=  1.0 / shells) {
+
 						Ray3D tempRay;
 						tempRay.origin = ray.intersection.point;
 						tempRay.dir = rayReflection.dir + (dx * deltaXVec) + 
@@ -181,40 +180,30 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 								tempRay,
 								scene,
 								light_list, 
-								depth - 1,
+								depth == 1 ? 0 : 1, // Force gloss to only bounce once.
 								index
 						);
 
-						double multiplier = pow(
-								tempRay.dir.dot(rayReflection.dir),
-								ray.intersection.mat -> specular_exp * g 
-										* GLOSS_REGULARIZER
-						);
-
-						if (std::isnan(multiplier)){
-							continue;
-						}
-
-						colorSum = colorSum + multiplier * c;
-
-						colorSum.clamp();
+						/*
+						 * In the interest of computation time and looking good,
+						 * the multiplier for the color has been linearized.
+						 */
+						colorSum = colorSum + c;
 
 					}
 				}
 
-				// Add the original ray.
-
 				// Average
-				colorSum = ( 1.0 / 
+				colorSum = ( g * GLOSS_REGULARIZER / 
 						(pow(1.0 + 2.0 * shells, 2) - ignoredRays) ) * colorSum;
 
-				colorSum = colorSum + shadeRay(rayReflection, scene, light_list, 
-					depth - 1, index);
+				colorSum.clamp();
 
-			} else {
-				colorSum = shadeRay(rayReflection, scene, light_list, 
-					depth - 1, index);
 			}
+
+			// Add the original ray
+			colorSum = colorSum + (1.0 - g) * shadeRay(rayReflection, scene, light_list,
+					depth - 1, index);
 
 			colorSum.clamp();
 
@@ -234,17 +223,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 						blankColor,
 						colorSum
 					);
-			// col = col + opacity * 
-			// 		Phong(
-			// 			rayReflection.dir,
-			// 			ray.intersection.normal,
-			// 			ray.dir,
-			// 			ray.intersection.mat,
-			// 			ambientLightColor,
-			// 			blankColor,
-			// 			colorSum
-			// 		);
-			
+
 			col.clamp();
 			
 			//handle refraction
@@ -281,7 +260,8 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 					if (refractedRay.dir.dot(ray.dir) < 0) {
 
 						//LOL of course this happen when they are travelling at the negative z direction in the first place
-						// std::cout << "Interesting\n";
+						// No, it's only negative when the refracted ray is more than 90 degrees from the original ray. This shouldn't happen.
+						std::cout << "This shouldn't happen\n";
 					}
 							
 

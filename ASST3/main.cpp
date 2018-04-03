@@ -34,8 +34,11 @@ int main(int argc, char* argv[])
 		Color(0.316228,0.316228,0.316228),
 		12.8, JADE_GLOSSINESS, JADE_REFRACTIVE);
 
+	Material bloo(Color(0, 0, 0.2), Color(0.2, 0.2, 0.7), Color(0.3, 0.3, 0.8),
+		10, BLOO_GLOSSINESS, JADE_REFRACTIVE);
+
 	Material mirror(Color(0.0, 0.0, 0.0), Color(0.2, 0.2, 0.2), 
-		Color(0.95, 1.0, 0.95), 70, MIRROR_GLOSSINESS, MIRROR_REFRACTIVE);
+		Color(0.95, 1.0, 0.95), 100, MIRROR_GLOSSINESS, MIRROR_REFRACTIVE);
 
 	Material red_trans(Color(1, 0.0, 0.0), Color(1, 0.0, 0.0), 
 		Color(0.0, 0.0, 0.0), 70, JADE_GLOSSINESS, REFRACTIVE);
@@ -52,12 +55,16 @@ int main(int argc, char* argv[])
 	// light_list.push_back(pLight);
 
 	ExtendedPointLight* ePLight = new ExtendedPointLight(Point3D(20, 20, 20), 
-			Color(1.0, 1.0, 1.0), 5);
+			Color(0.0, 0.0, 0.0), Color(1.0, 1.0, 1.0), Color(1.0, 1.0, 1.0), 5);
 	light_list.push_back(ePLight);	
 
 	ExtendedPointLight* ePLight2 = new ExtendedPointLight(Point3D(-20, 0, 15), 
-			Color(0.2, 0.2, 0.9), 5);
+			Color(0.0, 0.0, 0.0), Color(0.2, 0.2, 0.9), Color(0.2, 0.2, 0.9), 5);
 	//light_list.push_back(ePLight2);	
+
+	// ExtendedPointLight* ePLight3 = new ExtendedPointLight(Point3D(20, 20, 20), 
+	// 		Color(0.0, 0.0, 0.0), Color(1.0, 1.0, 1.0), Color(1.0, 1.0, 1.0), 8);
+	// light_list.push_back(ePLight3);
 
 	// ExtendedPointLight* ePLight2 = new ExtendedPointLight(Point3D(-7, -7, -6), 
 	// 		Color(0.2, 0.2, 0.7), 3);
@@ -66,16 +73,19 @@ int main(int argc, char* argv[])
 	// Add a unit square into the scene with material mat.
 	SceneNode* sphere = new SceneNode(new UnitSphere(), &glass, 0.1);
 	scene.push_back(sphere);
-	SceneNode* sphere2 = new SceneNode(new UnitSphere(), &red_trans, 0.1);
+	SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold, 0.1);
 	scene.push_back(sphere2);
-	SceneNode* sphere3 = new SceneNode(new UnitSphere(), &blue_trans, 0.1);
+	SceneNode* sphere3 = new SceneNode(new UnitSphere(), &gold, 0.1);
 	scene.push_back(sphere3);
-	SceneNode* sphere4 = new SceneNode(new UnitSphere(), &red_trans, 0.1);
+	SceneNode* sphere4 = new SceneNode(new UnitSphere(), &mirror, 0.1);
 	scene.push_back(sphere4);
-	SceneNode* sphere5 = new SceneNode(new UnitSphere(), &blue_trans, 0.1);
+	SceneNode* sphere5 = new SceneNode(new UnitSphere(), &mirror, 0.1);
 	scene.push_back(sphere5);
 	SceneNode* plane = new SceneNode(new UnitSquare(), &jade, 0);
 	scene.push_back(plane);
+
+	SceneNode* plane2 = new SceneNode(new UnitSquare(), &bloo, 0);
+	scene.push_back(plane2);
 	
 
 
@@ -106,10 +116,17 @@ int main(int argc, char* argv[])
 
 	sphere4->translate(Vector3D(1.0, -1.0, -5));
 	sphere5->translate(Vector3D(1.0, 1.0, -5));
+
 	double factor2[3] = { 6.0, 6.0, 6.0 };
+
 	plane->translate(Vector3D(0, 0, -7));
 	plane->rotate('z', 45);
 	plane->scale(Point3D(0, 0, 0), factor2);
+
+	plane2 -> translate(Vector3D(-2, -2, -7 + 3));
+	plane2 -> rotate('y', 90);
+	plane2 -> rotate('x', -45);
+	plane2 -> scale(Point3D(0,0,0), factor2);
 
 	// plane2->translate(Vector3D(0, 0, -8));
 	// plane2->rotate('x', 45);
@@ -130,10 +147,10 @@ int main(int argc, char* argv[])
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	
-	Camera camera1(Point3D(0, 0, 1), Vector3D(0, 0, -1), Vector3D(0, 1, 0), 60.0);
-	Image image1(width, height);
-	raytracer.render(camera1, scene, light_list, image1); //render 3D scene to image
-	image1.flushPixelBuffer("view1.bmp"); //save rendered image to file
+	// Camera camera1(Point3D(0, 0, 1), Vector3D(0, 0, -1), Vector3D(0, 1, 0), 60.0);
+	// Image image1(width, height);
+	// raytracer.render(camera1, scene, light_list, image1); //render 3D scene to image
+	// image1.flushPixelBuffer("view1.bmp"); //save rendered image to file
 
 	// Render it from a different point of view.
 	Camera camera2(Point3D(4, 2, 1), Vector3D(-4, -2, -6), Vector3D(0, 1, 0), 60.0);
