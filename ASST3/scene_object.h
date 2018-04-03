@@ -9,6 +9,7 @@
 #pragma once
 
 #include "util.h"
+#include "NormalMap.h"
 #include <vector>
 
 // All primitives should provide an intersection function.  
@@ -20,6 +21,7 @@ public:
 	// Returns true if an intersection occured, false otherwise.
 	virtual bool intersect(Ray3D&, const Matrix4x4&, const Matrix4x4&) = 0;
 	virtual ~SceneObject() {}
+	std::vector<NormalMap*> normalMap;
 };
 
 // Scene node containing information about an object: geometry, material, 

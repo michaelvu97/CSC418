@@ -10,6 +10,10 @@
 #include "scene_object.h"
 #include "stdlib.h"
 
+#ifndef PI
+#define PI 3.14159265358979323846
+#endif
+
 bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 		const Matrix4x4& modelToWorld) {
 	// TODO: implement intersection code for UnitSquare, which is
@@ -44,6 +48,12 @@ bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	double x = rayPosOnPlane[0];
 	double y = rayPosOnPlane[1];
 
+	Vector3D offset(0, 0, 0);
+
+	for (int i = 0; i < this -> normalMap.size(); i++) {
+		offset = offset + (this -> normalMap)[i] -> bump(rayPosOnPlane);
+	}
+
 	if (x >= - 0.5 && x <= 0.5 && y >= -0.5 && y <= 0.5) {
 
 		
@@ -52,7 +62,8 @@ bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 			ray.intersection.none) {
 			ray.intersection.point = modelToWorld * (rayPosOnPlane);
 			ray.intersection.normal = 
-					(worldToModel.transpose() * Vector3D(0,0,1));
+					worldToModel.transpose() * (Vector3D(0, 0,1) + offset);
+
 			ray.intersection.normal.normalize();
 			ray.intersection.none = false;
 			ray.intersection.t_value = t;
@@ -142,10 +153,26 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	// Valid intersection
 	if ((t < ray.intersection.t_value && !ray.intersection.none) ||
 			ray.intersection.none) {
+
+
+
 		rayPosOnSphere = rayModelSpace.origin + (t * rayModelSpace.dir);
+
+		Vector3D offset(0, 0, 0);
+
+		Vector3D dHat(rayPosOnSphere[0], rayPosOnSphere[1], rayPosOnSphere[2]);
+		dHat.normalize();
+
+		double u = 0.5 + atan2(dHat[2], dHat[0]) / (2 * PI);
+		double v = 0.5 - asin(dHat[1]) / (PI);
+
+		for (int i = 0; i < this -> normalMap.size(); i++) {
+			offset = offset + (this -> normalMap)[i] -> bump(Point3D(u, v, 0));
+		}
+
 		ray.intersection.point = modelToWorld * (rayPosOnSphere);
 		ray.intersection.normal = (worldToModel.transpose() * 
-				(rayPosOnSphere.ToVector()));
+				(rayPosOnSphere.ToVector() + offset));
 		ray.intersection.normal.normalize();
 		ray.intersection.t_value = t;
 

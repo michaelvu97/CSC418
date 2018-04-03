@@ -20,7 +20,7 @@
 #ifndef GLOBAL_RENDERING_PREFS
 #define GLOBAL_RENDERING_PREFS
 
-#define DEFAULT_GLOSS_SHELLS 2 // Set to 0 to disable gloss.
+#define DEFAULT_GLOSS_SHELLS 0 // Set to 0 to disable gloss.
 #define GLOSS_REGULARIZER 3
 #define GLOSS_EXPONENT_REGULARIZER 7
 
@@ -30,7 +30,7 @@
 #define ANTI_ALIASING_ENABLED 1
 #define ANTI_ALIASING_DELTA 0.3
 
-#define RAY_TRACE_DEPTH 25
+#define RAY_TRACE_DEPTH 5
 
 // [0,1], 1 means perfect mirror, 0 means very diffuse.
 #define GOLD_GLOSSINESS 0.6
@@ -54,7 +54,7 @@
 #define GOLD_REFRACTIVE EPSILON
 #define JADE_REFRACTIVE EPSILON
 #define MIRROR_REFRACTIVE EPSILON
-#define REFRACTIVE 1.3
+#define REFRACTIVE 3.0
 #define AIR_REFRACTIVE 1.0
 
 #define MOTION_BLUR_ENABLE 0

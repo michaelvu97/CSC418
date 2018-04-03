@@ -10,8 +10,9 @@
 #include "util.h"
 #include <vector>
 
-
-#define PI 3.1415
+#ifndef PI
+#define PI 3.14159265358979323846
+#endif
 // Base class for a light source.  You could define different types
 // of lights here, but point light is sufficient for most scenes you
 // might want to render.  Different light sources shade the ray 
