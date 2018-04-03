@@ -37,10 +37,10 @@ int main(int argc, char* argv[])
 	Material mirror(Color(0.0, 0.0, 0.0), Color(0.2, 0.2, 0.2), 
 		Color(0.95, 1.0, 0.95), 70, MIRROR_GLOSSINESS, MIRROR_REFRACTIVE);
 
-	Material red_trans(Color(0.5, 0.0, 0.0), Color(0.5, 0.0, 0.0), 
+	Material red_trans(Color(1, 0.0, 0.0), Color(1, 0.0, 0.0), 
 		Color(0.0, 0.0, 0.0), 70, JADE_GLOSSINESS, REFRACTIVE);
 
-	Material blue_trans(Color(0.0, 0.0, 0.5), Color(0.0, 0.0, 0.5), 
+	Material blue_trans(Color(0.0, 0.0, 1), Color(0.0, 0.0, 1), 
 		Color(0.0, 0.0, 0.0), 70, JADE_GLOSSINESS, REFRACTIVE);
 
 	Material glass(Color(0.0, 0.0, 0.0), Color(0.0, 0.0, 0.0), 
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 	// PointLight* pLight = new PointLight(Point3D(0,0,5), Color(0.1,0.1,0.1));
 	// light_list.push_back(pLight);
 
-	ExtendedPointLight* ePLight = new ExtendedPointLight(Point3D(0, 0, 20), 
+	ExtendedPointLight* ePLight = new ExtendedPointLight(Point3D(20, 20, 20), 
 			Color(1.0, 1.0, 1.0), 5);
 	light_list.push_back(ePLight);	
 
@@ -70,6 +70,10 @@ int main(int argc, char* argv[])
 	scene.push_back(sphere2);
 	SceneNode* sphere3 = new SceneNode(new UnitSphere(), &blue_trans, 0.1);
 	scene.push_back(sphere3);
+	SceneNode* sphere4 = new SceneNode(new UnitSphere(), &red_trans, 0.1);
+	scene.push_back(sphere4);
+	SceneNode* sphere5 = new SceneNode(new UnitSphere(), &blue_trans, 0.1);
+	scene.push_back(sphere5);
 	SceneNode* plane = new SceneNode(new UnitSquare(), &jade, 0);
 	scene.push_back(plane);
 	
@@ -88,18 +92,20 @@ int main(int argc, char* argv[])
 
 	double factor3[3] = { 2.0, 2.0, 2.0 };
 	sphere->translate(Vector3D(0, 0, -3));
-	sphere->scale(Point3D(0, 0 ,0), factor3);
+	//sphere->scale(Point3D(0, 0 ,0), factor3);
 
-	sphere2->translate(Vector3D(1.0, 1.0, -5));
-	sphere2->rotate('x', -45);
-	sphere2->rotate('z', 45);
-	sphere2->scale(Point3D(0, 0, 0), factor1);
+	sphere2->translate(Vector3D(-1.0, -1.0, -5));
+	// sphere2->rotate('x', -45);
+	// sphere2->rotate('z', 45);
+	// sphere2->scale(Point3D(0, 0, 0), factor1);
 
-	sphere3->translate(Vector3D(-1.0, -1.0, -5));
-	sphere3->rotate('x', -45);
-	sphere3->rotate('z', 45);
-	sphere3->scale(Point3D(0, 0, 0), factor1);
+	sphere3->translate(Vector3D(-1.0, 1.0, -5));
+	// sphere3->rotate('x', -45);
+	// sphere3->rotate('z', 45);
+	// sphere3->scale(Point3D(0, 0, 0), factor1);
 
+	sphere4->translate(Vector3D(1.0, -1.0, -5));
+	sphere5->translate(Vector3D(1.0, 1.0, -5));
 	double factor2[3] = { 6.0, 6.0, 6.0 };
 	plane->translate(Vector3D(0, 0, -7));
 	plane->rotate('z', 45);
