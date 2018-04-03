@@ -152,7 +152,8 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			deltaYVec.normalize();
 			deltaXVec.normalize();
 
-			Color colorSum(0.0, 0.0, 0.0);
+			Color specularSum(0.0, 0.0, 0.0);
+			Color diffuseSum(0.0, 0.0, 0.0);
 
 			// Must be greater than 0, more shells is more gloss rays.
 			int shells = DEFAULT_GLOSS_SHELLS;
@@ -180,7 +181,8 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 								tempRay,
 								scene,
 								light_list, 
-								depth == 1 ? 0 : 1, // Force gloss to only bounce once.
+								// depth / 2 > 0 ? depth / 2 : 0,
+								0,
 								index
 						);
 
@@ -188,26 +190,29 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 						 * In the interest of computation time and looking good,
 						 * the multiplier for the color has been linearized.
 						 */
-						colorSum = colorSum + c;
+						diffuseSum = diffuseSum + 
+								pow(
+										tempRay.dir.dot(rayReflection.dir), 
+										(1.0 - g) * GLOSS_EXPONENT_REGULARIZER
+								) * c;
 
 					}
 				}
 
 				// Average
-				colorSum = ( g * GLOSS_REGULARIZER / 
-						(pow(1.0 + 2.0 * shells, 2) - ignoredRays) ) * colorSum;
+				diffuseSum = ( g * GLOSS_REGULARIZER / 
+						(pow(1.0 + 2.0 * shells, 2) - ignoredRays) ) * diffuseSum;
 
-				colorSum.clamp();
+				diffuseSum.clamp();
 
 			}
-
 			// Add the original ray
-			colorSum = colorSum + (1.0 - g) * shadeRay(rayReflection, scene, light_list,
-					depth - 1, index);
+			specularSum = specularSum + (1.0 - g) * (1.0 - g) * shadeRay(rayReflection, scene, light_list,
+				depth - 1, index);	
 
-			colorSum.clamp();
+			
 
-			Color blankColor(0.0, 0.0, 0.0);
+			specularSum.clamp();
 
 			double opacity = ray.intersection.mat -> opacity;
 			double transparency = 1.0 - opacity;
@@ -220,8 +225,8 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 						ray.dir,
 						ray.intersection.mat,
 						ambientLightColor,
-						blankColor,
-						colorSum
+						diffuseSum,
+						specularSum
 					);
 
 			col.clamp();
@@ -256,11 +261,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 					// refractedRay.origin = refractedRay.origin + 
 					// 	0.1 *  refractedRay.dir;
 
-					// Somehow this always happen
 					if (refractedRay.dir.dot(ray.dir) < 0) {
-
-						//LOL of course this happen when they are travelling at the negative z direction in the first place
-						// No, it's only negative when the refracted ray is more than 90 degrees from the original ray. This shouldn't happen.
 						std::cout << "This shouldn't happen\n";
 					}
 							
@@ -360,7 +361,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 	for (int i = 0; i < image.height; i++) {
 
 		if (i % (image.height / 10) == 0) {
-			std::cout << ++numCompleted << " done\n";
+			std::cout << ++numCompleted << " started\n";
 
 			// int k = 0;
 
