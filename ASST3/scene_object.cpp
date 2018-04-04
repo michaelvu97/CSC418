@@ -48,10 +48,13 @@ bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	double x = rayPosOnPlane[0];
 	double y = rayPosOnPlane[1];
 
+	double u = x + 0.5;
+	double v = y + 0.5;
+
 	Vector3D offset(0, 0, 0);
 
 	for (int i = 0; i < this -> normalMap.size(); i++) {
-		offset = offset + (this -> normalMap)[i] -> bump(rayPosOnPlane);
+		offset = offset + (this -> normalMap)[i] -> bump(Point3D(u, v, 0));
 	}
 
 	if (x >= - 0.5 && x <= 0.5 && y >= -0.5 && y <= 0.5) {

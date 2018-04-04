@@ -489,41 +489,42 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 
 			}
 
-			if(MOTION_BLUR_ENABLE) {
-				float time = 0;
+			// MARKED FOR REMOVAL.
+			// if(MOTION_BLUR_ENABLE) {
+			// 	float time = 0;
 
-				for (int i = 0 ; i < 100 ; ++i){
-					float time = ((float)rand()/(float)(RAND_MAX));   
+			// 	for (int i = 0 ; i < 100 ; ++i){
+			// 		float time = ((float)rand()/(float)(RAND_MAX));   
 					
-					for ( int j = 0; j< scene.size(); j++){
-						// std::cout<< time << "\n";
-						Vector3D trans(scene[j]->velocity * time, scene[j]->velocity * time, scene[j]->velocity * time);
-						// std::cout << trans << "\n";
-						scene[j]->translate(trans);
-					}
+			// 		for ( int j = 0; j< scene.size(); j++){
+			// 			// std::cout<< time << "\n";
+			// 			Vector3D trans(scene[j]->velocity * time, scene[j]->velocity * time, scene[j]->velocity * time);
+			// 			// std::cout << trans << "\n";
+			// 			scene[j]->translate(trans);
+			// 		}
 
-					Color MB_res = shadeRay(ray,
-							scene,
-							light_list, 
-							RAY_TRACE_DEPTH,
-							AIR_REFRACTIVE
-					);
+			// 		Color MB_res = shadeRay(ray,
+			// 				scene,
+			// 				light_list, 
+			// 				RAY_TRACE_DEPTH,
+			// 				AIR_REFRACTIVE
+			// 		);
 				
-					for ( int j = 0; j< scene.size(); j++){
-						// std::cout<< time << "\n";
-						Vector3D trans(- 1.0 * scene[j]->velocity * time, - 1.0 *scene[j]->velocity * time, - 1.0 *scene[j]->velocity * time);
-						// std::cout << trans << "\n";
-						scene[j]->translate(trans);
-					}
+			// 		for ( int j = 0; j< scene.size(); j++){
+			// 			// std::cout<< time << "\n";
+			// 			Vector3D trans(- 1.0 * scene[j]->velocity * time, - 1.0 *scene[j]->velocity * time, - 1.0 *scene[j]->velocity * time);
+			// 			// std::cout << trans << "\n";
+			// 			scene[j]->translate(trans);
+			// 		}
 
-					colCentre = colCentre + MB_res; 
+			// 		colCentre = colCentre + MB_res; 
 					
-				}
+			// 	}
 
-				colCentre = 0.01 * colCentre; // Divide by 25 points.
-				colCentre.clamp();
+			// 	colCentre = 0.01 * colCentre; // Divide by 25 points.
+			// 	colCentre.clamp();
 
-			}
+			// }
 
 			image.setColorAtPixel(i, j, colCentre);			
 		}

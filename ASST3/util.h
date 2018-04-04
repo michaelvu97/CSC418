@@ -17,52 +17,39 @@
 #define M_PI	3.14159265358979323846
 #endif
 
-#ifndef GLOBAL_RENDERING_PREFS
-#define GLOBAL_RENDERING_PREFS
-
-#define DEFAULT_GLOSS_SHELLS 0 // Set to 0 to disable gloss.
-#define GLOSS_REGULARIZER 3
-#define GLOSS_EXPONENT_REGULARIZER 7
-
-#define SOFT_SHADOWS_ENABLE 1
-#define SOFT_SHADOWS_DELTA 4 // 4 is a good value
-
-#define ANTI_ALIASING_ENABLED 1
-#define ANTI_ALIASING_DELTA 0.3
-
-#define RAY_TRACE_DEPTH 5
-
-// [0,1], 1 means perfect mirror, 0 means very diffuse.
-#define GOLD_GLOSSINESS 0.6
-#define JADE_GLOSSINESS 0.8
-#define MIRROR_GLOSSINESS 1.0
-#define GLASS_GLOSSINESS 1.0
-#define BLOO_GLOSSINESS 0.2
-
-#define DOF_ENABLE 0
-#define FOCAL_LENGTH 4.0
-#define APERTURE 0.1
-#define DOF_NUM_RAYS 30
-
 #ifndef EPSILON
 #define EPSILON 0.001
 #endif
 
-#define TRANSPARENT_OBJECTS_CAST_SHADOWS 0
+#define ISOLATE if (true)
+	
+/* 
+ * Modify these values in main.cpp.
+ */
+extern const int  DEFAULT_GLOSS_SHELLS;
+extern const bool SOFT_SHADOWS_ENABLE;
+extern const bool ANTI_ALIASING_ENABLED;
+extern const bool DOF_ENABLE;
+extern const bool TRANSPARENT_OBJECTS_CAST_SHADOWS;
 
-//0 means not refractive at all
-#define GOLD_REFRACTIVE EPSILON
-#define JADE_REFRACTIVE EPSILON
-#define MIRROR_REFRACTIVE EPSILON
-#define REFRACTIVE 3.0
-#define AIR_REFRACTIVE 1.0
-
-#define MOTION_BLUR_ENABLE 0
-
-
-#endif
-
-
+extern const double GLOSS_REGULARIZER;
+extern const double GLOSS_EXPONENT_REGULARIZER;
+extern const double SOFT_SHADOWS_DELTA;
+extern const double ANTI_ALIASING_DELTA;
+extern const int 	RAY_TRACE_DEPTH;
+extern const double GOLD_GLOSSINESS;
+extern const double JADE_GLOSSINESS;
+extern const double MIRROR_GLOSSINESS;
+extern const double GLASS_GLOSSINESS;
+extern const double BLOO_GLOSSINESS;
+extern const double FOCAL_LENGTH;
+extern const double APERTURE;
+extern const int 	DOF_NUM_RAYS;
+extern const double GOLD_REFRACTIVE;
+extern const double JADE_REFRACTIVE;
+extern const double MIRROR_REFRACTIVE;
+extern const double REFRACTIVE;
+extern const double AIR_REFRACTIVE;
 
 class Vector3D {
 public:

@@ -125,8 +125,6 @@ Vector3D PolynomialNoiseNormal::bump (const Point3D& point) {
 
 Vector3D MetallicGrainNormal::bump(const Point3D& point) {
 
-    double jitter = (rand() % 50) * 0.001 / 50.0;
-
     bool hasBeenSet = false;
     Vector3D offset(0, 0, 0);
 
@@ -135,7 +133,6 @@ Vector3D MetallicGrainNormal::bump(const Point3D& point) {
 
         double deltaLenSquared = delta[0] * delta[0] + delta[1] * delta[1];
 
-        // Intersecting the dent.
         if (!hasBeenSet) {
             offset = -delta;
             hasBeenSet = true;

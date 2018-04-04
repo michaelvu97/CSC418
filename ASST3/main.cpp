@@ -1,12 +1,116 @@
-/***********************************************************
-	
-	Starter code for Assignment 3
-
-***********************************************************/
-
 #include <cstdlib>
 #include "raytracer.h"
 #include "NormalMap.h"
+#include <time.h>
+#include "util.h"
+
+/*************************** GLOBAL PARAMETERS ********************************/
+
+// Number of gloss shells to produce. 0 disables glossy reflections.
+const int DEFAULT_GLOSS_SHELLS = 0;
+
+// Enable soft shadows?
+const bool SOFT_SHADOWS_ENABLE = false;
+
+// Enable AA?
+const bool ANTI_ALIASING_ENABLED = false;
+
+// Enable depth of field?
+const bool DOF_ENABLE = false;
+
+// Should transparent objects cast shadows from light sources?
+const bool TRANSPARENT_OBJECTS_CAST_SHADOWS = false;
+
+/*
+ * Gloss Parameters.
+ *
+ * 		Regularizer: 
+ *				Constant multiplier of glossy intensity.
+ *
+ *		Exponent Regularizer: 
+ *				Exponentiation of gloss angle intensity multiplier.
+ *
+ */
+const double GLOSS_REGULARIZER 			= 3;
+const double GLOSS_EXPONENT_REGULARIZER = 7;
+
+/*
+ * Soft Shadow Parameters.
+ *
+ * 		Delta:
+ * 				How much should the extended light volume be divided for soft
+ *				shadow sampling? Number increases samples cubically. 4 is a 
+ *				reasonable value for this parameter.
+ *				
+ */
+const double SOFT_SHADOWS_DELTA = 4;
+
+/*
+ * AA Parameters.
+ *
+ *		Delta:
+ *				What distance should the anti-aliasing samples deviate from the
+ *				centre of the pixel?
+ *
+ */
+const double ANTI_ALIASING_DELTA = 0.3;
+
+/*
+ * General Ray Tracing Parameters.
+ *		
+ *		Depth:
+ *				How many bounces should each ray make before it is terminated?
+ *
+ */
+const int RAY_TRACE_DEPTH = 5;
+
+/*
+ * Material Glossiness Parameters.
+ *
+ *		The higher the value, the more "smooth" the object is. 1.0 is a perfect
+ *		mirror, 0.0 is a completely matte object.
+ *
+ */
+const double GOLD_GLOSSINESS 	= 0.6;
+const double JADE_GLOSSINESS 	= 0.8;
+const double MIRROR_GLOSSINESS 	= 1.0;
+const double GLASS_GLOSSINESS 	= 1.0;
+const double BLOO_GLOSSINESS 	= 0.2;
+
+/*
+ * Depth of Field Parameters.
+ *
+ * 		Focal Length:
+ *				Distance from the camera where the focal point will lie. The
+ *				focal plane is actually spherical since it is measured from the 
+ *				camera origin.
+ *		
+ *		Aperture:
+ *				Size of the simulated camera aperture. 0 is a pinhole camera,
+ *				and as the number increase, makes out-of-focus objects
+ *				blurrier.
+ *
+ *		Num Rays:
+ *				Number of samples to estimate the depth of field effect. The
+ *				higher the number, the less noisey the effect is and the better
+ *				it approximates real light, but the computation takes longer.
+ *			
+ */
+const double FOCAL_LENGTH 	= 4.0;
+const double APERTURE 		= 0.1;
+const int 	 DOF_NUM_RAYS	= 30;
+
+/*
+ * Material Refractive Constants.
+ */
+const double GOLD_REFRACTIVE = EPSILON;
+const double JADE_REFRACTIVE = EPSILON;
+const double MIRROR_REFRACTIVE = EPSILON;
+const double REFRACTIVE = 3.0;
+const double AIR_REFRACTIVE = 1.0;
+
+/******************************************************************************/
+
 
 int main(int argc, char* argv[])
 {
@@ -26,6 +130,8 @@ int main(int argc, char* argv[])
 		width = atoi(argv[1]);
 		height = atoi(argv[2]);
 	}
+
+	srand(time(NULL));
 	
 	// Define materials for shading.
 	Material gold(Color(0.3, 0.3, 0.3), Color(0.75164,0.60648,0.22648),
@@ -80,7 +186,7 @@ int main(int argc, char* argv[])
 	/*
 	 * PRETTY SCENE
 	 */
-	if (true) { // Isolate local variables from other scenes.
+	ISOLATE { // Isolate local variables from other scenes.
 
 		SceneNode* sphere = new SceneNode(new UnitSphere(), &glass, 0.1);
 		scene1.push_back(sphere);
@@ -103,15 +209,15 @@ int main(int argc, char* argv[])
 		/* 
 		 * Normal Mapping
 		 */
-		plane -> obj -> normalMap.push_back(new CorrugatedNormal());
+		plane -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
 		// plane2 -> obj -> normalMap.push_back(new PolynomialNoiseNormal(5));
-		sphere2 -> obj -> normalMap.push_back(new MetallicGrainNormal(5000));
-		sphere3 -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
-		sphere2 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
-		sphere3 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
+		// sphere2 -> obj -> normalMap.push_back(new MetallicGrainNormal(5000));
+		// sphere3 -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
+		// sphere2 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
+		// sphere3 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
 
-		sphere4 -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
-		sphere4 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
+		// sphere4 -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
+		// sphere4 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
 
 		double factor1[3] = { 1.0, 2.0, 1.0 };
 		double factor2[3] = { 6.0, 6.0, 6.0 };
@@ -139,7 +245,7 @@ int main(int argc, char* argv[])
 	/*
 	 * MIRROR ROOM SCENE
 	 */
-	if (true) { // Isolate local variables from other scenes.
+	ISOLATE { // Isolate local variables from other scenes.
 		SceneNode* sphere = new SceneNode(new UnitSphere(), &glass, 0.1);
 		sceneMirrorRoom.push_back(sphere);
 
