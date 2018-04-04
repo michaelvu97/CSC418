@@ -10,7 +10,7 @@
 const int DEFAULT_GLOSS_SHELLS = 0;
 
 // Enable soft shadows?
-const bool SOFT_SHADOWS_ENABLE = false;
+const bool SOFT_SHADOWS_ENABLE = true;
 
 // Enable AA?
 const bool ANTI_ALIASING_ENABLED = false;
@@ -62,7 +62,7 @@ const double ANTI_ALIASING_DELTA = 0.3;
  *				How many bounces should each ray make before it is terminated?
  *
  */
-const int RAY_TRACE_DEPTH = 5;
+const int RAY_TRACE_DEPTH = 7;
 
 /*
  * Material Glossiness Parameters.
@@ -120,8 +120,8 @@ int main(int argc, char* argv[])
 	// change this if you're just implementing part one of the 
 	// assignment.  
 	Raytracer raytracer;
-	LightList light_list;
-	Scene scene1, sceneMirrorRoom;   
+	LightList light_list, materialDemoLightList;
+	Scene scene1, sceneMirrorRoom, sceneMaterialDemo;   
 
 	int width = 320;
 	int height = 240;
@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
 		10, BLOO_GLOSSINESS, JADE_REFRACTIVE);
 
 	Material mirror(Color(0.0, 0.0, 0.0), Color(0.2, 0.2, 0.2), 
-		Color(0.98, 1.0, 0.98), 100, MIRROR_GLOSSINESS, MIRROR_REFRACTIVE);
+		Color(0.97, 0.99, 0.97), 100, MIRROR_GLOSSINESS, MIRROR_REFRACTIVE);
 
 	Material red_trans(Color(1, 0.0, 0.0), Color(1, 0.0, 0.0), 
 		Color(0.0, 0.0, 0.0), 70, JADE_GLOSSINESS, REFRACTIVE);
@@ -157,6 +157,9 @@ int main(int argc, char* argv[])
 		Color(0.0, 0.0, 0.0), 70, GLASS_GLOSSINESS, REFRACTIVE);
 	glass.opacity = 0.2;
 
+	Material neutral(Color(0.3, 0.3, 0.3), Color(0.6, 0.6, 0.6), 
+		Color(0.3, 0.3, 0.3), 40, 0.9, JADE_REFRACTIVE);
+
 	// Defines a point light source.
 	// PointLight* pLight = new PointLight(Point3D(0,0,5), Color(0.1,0.1,0.1));
 	// light_list.push_back(pLight);
@@ -165,9 +168,9 @@ int main(int argc, char* argv[])
 			Color(0.0, 0.0, 0.0), Color(1.0, 1.0, 1.0), Color(1.0, 1.0, 1.0), 5);
 	light_list.push_back(ePLight);	
 
-	ExtendedPointLight* ePLight2 = new ExtendedPointLight(Point3D(0.5, 0.5, -1), 
-			Color(0.0, 0.0, 0.0), Color(0.2, 0.2, 0.9), Color(0.2, 0.2, 0.9), 5);
-	light_list.push_back(ePLight2);	
+	// ExtendedPointLight* ePLight2 = new ExtendedPointLight(Point3D(0.5, 0.5, -1), 
+	// 		Color(0.0, 0.0, 0.0), Color(0.2, 0.2, 0.9), Color(0.2, 0.2, 0.9), 5);
+	// light_list.push_back(ePLight2);	
 
 	// ExtendedPointLight* ePLight3 = new ExtendedPointLight(Point3D(20, 20, 20), 
 	// 		Color(0.0, 0.0, 0.0), Color(1.0, 1.0, 1.0), Color(1.0, 1.0, 1.0), 8);
@@ -183,41 +186,35 @@ int main(int argc, char* argv[])
 
 
 
-	/*
-	 * PRETTY SCENE
-	 */
+	
 	ISOLATE { // Isolate local variables from other scenes.
 
-		SceneNode* sphere = new SceneNode(new UnitSphere(), &glass, 0.1);
+		/*
+		 * PRETTY SCENE
+		 */
+
+		SceneNode* sphere = new SceneNode(new UnitSphere(), &glass);
 		scene1.push_back(sphere);
 
-		SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold, 0.1);
+		SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold);
 		scene1.push_back(sphere2);
-		SceneNode* sphere3 = new SceneNode(new UnitSphere(), &gold, 0.1);
+		SceneNode* sphere3 = new SceneNode(new UnitSphere(), &gold);
 		scene1.push_back(sphere3);
-		SceneNode* sphere4 = new SceneNode(new UnitSphere(), &mirror, 0.1);
+		SceneNode* sphere4 = new SceneNode(new UnitSphere(), &mirror);
 		scene1.push_back(sphere4);
-		SceneNode* sphere5 = new SceneNode(new UnitSphere(), &mirror, 0.1);
+		SceneNode* sphere5 = new SceneNode(new UnitSphere(), &mirror);
 		scene1.push_back(sphere5);
 
-		SceneNode* plane = new SceneNode(new UnitSquare(), &jade, 0);
+		SceneNode* plane = new SceneNode(new UnitSquare(), &jade);
 		scene1.push_back(plane);
 
-		SceneNode* plane2 = new SceneNode(new UnitSquare(), &bloo, 0);
+		SceneNode* plane2 = new SceneNode(new UnitSquare(), &bloo);
 		scene1.push_back(plane2);
 
 		/* 
 		 * Normal Mapping
 		 */
-		plane -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
-		// plane2 -> obj -> normalMap.push_back(new PolynomialNoiseNormal(5));
-		// sphere2 -> obj -> normalMap.push_back(new MetallicGrainNormal(5000));
-		// sphere3 -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
-		// sphere2 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
-		// sphere3 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
-
-		// sphere4 -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
-		// sphere4 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
+		sphere -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
 
 		double factor1[3] = { 1.0, 2.0, 1.0 };
 		double factor2[3] = { 6.0, 6.0, 6.0 };
@@ -238,33 +235,33 @@ int main(int argc, char* argv[])
 		plane2 -> rotate('x', -45);
 		plane2 -> scale(Point3D(0,0,0), factor2);
 	}
-	/*
-	 * END PRETTY SCENE
-	 */
-
-	/*
-	 * MIRROR ROOM SCENE
-	 */
+	
 	ISOLATE { // Isolate local variables from other scenes.
-		SceneNode* sphere = new SceneNode(new UnitSphere(), &glass, 0.1);
+
+		/*
+		 * MIRROR ROOM SCENE
+		 */
+
+		SceneNode* sphere = new SceneNode(new UnitSphere(), &gold);
 		sceneMirrorRoom.push_back(sphere);
 
-		SceneNode* plane = new SceneNode(new UnitSquare(), &mirror, 0);
+		SceneNode* plane = new SceneNode(new UnitSquare(), &mirror);
 		sceneMirrorRoom.push_back(plane);
-		SceneNode* plane2 = new SceneNode(new UnitSquare(), &mirror, 0);
+		SceneNode* plane2 = new SceneNode(new UnitSquare(), &mirror);
 		sceneMirrorRoom.push_back(plane2);
-		SceneNode* plane3 = new SceneNode(new UnitSquare(), &mirror, 0);
+		SceneNode* plane3 = new SceneNode(new UnitSquare(), &mirror);
 		sceneMirrorRoom.push_back(plane3);
-		SceneNode* plane4 = new SceneNode(new UnitSquare(), &mirror, 0);
+		SceneNode* plane4 = new SceneNode(new UnitSquare(), &mirror);
 		sceneMirrorRoom.push_back(plane4);
 
-		SceneNode* plane5 = new SceneNode(new UnitSquare(), &mirror, 0);
+		SceneNode* plane5 = new SceneNode(new UnitSquare(), &mirror);
 		sceneMirrorRoom.push_back(plane5);
 
-		SceneNode* plane6 = new SceneNode(new UnitSquare(), &mirror, 0);
+		SceneNode* plane6 = new SceneNode(new UnitSquare(), &mirror);
 		sceneMirrorRoom.push_back(plane6);
 
 
+		sphere -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
 
 		double factor4[3] = {6, 6, 6};
 		double factor5[3] = {10, 6, 1};
@@ -292,22 +289,105 @@ int main(int argc, char* argv[])
 		plane6 -> rotate('x', -90);
 		plane6 -> scale(Point3D(0,0,0), factor5);
 	}
-	/*
-	 * END MIRROR ROOM SCENE
-	 */
+
+	ISOLATE { // Isolate local variables from other scenes.
+		/*
+		 * Material Demo Scene
+		 */
+
+		ExtendedPointLight* behindCameraLight = new ExtendedPointLight(
+				Point3D(0.0, 0.0, -1.1), 
+				Color(0.1, 0.1, 0.1), 
+				Color(0.9, 0.9, 0.8), 
+				Color(0.7, 0.7, 0.7), 
+				1
+		);
+
+		ExtendedPointLight* diffuseAboveLight = new ExtendedPointLight(
+				Point3D(0.0, 0.0, -1.1), 
+				Color(0.1, 0.1, 0.1), 
+				Color(0.5, 0.5, 0.55), 
+				Color(0.7, 0.7, 0.77), 
+				1.5
+		);
+
+		materialDemoLightList.push_back(behindCameraLight);
+
+		// TODO maybe make these less intense colors.
+		SceneNode* ground 		= new SceneNode(new UnitSquare(), &jade);
+		SceneNode* leftWall 	= new SceneNode(new UnitSquare(), &neutral);
+		SceneNode* rightWall 	= new SceneNode(new UnitSquare(), &neutral);
+		SceneNode* ceiling 		= new SceneNode(new UnitSquare(), &neutral);
+		SceneNode* backWall 	= new SceneNode(new UnitSquare(), &neutral);
+		SceneNode* behindCamera = new SceneNode(new UnitSquare(), &neutral);
+
+		sceneMaterialDemo.push_back(ground);
+		sceneMaterialDemo.push_back(leftWall);
+		sceneMaterialDemo.push_back(rightWall);
+		sceneMaterialDemo.push_back(ceiling);
+		sceneMaterialDemo.push_back(backWall);
+		sceneMaterialDemo.push_back(behindCamera);
+
+		double roomScaleFactor[3] = {10, 10, 10};
+
+		ground -> translate(Vector3D(0, -1, -3));
+		ground -> rotate('x', -90);
+
+		backWall -> translate(Vector3D(0, 4, -8));
+
+		behindCamera -> translate(Vector3D(0, 4, 2));
+		behindCamera -> rotate('y', 180);
+
+		leftWall -> translate(Vector3D(-5, 4, -3));
+		leftWall -> rotate('y', 90);
+
+		rightWall -> translate(Vector3D(5, 4, -3));
+		rightWall -> rotate('y', -90);
+
+		ceiling -> translate(Vector3D(0, 9, -3));
+		ceiling -> rotate('x', 90);
+
+		ground       -> scale(Point3D(0, 0, 0), roomScaleFactor);
+		leftWall     -> scale(Point3D(0, 0, 0), roomScaleFactor);
+		rightWall    -> scale(Point3D(0, 0, 0), roomScaleFactor);
+		ceiling      -> scale(Point3D(0, 0, 0), roomScaleFactor);
+		backWall	 -> scale(Point3D(0, 0, 0), roomScaleFactor);
+		behindCamera -> scale(Point3D(0, 0, 0), roomScaleFactor);
+
+
+		SceneNode* ball_1 = new SceneNode(new UnitSphere(), &gold);
+		SceneNode* ball_2 = new SceneNode(new UnitSphere(), &gold);
+		SceneNode* ball_3 = new SceneNode(new UnitSphere(), &gold);
+		SceneNode* ball_4 = new SceneNode(new UnitSphere(), &gold);
+
+		sceneMaterialDemo.push_back(ball_1);
+		sceneMaterialDemo.push_back(ball_2);
+		sceneMaterialDemo.push_back(ball_3);
+		sceneMaterialDemo.push_back(ball_4);
+
+		double bally = 0;
+		double ballz = -5;
+
+		ball_1 -> translate(Vector3D(-3, bally, ballz));
+		ball_2 -> translate(Vector3D(-1, bally, ballz));
+		ball_3 -> translate(Vector3D(1, bally, ballz));
+		ball_4 -> translate(Vector3D(3, bally, ballz));
+
+
+	}
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	
 	Camera camera1(Point3D(0, 0, 1), Vector3D(0, 0, -1), Vector3D(0, 1, 0), 60.0);
 	Image image1(width, height);
-	raytracer.render(camera1, scene1, light_list, image1); //render 3D scene to image
+	raytracer.render(camera1, sceneMaterialDemo, materialDemoLightList, image1); //render 3D scene to image
 	image1.flushPixelBuffer("view1.bmp"); //save rendered image to file
 
 	// Render it from a different point of view.
-	Camera camera2(Point3D(4, 2, 1), Vector3D(-4, -2, -6), Vector3D(0, 1, 0), 60.0);
-	Image image2(width, height);
-	raytracer.render(camera2, scene1, light_list, image2);
-	image2.flushPixelBuffer("view2.bmp");
+	// Camera camera2(Point3D(4, 2, 1), Vector3D(-4, -2, -6), Vector3D(0, 1, 0), 60.0);
+	// Image image2(width, height);
+	// raytracer.render(camera2, sceneMaterialDemo, light_list, image2);
+	// image2.flushPixelBuffer("view2.bmp");
 
 	// Free memory
 	for (size_t i = 0; i < scene1.size(); ++i) {
@@ -316,6 +396,10 @@ int main(int argc, char* argv[])
 
 	for (size_t i = 0; i < sceneMirrorRoom.size(); ++i) {
 		delete sceneMirrorRoom[i];
+	}
+
+	for (size_t i = 0; i < sceneMaterialDemo.size(); ++i) {
+		delete sceneMaterialDemo[i];
 	}
 
 	for (size_t i = 0; i < light_list.size(); ++i) {

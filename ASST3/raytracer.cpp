@@ -18,14 +18,18 @@
 
 Color ambientLightColor;
 
-void Raytracer::traverseScene(Scene& scene, Ray3D& ray, bool ignoreTransparent){
+void Raytracer::traverseScene(Scene& scene, Ray3D& ray, bool ignoreTransparent) {
+	this -> traverseScene(scene, ray, ignoreTransparent, DBL_MAX);
+}
+
+void Raytracer::traverseScene(Scene& scene, Ray3D& ray, bool ignoreTransparent, double limit){
 	for (size_t i = 0; i < scene.size(); ++i) {
 		SceneNode* node = scene[i];
 
 		if (ignoreTransparent && node -> mat -> opacity < 1.0 - EPSILON)
 			continue;
 
-		if (node->obj->intersect(ray, node->worldToModel, node->modelToWorld)) {
+		if (node->obj->intersect(ray, node->worldToModel, node->modelToWorld, limit)) {
 			ray.intersection.mat = node->mat;
 	 	}
 	}
@@ -287,19 +291,23 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			newLightRay.origin = ray.intersection.point;
 			newLightRay.dir = 
 					(light_list[i] -> get_position()) - newLightRay.origin;
+
+			double dist = newLightRay.dir.length();
 			newLightRay.dir.normalize();
 
 			std::vector<Ray3D*> samples = 
 					light_list[i] -> generateSamples(newLightRay);
 
 			Color colorSum(0, 0, 0);
+
 			
 			int hits = 0;
 
 			for (int sampleNum = 0; sampleNum < samples.size(); sampleNum++) {
 
 				traverseScene(scene, *samples[sampleNum], 
-						!TRANSPARENT_OBJECTS_CAST_SHADOWS
+						!TRANSPARENT_OBJECTS_CAST_SHADOWS,
+						dist
 				); 
 
 				if (samples[sampleNum] -> intersection.none) {

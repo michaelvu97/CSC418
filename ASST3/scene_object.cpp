@@ -15,7 +15,7 @@
 #endif
 
 bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
-		const Matrix4x4& modelToWorld) {
+		const Matrix4x4& modelToWorld, double limit) {
 	// TODO: implement intersection code for UnitSquare, which is
 	// defined on the xy-plane, with vertices (0.5, 0.5, 0), 
 	// (-0.5, 0.5, 0), (-0.5, -0.5, 0), (0.5, -0.5, 0), and normal
@@ -39,6 +39,11 @@ bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	// t must be positive.
 	if (t < EPSILON) {
 		// ray.intersection.none = true;
+		return false;
+	}	
+
+	// The object is past the limt.
+	if (t > limit) {
 		return false;
 	}
 
@@ -80,7 +85,7 @@ bool UnitSquare::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 }
 
 bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
-		const Matrix4x4& modelToWorld) {
+		const Matrix4x4& modelToWorld, double limit) {
 	// TODO: implement intersection code for UnitSphere, which is centred 
 	// on the origin.  
 	//
@@ -115,7 +120,7 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 	if (nIntersections == 1) {
 
 		// Only accept positive t
-		if (intersections[0] < EPSILON) {
+		if (intersections[0] < EPSILON || intersections[0] > limit) {
 			goto no_intersections;
 		}
 
@@ -129,9 +134,9 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 		 * Find the closest to the camera, given by the intersection with the
 		 * smallest magnitude
 		 */
-		if (intersections[0] < EPSILON) {
+		if (intersections[0] < EPSILON  || intersections[0] > limit) {
 
-			if (intersections[1] < EPSILON) {
+			if (intersections[1] < EPSILON || intersections[1] > limit) {
 				goto no_intersections;
 			}
 
@@ -139,7 +144,7 @@ bool UnitSphere::intersect(Ray3D& ray, const Matrix4x4& worldToModel,
 			t = intersections[1];
 
 
-		} else if (intersections[1] < EPSILON) {
+		} else if (intersections[1] < EPSILON || intersections[1] > limit) {
 
 			// pick 0
 			t = intersections[0];
