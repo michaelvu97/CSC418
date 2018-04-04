@@ -20,14 +20,14 @@
 #ifndef GLOBAL_RENDERING_PREFS
 #define GLOBAL_RENDERING_PREFS
 
-#define DEFAULT_GLOSS_SHELLS 3 // Set to 0 to disable gloss.
+#define DEFAULT_GLOSS_SHELLS 0 // Set to 0 to disable gloss.
 #define GLOSS_REGULARIZER 3
 #define GLOSS_EXPONENT_REGULARIZER 7
 
-#define SOFT_SHADOWS_ENABLE 0
+#define SOFT_SHADOWS_ENABLE 1
 #define SOFT_SHADOWS_DELTA 4 // 4 is a good value
 
-#define ANTI_ALIASING_ENABLED 0
+#define ANTI_ALIASING_ENABLED 1
 #define ANTI_ALIASING_DELTA 0.3
 
 #define RAY_TRACE_DEPTH 5

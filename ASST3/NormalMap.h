@@ -1,5 +1,6 @@
 #include "util.h"
 #include <cmath>
+#include <vector>
 
 #ifndef PI
 #define PI 3.14159265358979323846
@@ -15,7 +16,9 @@ public:
 };
 
 class CorrugatedNormal: public NormalMap {
-
+    /*
+     * Creates single-direction cosine waves.
+     */
 public:
 
     Vector3D bump(const Point3D& p);
@@ -27,7 +30,9 @@ public:
 };
 
 class RadialCorrugatedNormal: public NormalMap {
-
+    /*
+     * Creates radial cosine waves.
+     */
 public:
 
     RadialCorrugatedNormal(double x, double y) {
@@ -46,11 +51,11 @@ private:
 
 };
 
-/*
- * Creates completely noisey surface normal
- */
-class NoiseyNormal: public NormalMap {
 
+class NoiseyNormal: public NormalMap {
+    /*
+     * Creates completely noisey surface normal
+     */
 public:
 
     NoiseyNormal(double magnitude) {
@@ -64,7 +69,9 @@ public:
 };
 
 class BricksNormal: public NormalMap {
-
+    /* 
+     * Creates kind of a brick effect.
+     */
 public:
 
     Vector3D bump(const Point3D& point);
@@ -75,5 +82,92 @@ public:
     double depthThreshold = -0.9;
 
 };
+
+class LumpyNormal : public NormalMap {
+    /*
+     * Small round bumps across the surface.
+     */
+public:
+
+    Vector3D bump (const Point3D& point);
+
+    double period = 6.0;
+    double depthThreshold = 0.8;
+    double magnitude = 10;
+};
+
+class RibbedNormal : public NormalMap {
+    /* 
+     * For her pleasure
+     */
+
+public:
+    Vector3D bump (const Point3D& point);
+
+    double period = 6.0;
+    double heightCutoff = 0.58;
+    double magnitude = 0.3;
+};
+
+class PolynomialNoiseNormal : public NormalMap {
+    /*
+     * Generates a random harmonic noise map.
+     * Benefits are: computation time, continuousness.
+     */
+public:
+    PolynomialNoiseNormal(int order) {
+
+        int noiseLevel = order * 2;
+
+        for (int i = 0; i < order; i++) {
+            this -> xroots.push_back(double(rand() % noiseLevel) - double(noiseLevel) / 2);
+            this -> yroots.push_back(double(rand() % noiseLevel) - double(noiseLevel) / 2);
+            this -> xoffsets.push_back(double(rand() % noiseLevel) - double(noiseLevel) / 2);
+            this -> yoffsets.push_back(double(rand() % noiseLevel) - double(noiseLevel) / 2);
+        }
+
+        this -> order = order;
+
+    }
+
+    Vector3D bump (const Point3D& point);
+
+private:
+
+    // Roots in [0,1]
+    int order;
+    std::vector<double> xroots;
+    std::vector<double> yroots;
+
+    std::vector<double> xoffsets;
+    std::vector<double> yoffsets;
+
+};
+
+class MetallicGrainNormal : public NormalMap {
+    /*
+     * Simulates metal surface grains, essentially k-nn voronoi.
+     */
+
+public:
+    MetallicGrainNormal(int nDents) {
+
+
+        for (int i = 0; i < nDents; i++) {
+            dentLocations.push_back(Vector3D(
+                    (rand() % 50) / 50.0,
+                    (rand() % 50) / 50.0,
+                    0.0
+            )); 
+        }
+
+    }
+
+    Vector3D bump (const Point3D& point);
+
+private:
+    std::vector<Vector3D> dentLocations;
+};
+
 
 #endif

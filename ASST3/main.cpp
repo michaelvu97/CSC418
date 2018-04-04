@@ -81,9 +81,9 @@ int main(int argc, char* argv[])
 	 * PRETTY SCENE
 	 */
 	if (true) { // Isolate local variables from other scenes.
+
 		SceneNode* sphere = new SceneNode(new UnitSphere(), &glass, 0.1);
 		scene1.push_back(sphere);
-		sphere -> obj -> normalMap.push_back(new BricksNormal());
 
 		SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold, 0.1);
 		scene1.push_back(sphere2);
@@ -93,29 +93,35 @@ int main(int argc, char* argv[])
 		scene1.push_back(sphere4);
 		SceneNode* sphere5 = new SceneNode(new UnitSphere(), &mirror, 0.1);
 		scene1.push_back(sphere5);
-		sphere5 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
 
 		SceneNode* plane = new SceneNode(new UnitSquare(), &jade, 0);
 		scene1.push_back(plane);
-		plane -> obj -> normalMap.push_back(new BricksNormal());
 
 		SceneNode* plane2 = new SceneNode(new UnitSquare(), &bloo, 0);
 		scene1.push_back(plane2);
-		plane2 -> obj -> normalMap.push_back(new RadialCorrugatedNormal(0.5, 0.5));
+
+		/* 
+		 * Normal Mapping
+		 */
+		plane -> obj -> normalMap.push_back(new CorrugatedNormal());
+		// plane2 -> obj -> normalMap.push_back(new PolynomialNoiseNormal(5));
+		sphere2 -> obj -> normalMap.push_back(new MetallicGrainNormal(5000));
+		sphere3 -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
+		sphere2 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
+		sphere3 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
+
+		sphere4 -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
+		sphere4 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
 
 		double factor1[3] = { 1.0, 2.0, 1.0 };
 		double factor2[3] = { 6.0, 6.0, 6.0 };
 		double factor3[3] = { 2.0, 2.0, 2.0 };
 
 		sphere->translate(Vector3D(0, 0, -3));
-
 		sphere2->translate(Vector3D(-1.0, -1.0, -5));
-
 		sphere3->translate(Vector3D(-1.0, 1.0, -5));
-
 		sphere4->translate(Vector3D(1.0, -1.0, -5));
 		sphere5->translate(Vector3D(1.0, 1.0, -5));
-
 
 		plane->translate(Vector3D(0, 0, -7));
 		plane->rotate('z', 45);
