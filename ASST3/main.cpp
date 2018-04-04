@@ -83,6 +83,8 @@ int main(int argc, char* argv[])
 	if (true) { // Isolate local variables from other scenes.
 		SceneNode* sphere = new SceneNode(new UnitSphere(), &glass, 0.1);
 		scene1.push_back(sphere);
+		sphere -> obj -> normalMap.push_back(new BricksNormal());
+
 		SceneNode* sphere2 = new SceneNode(new UnitSphere(), &gold, 0.1);
 		scene1.push_back(sphere2);
 		SceneNode* sphere3 = new SceneNode(new UnitSphere(), &gold, 0.1);
@@ -91,16 +93,15 @@ int main(int argc, char* argv[])
 		scene1.push_back(sphere4);
 		SceneNode* sphere5 = new SceneNode(new UnitSphere(), &mirror, 0.1);
 		scene1.push_back(sphere5);
-		sphere5 -> obj -> normalMap.push_back(new RadialCorrugatedNormal(0, 0));
 		sphere5 -> obj -> normalMap.push_back(new NoiseyNormal(0.02));
 
 		SceneNode* plane = new SceneNode(new UnitSquare(), &jade, 0);
 		scene1.push_back(plane);
-		// plane -> obj -> normalMap = new CorrugatedNormal();
+		plane -> obj -> normalMap.push_back(new BricksNormal());
 
 		SceneNode* plane2 = new SceneNode(new UnitSquare(), &bloo, 0);
 		scene1.push_back(plane2);
-		// plane2 -> obj -> normalMap = new RadialCorrugatedNormal(0, 0);
+		plane2 -> obj -> normalMap.push_back(new RadialCorrugatedNormal(0.5, 0.5));
 
 		double factor1[3] = { 1.0, 2.0, 1.0 };
 		double factor2[3] = { 6.0, 6.0, 6.0 };
