@@ -13,10 +13,10 @@ const int DEFAULT_GLOSS_SHELLS = 0;
 const bool SOFT_SHADOWS_ENABLE = false;
 
 // Enable AA?
-const bool ANTI_ALIASING_ENABLED = true;
+const bool ANTI_ALIASING_ENABLED = false;
 
 // Enable depth of field?
-const bool DOF_ENABLE = false;
+const bool DOF_ENABLE = true;
 
 // Should transparent objects cast shadows from light sources?
 const bool TRANSPARENT_OBJECTS_CAST_SHADOWS = false;
@@ -105,9 +105,9 @@ const double BLOO_GLOSSINESS 	= 0.2;
  *				it approximates real light, but the computation takes longer.
  *			
  */
-const double FOCAL_LENGTH 	= 4.0;
+const double FOCAL_LENGTH 	= 6.0;
 const double APERTURE 		= 0.1;
-const int 	 DOF_NUM_RAYS	= 30;
+const int 	 DOF_NUM_RAYS	= 30; // 30 is good
 
 /*
  * Material Refractive Constants.
@@ -392,12 +392,14 @@ int main(int argc, char* argv[])
 		materialDemoLightList.push_back(behindCameraLight);
 
 		// TODO maybe make these less intense colors.
-		SceneNode* ground 		= new SceneNode(new UnitSquare(), &bloo);
+		SceneNode* ground 		= new SceneNode(new UnitSquare(), &jade);
 		SceneNode* leftWall 	= new SceneNode(new UnitSquare(), &neutral);
 		SceneNode* rightWall 	= new SceneNode(new UnitSquare(), &neutral);
 		SceneNode* ceiling 		= new SceneNode(new UnitSquare(), &neutral);
 		SceneNode* backWall 	= new SceneNode(new UnitSquare(), &neutral);
 		SceneNode* behindCamera = new SceneNode(new UnitSquare(), &neutral);
+
+		ground -> obj -> normalMap.push_back(new CorrugatedNormal());
 
 		// sceneMaterialDemo.push_back(ground);
 		// sceneMaterialDemo.push_back(leftWall);
@@ -408,8 +410,10 @@ int main(int argc, char* argv[])
 
 		double roomScaleFactor[3] = {10, 10, 10};
 
-		ground -> translate(Vector3D(0, -1, -3));
+		// ground -> translate(Vector3D(0, -1, -3));
+		ground -> translate(Vector3D(0, -3, -3));
 		ground -> rotate('x', -90);
+		ground -> rotate('z', 30);
 
 		backWall -> translate(Vector3D(0, 4, -8));
 
@@ -433,15 +437,23 @@ int main(int argc, char* argv[])
 		behindCamera -> scale(Point3D(0, 0, 0), roomScaleFactor);
 
 
-		SceneNode* ball_1 = new SceneNode(new UnitSphere(), &gold);
-		SceneNode* ball_2 = new SceneNode(new UnitSphere(), &jade);
-		SceneNode* ball_3 = new SceneNode(new UnitSphere(), &gold);
+		// SceneNode* ball_1 = new SceneNode(new UnitSphere(), &gold);
+		// SceneNode* ball_2 = new SceneNode(new UnitSphere(), &jade);
+		// SceneNode* ball_3 = new SceneNode(new UnitSphere(), &gold);
+		// SceneNode* ball_4 = new SceneNode(new UnitSphere(), &mirror);
+
+		SceneNode* ball_1 = new SceneNode(new UnitSphere(), &mirror);
+		SceneNode* ball_2 = new SceneNode(new UnitSphere(), &mirror);
+		SceneNode* ball_3 = new SceneNode(new UnitSphere(), &mirror);
 		SceneNode* ball_4 = new SceneNode(new UnitSphere(), &mirror);
+
+		SceneNode* ball_5 = new SceneNode(new UnitSphere(), &gold);
 
 		sceneMaterialDemo.push_back(ball_1);
 		sceneMaterialDemo.push_back(ball_2);
 		sceneMaterialDemo.push_back(ball_3);
 		sceneMaterialDemo.push_back(ball_4);
+		sceneMaterialDemo.push_back(ball_5);
 
 		// ball_1 -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
 		ball_1 -> obj -> normalMap.push_back(new MetallicGrainNormal(2000));
@@ -456,6 +468,11 @@ int main(int argc, char* argv[])
 		ball_2 -> translate(Vector3D(-1, bally, ballz));
 		ball_3 -> translate(Vector3D(1, bally, ballz));
 		ball_4 -> translate(Vector3D(3, bally, ballz));
+
+		double smolFactor[3] = {15, 15, 1};
+		ball_5 -> scale(Point3D(0, 0, 0), smolFactor);
+
+		ball_5 -> translate(Vector3D(0, 0, 4));
 
 
 	}
