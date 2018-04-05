@@ -469,3 +469,38 @@ Vector3D GetArbitraryTangentFromNorm(Vector3D& n) {
 	return crossRes;
 
 }
+
+unsigned char* readBMP(char* filename) {
+	/*
+	 * Note that this is taken from StackOverflow @9296059 as a helper class for
+	 * loading bitmaps.
+	 * 
+	 */
+
+	FILE* f = fopen(filename, "rb");
+	unsigned char info[54];
+	fread(info, sizeof(unsigned char), 54, f); // Read 54-byte header.
+
+	// TODO make this static.
+	int width = *(int*)&info[18];
+	int height = *(int*)&info[22];
+
+	int size = 3 * width * height; // 24 bit color depth
+
+	unsigned char* data = new unsigned char[size];
+	fread(data, sizeof(unsigned char), size, f);
+	fclose(f);
+
+	/*
+	 * Convert from BGR to RGB? 
+	 */
+	for (int i = 0; i < size; i += 3) {
+		unsigned char tmp = data[i];
+		data[i] = data[i+2];
+		data[i + 2] = tmp;
+	}
+
+	return data;
+
+}
+

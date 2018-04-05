@@ -31,6 +31,8 @@ extern const bool SOFT_SHADOWS_ENABLE;
 extern const bool ANTI_ALIASING_ENABLED;
 extern const bool DOF_ENABLE;
 extern const bool TRANSPARENT_OBJECTS_CAST_SHADOWS;
+extern const bool USE_LIGHT_AMBIENT;
+extern const bool USE_ENV_MAP;
 
 extern const double GLOSS_REGULARIZER;
 extern const double GLOSS_EXPONENT_REGULARIZER;
@@ -331,3 +333,5 @@ Color Phong(Vector3D& _lightDirection, Vector3D& _normal,
 		Color& col_diffuse, Color& col_specular);
 
 Vector3D GetArbitraryTangentFromNorm(Vector3D& n);
+
+unsigned char* readBMP(char* filename);

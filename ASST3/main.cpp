@@ -10,7 +10,7 @@
 const int DEFAULT_GLOSS_SHELLS = 0;
 
 // Enable soft shadows?
-const bool SOFT_SHADOWS_ENABLE = true;
+const bool SOFT_SHADOWS_ENABLE = false;
 
 // Enable AA?
 const bool ANTI_ALIASING_ENABLED = false;
@@ -20,6 +20,15 @@ const bool DOF_ENABLE = false;
 
 // Should transparent objects cast shadows from light sources?
 const bool TRANSPARENT_OBJECTS_CAST_SHADOWS = false;
+
+// Use the environment map?
+const bool USE_ENV_MAP = true;
+
+/*
+ * Should the ambient light color be calculated from the given lights?
+ * Set to false for a much better/photorealistic look.
+ */
+const bool USE_LIGHT_AMBIENT = false;
 
 /*
  * Gloss Parameters.
@@ -62,7 +71,7 @@ const double ANTI_ALIASING_DELTA = 0.3;
  *				How many bounces should each ray make before it is terminated?
  *
  */
-const int RAY_TRACE_DEPTH = 7;
+const int RAY_TRACE_DEPTH = 3;
 
 /*
  * Material Glossiness Parameters.
@@ -131,6 +140,70 @@ int main(int argc, char* argv[])
 		height = atoi(argv[2]);
 	}
 
+	if (USE_ENV_MAP) {
+		unsigned char* cubeMap = readBMP("cubemap.bmp");
+
+		// We are using a static face size of 256.
+
+		unsigned int face_size = 256;
+
+		unsigned int img_width = 1024, img_height = 768;
+
+		for (unsigned int faceNum = 0; faceNum < 6; faceNum++) {
+
+			int xOffSet, yOffset;
+
+			switch(faceNum) {
+				case 0:
+					xOffSet = 2 * face_size;
+					yOffset = face_size;
+					break; // offset here.
+				case 1: 
+					xOffSet = 0;
+					yOffset = face_size;
+					break;
+				case 2:
+					xOffSet = face_size;
+					yOffset = 0;
+					break;
+				case 3:
+					xOffSet= face_size;
+					yOffset = 2 * face_size;
+					break;
+				case 4:
+					xOffSet = face_size;
+					yOffset = face_size;
+					break;
+				case 5:
+					xOffSet = 3 * face_size;
+					yOffset = face_size;
+					break;
+				default:
+					break;
+			}
+
+			raytracer.envMapData[faceNum] = (Color**) malloc(
+					sizeof(Color*) * face_size * face_size
+			);
+
+			for (unsigned int dx = 0; dx < face_size; dx++) {
+				for (unsigned int dy = 0; dy < face_size; dy++) {
+
+					int pixelLocation =
+						((yOffset + dy) * img_width) + dx + xOffSet;
+
+					raytracer.envMapData[faceNum][dx + face_size * dy] = new Color(
+						cubeMap[3 * pixelLocation] / 256.0, 
+						cubeMap[3 * pixelLocation + 1] / 256.0, 
+						cubeMap[3 * pixelLocation + 2] / 256.0
+					);					
+
+				}
+			}
+		}
+
+	}
+
 	srand(time(NULL));
 	
 	// Define materials for shading.
@@ -142,6 +215,9 @@ int main(int argc, char* argv[])
 		12.8, JADE_GLOSSINESS, JADE_REFRACTIVE);
 
 	Material bloo(Color(0, 0, 0.2), Color(0.2, 0.2, 0.7), Color(0.3, 0.3, 0.8),
+		10, BLOO_GLOSSINESS, JADE_REFRACTIVE);
+
+	Material red(Color(0.2, 0, 0), Color(0.7, 0.2, 0.2), Color(0.8, 0.3, 0.3),
 		10, BLOO_GLOSSINESS, JADE_REFRACTIVE);
 
 	Material mirror(Color(0.0, 0.0, 0.0), Color(0.2, 0.2, 0.2), 
@@ -158,7 +234,7 @@ int main(int argc, char* argv[])
 	glass.opacity = 0.2;
 
 	Material neutral(Color(0.3, 0.3, 0.3), Color(0.6, 0.6, 0.6), 
-		Color(0.3, 0.3, 0.3), 40, 0.9, JADE_REFRACTIVE);
+		Color(0.3, 0.3, 0.3), 40, 0.3, JADE_REFRACTIVE);
 
 	// Defines a point light source.
 	// PointLight* pLight = new PointLight(Point3D(0,0,5), Color(0.1,0.1,0.1));
@@ -298,35 +374,36 @@ int main(int argc, char* argv[])
 		ExtendedPointLight* behindCameraLight = new ExtendedPointLight(
 				Point3D(0.0, 0.0, -1.1), 
 				Color(0.1, 0.1, 0.1), 
-				Color(0.9, 0.9, 0.8), 
+				Color(0.8, 0.8, 0.81), 
 				Color(0.7, 0.7, 0.7), 
 				1
 		);
 
 		ExtendedPointLight* diffuseAboveLight = new ExtendedPointLight(
-				Point3D(0.0, 0.0, -1.1), 
+				Point3D(0.0, 1.0, -2.0), 
 				Color(0.1, 0.1, 0.1), 
-				Color(0.5, 0.5, 0.55), 
-				Color(0.7, 0.7, 0.77), 
+				Color(0.3, 0.3, 0.33), 
+				Color(0.4, 0.4, 0.4), 
 				1.5
 		);
 
+		materialDemoLightList.push_back(diffuseAboveLight);
 		materialDemoLightList.push_back(behindCameraLight);
 
 		// TODO maybe make these less intense colors.
-		SceneNode* ground 		= new SceneNode(new UnitSquare(), &jade);
+		SceneNode* ground 		= new SceneNode(new UnitSquare(), &bloo);
 		SceneNode* leftWall 	= new SceneNode(new UnitSquare(), &neutral);
 		SceneNode* rightWall 	= new SceneNode(new UnitSquare(), &neutral);
 		SceneNode* ceiling 		= new SceneNode(new UnitSquare(), &neutral);
 		SceneNode* backWall 	= new SceneNode(new UnitSquare(), &neutral);
 		SceneNode* behindCamera = new SceneNode(new UnitSquare(), &neutral);
 
-		sceneMaterialDemo.push_back(ground);
-		sceneMaterialDemo.push_back(leftWall);
-		sceneMaterialDemo.push_back(rightWall);
-		sceneMaterialDemo.push_back(ceiling);
-		sceneMaterialDemo.push_back(backWall);
-		sceneMaterialDemo.push_back(behindCamera);
+		// sceneMaterialDemo.push_back(ground);
+		// sceneMaterialDemo.push_back(leftWall);
+		// sceneMaterialDemo.push_back(rightWall);
+		// sceneMaterialDemo.push_back(ceiling);
+		// sceneMaterialDemo.push_back(backWall);
+		// sceneMaterialDemo.push_back(behindCamera);
 
 		double roomScaleFactor[3] = {10, 10, 10};
 
@@ -356,14 +433,20 @@ int main(int argc, char* argv[])
 
 
 		SceneNode* ball_1 = new SceneNode(new UnitSphere(), &gold);
-		SceneNode* ball_2 = new SceneNode(new UnitSphere(), &gold);
+		SceneNode* ball_2 = new SceneNode(new UnitSphere(), &jade);
 		SceneNode* ball_3 = new SceneNode(new UnitSphere(), &gold);
-		SceneNode* ball_4 = new SceneNode(new UnitSphere(), &gold);
+		SceneNode* ball_4 = new SceneNode(new UnitSphere(), &mirror);
 
 		sceneMaterialDemo.push_back(ball_1);
 		sceneMaterialDemo.push_back(ball_2);
 		sceneMaterialDemo.push_back(ball_3);
 		sceneMaterialDemo.push_back(ball_4);
+
+		// ball_1 -> obj -> normalMap.push_back(new MetallicGrainNormal(500));
+		ball_1 -> obj -> normalMap.push_back(new MetallicGrainNormal(2000));
+		ball_2 -> obj -> normalMap.push_back(new CorrugatedNormal());
+		ball_3 -> obj -> normalMap.push_back(new NoiseyNormal(0.6));
+		ball_4 -> obj -> normalMap.push_back(new PolynomialNoiseNormal(15));
 
 		double bally = 0;
 		double ballz = -5;
@@ -378,9 +461,10 @@ int main(int argc, char* argv[])
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	
-	Camera camera1(Point3D(0, 0, 1), Vector3D(0, 0, -1), Vector3D(0, 1, 0), 60.0);
+	Camera camera1(Point3D(0, 0, 1), Vector3D(0, 0, -1), Vector3D(0, 1, 0), 100.0);
 	Image image1(width, height);
 	raytracer.render(camera1, sceneMaterialDemo, materialDemoLightList, image1); //render 3D scene to image
+	// raytracer.render(camera1, scene1, light_list, image1); //render 3D scene to image
 	image1.flushPixelBuffer("view1.bmp"); //save rendered image to file
 
 	// Render it from a different point of view.

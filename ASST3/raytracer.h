@@ -16,7 +16,20 @@ class Raytracer {
 public:
 	// Renders 3D scene to an image given camera and lights setup.
 	void render(Camera& camera, Scene& scene, LightList& light_list, Image& image);
-		
+	
+	/* 
+	 * Convention:  
+	 *    2
+	 *	1 4 0 5
+	 *    3
+	 */
+	SceneNode* envMapFaces[6];
+
+	// Face -> u + 256 * v -> Color pointer
+	Color** envMapData[6];
+
+	int envMapFaceSize = 256;
+
 private:
 
 	// Return the color of the ray after intersection and shading, call 
@@ -37,5 +50,7 @@ private:
 	// Precompute the modelToWorld and worldToModel transformations for each
     // object in the scene.
 	void computeTransforms(Scene& scene);
+
+	
 
 };

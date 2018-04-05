@@ -18,6 +18,8 @@
 
 Color ambientLightColor;
 
+
+
 void Raytracer::traverseScene(Scene& scene, Ray3D& ray, bool ignoreTransparent) {
 	this -> traverseScene(scene, ray, ignoreTransparent, DBL_MAX);
 }
@@ -332,6 +334,88 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 		}
 
 		
+	} else if (USE_ENV_MAP) {
+		// Calculate the environment map intersection.
+		// HELP WHAT DO.
+
+		for (size_t i = 0; i < 6; ++i) {
+			SceneNode* node = this -> envMapFaces[i];
+
+			node->obj->intersect(ray, node->worldToModel, node->modelToWorld, 
+					DBL_MAX
+			);
+
+		}
+
+		// Determine which face was hit.
+		if (ray.intersection.none) {
+			std::cout << "missed the env map????? This isn't possible\n";
+		}
+
+		Point3D p = ray.intersection.point;
+
+		int face = -1;
+
+		// 10 is used as the env map epsilon
+
+		double u = 0.0, v = 0.0;
+
+		if (p[0] > 500.0 - 10 && p[0] < 500.0 + 10) {
+			face = 0;
+			u = (p[1] + 500) / 1000.0;
+			v = (p[2] + 500) / 1000.0;
+		} else if (p[0] > -500.0 - 10 && p[0] < -500.0 + 10) {
+			face = 1;
+			u = (500 - p[1]) / 1000.0;
+			v = (p[2] + 500.0) / 1000.0;
+		} else if (p[1] > 500.0 - 10 && p[1] < 500.0 + 10) {
+			face = 5;
+			u = (500 - p[0]) / 1000.0;
+			v = (p[2] + 500) / 1000.0;
+		} else if (p[1] > -500.0 - 10 && p[1] < -500.0 + 10) {
+			face = 4;
+			u = (p[0] + 500) / 1000.0;
+			v = (p[2] + 500) / 1000.0;
+		} else if (p[2] > 500.0 - 10 && p[2] < 500.0 + 10) {
+			face = 3;
+			u = (p[0] + 500) / 1000.0;
+			v = (500 - p[1]) / 1000.0;
+		} else if (p[2] > -500.0 - 10 && p[2] < -500.0 + 10) {
+			face = 2;
+			u = (p[0] + 500) / 1000.0;
+			v = (p[1] + 500) / 1000.0;
+		} else {
+			std::cout<<"failure: " << p << "\n";
+		}
+
+		u *= 256;
+		v *= 256;
+
+		int pixelU = int (u);
+		int pixelV = int (v);
+
+		if (pixelV > 255) {
+			std::cout << face ;
+		}
+
+		if (pixelU < 0)
+			pixelU = 0;
+		if (pixelU > 255)
+			pixelU = 255;
+		if (pixelV < 0)
+			pixelV = 0;
+		if (pixelV > 255)
+			pixelV = 255;
+
+		// std::cout << pixelU << ", " << pixelV << "\n";
+
+		if (face != -1) {
+
+			col = col + *(this -> envMapData[face][int(pixelU) + 256 * int(pixelV)]);
+
+		}
+
+
 	}
 
 	// You'll want to call shadeRay recursively (with a different ray, 
@@ -350,6 +434,51 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 
 	viewToWorld = camera.initInvViewMatrix();
 
+	if (USE_ENV_MAP) {
+
+		Material* nullMaterial = new Material(Color(0, 0, 0), Color(0, 0, 0), 
+				Color(0, 0, 0), 1, 1, 0);
+
+		for (int i = 0; i < 6; i++) {
+			this -> envMapFaces[i] = new SceneNode(new UnitSquare(), nullMaterial);	
+		}
+
+		// Ground
+		this -> envMapFaces[3] -> translate(Vector3D(0, -500, 0));
+		this -> envMapFaces[3] -> rotate('x', -90);
+
+		this -> envMapFaces[4] -> translate(Vector3D(0, 0, -500));
+
+		this -> envMapFaces[5] -> translate(Vector3D(0, 0, 500));
+		this -> envMapFaces[5] -> rotate('y', 180);
+
+		this -> envMapFaces[1] -> translate(Vector3D(-500, 0, 0));
+		this -> envMapFaces[1] -> rotate('y', 90);
+
+		this -> envMapFaces[0] -> translate(Vector3D(500, 0, 0));
+		this -> envMapFaces[0] -> rotate('y', -90);
+
+		this -> envMapFaces[2] -> translate(Vector3D(0, 500, 0));
+		this -> envMapFaces[2] -> rotate('x', 90);
+
+		double envMapScaleFactor[3] = {1000, 1000, 1000};
+
+		this -> envMapFaces[3] -> scale(Point3D(0, 0, 0), envMapScaleFactor);
+		this -> envMapFaces[1] -> scale(Point3D(0, 0, 0), envMapScaleFactor);
+		this -> envMapFaces[0] -> scale(Point3D(0, 0, 0), envMapScaleFactor);
+		this -> envMapFaces[2] -> scale(Point3D(0, 0, 0), envMapScaleFactor);
+		this -> envMapFaces[4] -> scale(Point3D(0, 0, 0), envMapScaleFactor);
+		this -> envMapFaces[5] -> scale(Point3D(0, 0, 0), envMapScaleFactor);
+		
+
+		for (int i = 0; i < 6; i++) {
+			this -> envMapFaces[i] -> modelToWorld = this -> envMapFaces[i] -> trans;
+			this -> envMapFaces[i] -> worldToModel = this -> envMapFaces[i] -> invtrans;
+		}
+
+	}
+
+
 	int numCompleted = 0;
 
 	// Compute the ambient light.
@@ -357,14 +486,16 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 	ambientLightColor[1] = 0.0;
 	ambientLightColor[2] = 0.0;
 
-	for (int i = 0; i < light_list.size(); i++) {
-		ambientLightColor = ambientLightColor + light_list[i] -> get_ambient();
+	if (USE_LIGHT_AMBIENT) {
+		for (int i = 0; i < light_list.size(); i++) {
+			ambientLightColor = ambientLightColor + light_list[i] -> get_ambient();
+		}
+
+		ambientLightColor = (1.0 / light_list.size()) * ambientLightColor;
 	}
 
-	ambientLightColor = (1.0 / light_list.size()) * ambientLightColor;
-
 	//multithreading
-	#pragma omp parallel for
+	// #pragma omp parallel for
 	// Construct a ray for each pixel.
 	for (int i = 0; i < image.height; i++) {
 
