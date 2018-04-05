@@ -13,7 +13,7 @@ const int DEFAULT_GLOSS_SHELLS = 0;
 const bool SOFT_SHADOWS_ENABLE = false;
 
 // Enable AA?
-const bool ANTI_ALIASING_ENABLED = false;
+const bool ANTI_ALIASING_ENABLED = true;
 
 // Enable depth of field?
 const bool DOF_ENABLE = false;
@@ -145,9 +145,10 @@ int main(int argc, char* argv[])
 
 		// We are using a static face size of 256.
 
-		unsigned int face_size = 256;
+		unsigned int face_size = 1024;
 
-		unsigned int img_width = 1024, img_height = 768;
+		unsigned int img_width = 4 * face_size, 
+					 img_height = 3 * face_size;
 
 		for (unsigned int faceNum = 0; faceNum < 6; faceNum++) {
 
@@ -193,9 +194,9 @@ int main(int argc, char* argv[])
 						((yOffset + dy) * img_width) + dx + xOffSet;
 
 					raytracer.envMapData[faceNum][dx + face_size * dy] = new Color(
-						cubeMap[3 * pixelLocation] / 256.0, 
-						cubeMap[3 * pixelLocation + 1] / 256.0, 
-						cubeMap[3 * pixelLocation + 2] / 256.0
+						double(cubeMap[3 * pixelLocation]) / 256, 
+						double(cubeMap[3 * pixelLocation + 1]) / 256, 
+						double(cubeMap[3 * pixelLocation + 2]) / 256
 					);					
 
 				}
@@ -461,7 +462,7 @@ int main(int argc, char* argv[])
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.	
-	Camera camera1(Point3D(0, 0, 1), Vector3D(0, 0, -1), Vector3D(0, 1, 0), 100.0);
+	Camera camera1(Point3D(0, 0, 1), Vector3D(0, 0, -1), Vector3D(0, 1, 0), 90.0);
 	Image image1(width, height);
 	raytracer.render(camera1, sceneMaterialDemo, materialDemoLightList, image1); //render 3D scene to image
 	// raytracer.render(camera1, scene1, light_list, image1); //render 3D scene to image

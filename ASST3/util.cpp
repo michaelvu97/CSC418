@@ -478,8 +478,9 @@ unsigned char* readBMP(char* filename) {
 	 */
 
 	FILE* f = fopen(filename, "rb");
-	unsigned char info[54];
-	fread(info, sizeof(unsigned char), 54, f); // Read 54-byte header.
+	unsigned char info[122];
+	fread(info, sizeof(unsigned char), 122, f); // Read 122-byte header.
+	// This might be sketchy since the header size could change.
 
 	// TODO make this static.
 	int width = *(int*)&info[18];

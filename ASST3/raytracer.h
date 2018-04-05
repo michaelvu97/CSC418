@@ -28,7 +28,7 @@ public:
 	// Face -> u + 256 * v -> Color pointer
 	Color** envMapData[6];
 
-	int envMapFaceSize = 256;
+	int envMapFaceSize = 1024;
 
 private:
 
