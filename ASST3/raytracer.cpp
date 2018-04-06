@@ -121,7 +121,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 			Color specularSum(0.0, 0.0, 0.0);
 
 			// Add the original ray
-			specularSum = specularSum + (g) * (g) * 
+			specularSum = specularSum + g * 
 					shadeRay(
 							rayReflection,
 							scene,

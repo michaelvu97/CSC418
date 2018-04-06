@@ -68,7 +68,7 @@ const double GOLD_GLOSSINESS 	= 0.6;
 const double JADE_GLOSSINESS 	= 0.8;
 const double MIRROR_GLOSSINESS 	= 1.0;
 const double GLASS_GLOSSINESS 	= 1.0;
-const double BLOO_GLOSSINESS 	= 0.3;
+const double BLOO_GLOSSINESS 	= 0.15;
 
 /*
  * Depth of Field Parameters.
