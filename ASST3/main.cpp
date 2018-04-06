@@ -16,7 +16,7 @@ const bool SOFT_SHADOWS_ENABLE = false;
 const bool ANTI_ALIASING_ENABLED = false;
 
 // Enable depth of field?
-const bool DOF_ENABLE = true;
+const bool DOF_ENABLE = false;
 
 // Should transparent objects cast shadows from light sources?
 const bool TRANSPARENT_OBJECTS_CAST_SHADOWS = false;
@@ -84,7 +84,7 @@ const double GOLD_GLOSSINESS 	= 0.6;
 const double JADE_GLOSSINESS 	= 0.8;
 const double MIRROR_GLOSSINESS 	= 1.0;
 const double GLASS_GLOSSINESS 	= 1.0;
-const double BLOO_GLOSSINESS 	= 0.2;
+const double BLOO_GLOSSINESS 	= 0.05;
 
 /*
  * Depth of Field Parameters.
@@ -481,15 +481,15 @@ int main(int argc, char* argv[])
 	// testing purposes.	
 	Camera camera1(Point3D(0, 0, 1), Vector3D(0, 0, -1), Vector3D(0, 1, 0), 90.0);
 	Image image1(width, height);
-	raytracer.render(camera1, sceneMaterialDemo, materialDemoLightList, image1); //render 3D scene to image
-	// raytracer.render(camera1, scene1, light_list, image1); //render 3D scene to image
+	// raytracer.render(camera1, sceneMaterialDemo, materialDemoLightList, image1); //render 3D scene to image
+	raytracer.render(camera1, scene1, light_list, image1); //render 3D scene to image
 	image1.flushPixelBuffer("view1.bmp"); //save rendered image to file
 
 	// Render it from a different point of view.
-	// Camera camera2(Point3D(4, 2, 1), Vector3D(-4, -2, -6), Vector3D(0, 1, 0), 60.0);
-	// Image image2(width, height);
-	// raytracer.render(camera2, sceneMaterialDemo, light_list, image2);
-	// image2.flushPixelBuffer("view2.bmp");
+	Camera camera2(Point3D(4, 2, 1), Vector3D(-4, -2, -6), Vector3D(0, 1, 0), 60.0);
+	Image image2(width, height);
+	raytracer.render(camera2, scene1, light_list, image2);
+	image2.flushPixelBuffer("view2.bmp");
 
 	// Free memory
 	for (size_t i = 0; i < scene1.size(); ++i) {

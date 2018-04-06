@@ -51,6 +51,4 @@ private:
     // object in the scene.
 	void computeTransforms(Scene& scene);
 
-	
-
 };
