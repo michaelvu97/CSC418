@@ -6,9 +6,6 @@
 
 /*************************** GLOBAL PARAMETERS ********************************/
 
-// Number of gloss shells to produce. 0 disables glossy reflections.
-const int DEFAULT_GLOSS_SHELLS = 0;
-
 // Enable soft shadows?
 const bool SOFT_SHADOWS_ENABLE = false;
 
@@ -29,19 +26,6 @@ const bool USE_ENV_MAP = true;
  * Set to false for a much better/photorealistic look.
  */
 const bool USE_LIGHT_AMBIENT = false;
-
-/*
- * Gloss Parameters.
- *
- * 		Regularizer: 
- *				Constant multiplier of glossy intensity.
- *
- *		Exponent Regularizer: 
- *				Exponentiation of gloss angle intensity multiplier.
- *
- */
-const double GLOSS_REGULARIZER 			= 3;
-const double GLOSS_EXPONENT_REGULARIZER = 7;
 
 /*
  * Soft Shadow Parameters.
@@ -84,7 +68,7 @@ const double GOLD_GLOSSINESS 	= 0.6;
 const double JADE_GLOSSINESS 	= 0.8;
 const double MIRROR_GLOSSINESS 	= 1.0;
 const double GLASS_GLOSSINESS 	= 1.0;
-const double BLOO_GLOSSINESS 	= 0.05;
+const double BLOO_GLOSSINESS 	= 0.3;
 
 /*
  * Depth of Field Parameters.

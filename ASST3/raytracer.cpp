@@ -116,81 +116,27 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 
 			// Create a "fake" light source from the reflected ray.
 			//create a cone of rays
-			double g = 1.0 - ray.intersection.mat -> glossiness;
-
-			Vector3D deltaYVec = GetArbitraryTangentFromNorm(ray.dir);
-			Vector3D deltaXVec = ray.dir.cross(deltaYVec);
-
-			deltaYVec.normalize();
-			deltaXVec.normalize();
+			double g = ray.intersection.mat -> glossiness;
 
 			Color specularSum(0.0, 0.0, 0.0);
-			Color diffuseSum(0.0, 0.0, 0.0);
 
-			// Must be greater than 0, more shells is more gloss rays.
-			int shells = DEFAULT_GLOSS_SHELLS;
-
-			/*
-			 * Calculate glossy reflections.
-			 */
-			if (shells > 0 && g > EPSILON) {
-
-				int ignoredRays = 0;
-
-				for (double dx = -1; dx <= 1 ; dx += 1.0 / shells) {
-					for (double dy = -1; dy <= 1; dy +=  1.0 / shells) {
-
-						Ray3D tempRay;
-						tempRay.origin = ray.intersection.point;
-						tempRay.dir = rayReflection.dir + (dx * deltaXVec) + 
-								(dy * deltaYVec);
-
-						tempRay.dir.normalize();
-
-						if (tempRay.dir.dot(ray.intersection.normal) < 0) {
-							ignoredRays++;
-							continue;
-						}
-
-						Color c = shadeRay(
-								tempRay,
-								scene,
-								light_list, 
-								// depth / 2 > 0 ? depth / 2 : 0,
-								0,
-								index
-						);
-
-						/*
-						 * In the interest of computation time and looking good,
-						 * the multiplier for the color has been linearized.
-						 */
-						diffuseSum = diffuseSum + 
-								pow(
-										tempRay.dir.dot(rayReflection.dir), 
-										(1.0 - g) * GLOSS_EXPONENT_REGULARIZER
-								) * c;
-
-					}
-				}
-
-				// Average
-				diffuseSum = ( g * GLOSS_REGULARIZER / 
-						(pow(1.0 + 2.0 * shells, 2) - ignoredRays) ) * diffuseSum;
-
-				diffuseSum.clamp();
-
-			}
 			// Add the original ray
-			specularSum = specularSum + (1.0 - g) * (1.0 - g) * shadeRay(rayReflection, scene, light_list,
-				depth - 1, index);	
+			specularSum = specularSum + (g) * (g) * 
+					shadeRay(
+							rayReflection,
+							scene,
+							light_list,
+							depth - 1,
+							index
+					);	
 
-			
 
 			specularSum.clamp();
 
 			double opacity = ray.intersection.mat -> opacity;
 			double transparency = 1.0 - opacity;
+
+			Color blankColor(0, 0, 0);
 
 			col = col + reflectance * (
 					Phong(
@@ -199,10 +145,7 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 						ray.dir,
 						ray.intersection.mat,
 						ambientLightColor,
-						diffuseSum,
-
-						// This is experimental right now. Normally use diffuse
-						// instead of the 0 0 0 color above.
+						blankColor,
 						specularSum
 					)
 			);
@@ -305,9 +248,10 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 
 
 
-			if (hits == 0) {
+			if (hits == 0 && USE_LIGHT_AMBIENT) {
 				// Just use light ambient.
-				col = col + ambientLightColor;
+				// This seems wrong
+				col = col + light_list[i] -> get_ambient(); 
 			} else { 
 				col =  col + (1.0 / (double) samples.size()) * colorSum;
 			}
@@ -331,8 +275,8 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 
 		// Determine which face was hit.
 		if (ray.intersection.none) {
-			std::cout << "Missed environment map, the containing box may not be\
-			 sealed\n";
+			std::cout << "Missed environment map, the containing box may not be"
+			 << " sealed\n";
 		}
 
 		Point3D p = ray.intersection.point;

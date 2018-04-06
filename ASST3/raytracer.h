@@ -22,6 +22,8 @@ public:
 	 *    2
 	 *	1 4 0 5
 	 *    3
+	 *
+	 * 4 is the ground
 	 */
 	SceneNode* envMapFaces[6];
 
