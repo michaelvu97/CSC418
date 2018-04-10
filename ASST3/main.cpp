@@ -21,6 +21,9 @@ bool TRANSPARENT_OBJECTS_CAST_SHADOWS = false;
 // Use the environment map?
 bool USE_ENV_MAP = false;
 
+// Check for lighting occlusion / do objects cast shadows?
+bool GLOBAL_ILLUMINATION_ENABLED = true;
+
 /*
  * Should the ambient light color be calculated from the given lights?
  * Set to false for a much better/photorealistic look.
@@ -81,7 +84,7 @@ const double BLOO_GLOSSINESS 	= 0.15;
  *		Aperture:
  *				Size of the simulated camera aperture. 0 is a pinhole camera,
  *				and as the number increase, makes out-of-focus objects
- *				blurrier.
+ *				blurrier. 
  *
  *		Num Rays:
  *				Number of samples to estimate the depth of field effect. The
@@ -90,7 +93,7 @@ const double BLOO_GLOSSINESS 	= 0.15;
  *			
  */
 const double FOCAL_LENGTH 	= 6.0;
-const double APERTURE 		= 0.1;
+const double APERTURE 		= 0.5;
 const int 	 DOF_NUM_RAYS	= 30; // 30 is good
 
 /*
@@ -131,9 +134,9 @@ int main(int argc, char* argv[])
 
 	int configLineNum = 0;
 
-	bool configVars[6];
+	bool configVars[7];
 
-	while (configLineNum < 6 && getline(configFile, line)) {
+	while (configLineNum < 7 && getline(configFile, line)) {
 		int eqIndex = line.find("=");
 		configVars[configLineNum] = line.at(eqIndex + 1) != '0';
 		configLineNum++;
@@ -147,6 +150,7 @@ int main(int argc, char* argv[])
 	TRANSPARENT_OBJECTS_CAST_SHADOWS 	= configVars[3];
 	USE_ENV_MAP 						= configVars[4];
 	USE_LIGHT_AMBIENT 					= configVars[5];
+	GLOBAL_ILLUMINATION_ENABLED			= configVars[6];
 
 	std::cout << "==== SETTINGS ====\n";
 	if (configVars[0]) {
@@ -165,8 +169,12 @@ int main(int argc, char* argv[])
 		std::cout << "Environment map enabled.\n";
 	}
 	if (configVars[5]) {
-		std::cout << "Ambient lighting from light sources enbaled.\n";
+		std::cout << "Ambient lighting from light sources enabled.\n";
 	}
+	if (configVars[6]) {
+		std::cout << "Global illumination enabled.\n";
+	}
+
 	std::cout << "==================\n";
 
 	int selectedScene = -1;

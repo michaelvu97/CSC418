@@ -32,6 +32,7 @@ extern bool DOF_ENABLE;
 extern bool TRANSPARENT_OBJECTS_CAST_SHADOWS;
 extern bool USE_LIGHT_AMBIENT;
 extern bool USE_ENV_MAP;
+extern bool GLOBAL_ILLUMINATION_ENABLED;
 
 extern const double GLOSS_REGULARIZER;
 extern const double GLOSS_EXPONENT_REGULARIZER;

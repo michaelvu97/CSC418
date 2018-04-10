@@ -236,7 +236,8 @@ Color Raytracer::shadeRay(Ray3D& ray, Scene& scene, LightList& light_list,
 						dist
 				); 
 
-				if (samples[sampleNum] -> intersection.none) {
+				if (samples[sampleNum] -> intersection.none ||
+					!GLOBAL_ILLUMINATION_ENABLED) {
 					// The light was unobstructed
 					computeShading(ray, light_list[i]);
 					hits++;
@@ -538,6 +539,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 
 				colCentre = colCentre + antiAliasingColor;
 
+				colCentre.clamp();
 
 
 			}
@@ -549,11 +551,11 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 				// Generate focal point for different ray dir
 				Point3D focalPoint = ray.origin + FOCAL_LENGTH * ray.dir;
 
-				for(int i =0; i < DOF_NUM_RAYS; i++){
+				for(int i = 0; i < DOF_NUM_RAYS; i++){
 
 					// Randomly pick points within the radius of the aperture 
-					float temp1 =  APERTURE *((float)rand()/(float)(RAND_MAX));
-					float temp2 =  APERTURE *((float)rand()/(float)(RAND_MAX));
+					float temp1 =  APERTURE * ((float)rand()/(float)(RAND_MAX));
+					float temp2 =  APERTURE * ((float)rand()/(float)(RAND_MAX));
 
 					Vector3D tempVec (temp1, temp2, 0);
 
@@ -564,6 +566,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 					secondaryRay.dir = focalPoint - randPoint;
 					secondaryRay.dir.normalize();
 					secondaryRay.intersection.t_value = DBL_MAX;
+					secondaryRay.intersection.none = true;
 
 					Color dof_res = shadeRay(
 							secondaryRay,
@@ -577,12 +580,13 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 
 				}
 
-				// Divide by 25 points.
+				// Get the mean color
 				dofCol = (1.0 / DOF_NUM_RAYS) * dofCol; 
 
-				dofCol.clamp();
+				// colCentre = colCentre + dofCol;
+				colCentre = dofCol;
 
-				colCentre = colCentre + dofCol;
+				colCentre.clamp();
 
 			}
 
