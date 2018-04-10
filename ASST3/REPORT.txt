@@ -1,0 +1,51 @@
+CSC418 Lab 3 Report
+
+Beston Leung - 1002250725
+Mike Vu - 1002473272
+06.04.2018
+
+INTRODUCTION
+We have implemented 6 features in total, including Anti-aliasing, Depth of field, extended light sources, refraction, environment mapping and procedural texture mapping(normal mapping). Note the normal mapping is done as an add-on to the project and might prone to error.  Implementations of the features are mostly in raytracer.cpp while texture mapping is done through an addition of two files, NormalMap.cpp and its header files.
+We support sphere and plane intersection and a variety of materials, such as mirror and glass. 
+To facilitate testing and usability of the raytracer. We define all feature parameters and toggles globally in the main files. All the features can be toggled on or off individually.
+
+COMPILATION INSTRUCTIONS
+To compile, make in the project directory. To enable/disable features, modify the values in the "config" file to 1/0. To change program parameters, modify the global values at the top of "main.cpp". To run the program, ."/raytracer <?height> <?width>", and select the scene to render. 0 is the default provided scene, and the others demonstrate some of our extra features. The enabled raytracer settings will be printed, and the progress of the raytracer will be printed every decade of completion.
+
+FEATURES
+
+Anti-aliasing
+Anti-aliasing is achieved with the use of distributed ray tracing. Four extra rays are cast towards each pixel at a margin defined by the user. The final color of the pixel is the average of the colour sum. 
+Before and after images are shown in folder AA under Part B.
+
+Depth of field
+The Depth of field shares the same idea of anti-aliasing except the distributed rays are cast stochastically from random points on the lens to the focal point. The final color of the pixel is the average of the colour sum. 
+Before and after images are shown in folder DoF under Part B.
+
+Extended light sources
+Extended light sources are done by generating a group of rays from the point of intersection at the direction towards the light source. The final result is calculated by the ratio of unobstructed rays and obstructed rays. Hence objects that are partially blocked by another object has smoother transition/ softer shadow.
+Before and after images are shown in folder SoftShadows under Part B.
+
+Refraction
+Refraction shares many similarities with reflection. By calculating Fresnel coefficient for each point of intersection, transparent objects would result in a less than one reflectance. Hence, a refracted ray is generated accordingly and normal intersection detection techniques apply.
+Before and after images are shown in folder Refractions under Part B. The two images showcase balls with refractive index 1.5 and 3.0 respectively.
+
+Environment mapping
+Environment mapping is achieved by wrapping the visible space in a 1000x1000 cube, and mapping a cubemap onto the inner faces. Images are loaded from bitmap files in a standard cubemap format. The cube is not included in the world ray calculations, unless a ray does not intersect any objects (it casts to infinity). In this case, the environment cubemap is checked for intersections and assigns the nearest pixel colour to the ray.
+Images can be found in folder Environment  Bump Mapping under part B.
+
+Procedural texture mapping (Normal mapping) (EXTRA FEATURE)
+Normal Mapping is achieved by defining an mathematical function for offsetting the surface normal. When sampling the normal from a surface, the object converts the point to UV coordinates and accordingly calculates the new normal for that point. Since continuous functions are used, the resolution of the mapping is practically infinite.
+Images can be found in folder Procedural Bump Mapping under part B, and is an extra feature.
+
+External resources
+ReadBMP function is taken as a helper class from StackOverflow @9296059
+Cubemap image taken from Google Images and modified in GIMP.
+  
+Role of each member
+The early stages of the project were achieved through pair programming, since having a deep understanding of our raytracer was critical for splitting up work later. Later features were split between members.
+Michael: Environment Mapping, Normal Mapping
+Beston: Refraction, Depth of Field
+Both: Anti-Aliasing, Extended Light Sources
+
+
