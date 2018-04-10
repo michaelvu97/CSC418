@@ -481,15 +481,19 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 			ray.dir.normalize();
 			ray.intersection.t_value = DBL_MAX;
 
-			Color colCentre = shadeRay(
-					ray, 
-					scene, 
-					light_list, 
-					RAY_TRACE_DEPTH, 
-					AIR_REFRACTIVE
-			); 
+			Color colCentre(0, 0, 0);
+
+			if (!ANTI_ALIASING_ENABLED && !DOF_ENABLE) {
+				colCentre = shadeRay(
+						ray, 
+						scene, 
+						light_list, 
+						RAY_TRACE_DEPTH, 
+						AIR_REFRACTIVE
+				); 
+			}
 			
-			if (ANTI_ALIASING_ENABLED) {
+			if (ANTI_ALIASING_ENABLED && !DOF_ENABLE) {
 
 				Color antiAliasingColor(0, 0, 0);
 
@@ -537,7 +541,7 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 				antiAliasingColor = 0.2 * antiAliasingColor; 
 				antiAliasingColor.clamp();
 
-				colCentre = colCentre + antiAliasingColor;
+				colCentre = antiAliasingColor;
 
 				colCentre.clamp();
 
@@ -583,7 +587,6 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 				// Get the mean color
 				dofCol = (1.0 / DOF_NUM_RAYS) * dofCol; 
 
-				// colCentre = colCentre + dofCol;
 				colCentre = dofCol;
 
 				colCentre.clamp();

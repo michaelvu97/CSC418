@@ -58,7 +58,7 @@ const double ANTI_ALIASING_DELTA = 0.3;
  *				How many bounces should each ray make before it is terminated?
  *
  */
-const int RAY_TRACE_DEPTH = 0;
+const int RAY_TRACE_DEPTH = 5;
 
 /*
  * Material Glossiness Parameters.
@@ -102,7 +102,7 @@ const int 	 DOF_NUM_RAYS	= 30; // 30 is good
 const double GOLD_REFRACTIVE = EPSILON;
 const double JADE_REFRACTIVE = EPSILON;
 const double MIRROR_REFRACTIVE = EPSILON;
-const double REFRACTIVE = 3.0;
+const double REFRACTIVE = 1.5;
 const double AIR_REFRACTIVE = 1.0;
 
 /******************************************************************************/
@@ -554,6 +554,7 @@ int main(int argc, char* argv[])
 		SceneNode* ball_2 = new SceneNode(new UnitSphere(), &jade);
 		SceneNode* ball_3 = new SceneNode(new UnitSphere(), &gold);
 		SceneNode* ball_4 = new SceneNode(new UnitSphere(), &mirror);
+
 
 		scenes[3].push_back(ball_1);
 		scenes[3].push_back(ball_2);
