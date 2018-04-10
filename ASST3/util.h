@@ -26,13 +26,12 @@
 /* 
  * Modify these values in main.cpp.
  */
-extern const int  DEFAULT_GLOSS_SHELLS;
-extern const bool SOFT_SHADOWS_ENABLE;
-extern const bool ANTI_ALIASING_ENABLED;
-extern const bool DOF_ENABLE;
-extern const bool TRANSPARENT_OBJECTS_CAST_SHADOWS;
-extern const bool USE_LIGHT_AMBIENT;
-extern const bool USE_ENV_MAP;
+extern bool SOFT_SHADOWS_ENABLE;
+extern bool ANTI_ALIASING_ENABLED;
+extern bool DOF_ENABLE;
+extern bool TRANSPARENT_OBJECTS_CAST_SHADOWS;
+extern bool USE_LIGHT_AMBIENT;
+extern bool USE_ENV_MAP;
 
 extern const double GLOSS_REGULARIZER;
 extern const double GLOSS_EXPONENT_REGULARIZER;
