@@ -92,9 +92,9 @@ const double BLOO_GLOSSINESS 	= 0.15;
  *				it approximates real light, but the computation takes longer.
  *			
  */
-const double FOCAL_LENGTH 	= 6.0;
-const double APERTURE 		= 0.5;
-const int 	 DOF_NUM_RAYS	= 30; // 30 is good
+const double FOCAL_LENGTH 	= 4.0;
+const double APERTURE 		= 0.2;
+const int 	 DOF_NUM_RAYS	= 60; // 30 is good
 
 /*
  * Material Refractive Constants.
@@ -102,7 +102,7 @@ const int 	 DOF_NUM_RAYS	= 30; // 30 is good
 const double GOLD_REFRACTIVE = EPSILON;
 const double JADE_REFRACTIVE = EPSILON;
 const double MIRROR_REFRACTIVE = EPSILON;
-const double REFRACTIVE = 1.5;
+const double REFRACTIVE = 3.5;
 const double AIR_REFRACTIVE = 1.0;
 
 /******************************************************************************/

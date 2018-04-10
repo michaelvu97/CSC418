@@ -558,8 +558,11 @@ void Raytracer::render(Camera& camera, Scene& scene, LightList& light_list,
 				for(int i = 0; i < DOF_NUM_RAYS; i++){
 
 					// Randomly pick points within the radius of the aperture 
-					float temp1 =  APERTURE * ((float)rand()/(float)(RAND_MAX));
-					float temp2 =  APERTURE * ((float)rand()/(float)(RAND_MAX));
+					float temp1 =  APERTURE * 
+							(((float)rand()/(float)(RAND_MAX)) - 0.5);
+							
+					float temp2 =  APERTURE * 
+							(((float)rand()/(float)(RAND_MAX)) - 0.5);
 
 					Vector3D tempVec (temp1, temp2, 0);
 
